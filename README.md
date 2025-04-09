@@ -31,24 +31,7 @@ Script-AIS/ │ ├── apprentissage/ │ ├── test.py # Script de test 
 yaml
 Copier le code
 
-Le dossier `apprentissage` regroupe les scripts réalisés lors de la phase d'expérimentation et d’apprentissage.
-
----
-
-## ✅ Prérequis
-
-- Python **3.x**
-- Bibliothèques standard :
-  - `subprocess`
-  - `os`
-
----
-
-## 🚀 Installation
-
-Cloner ce dépôt GitHub :
-
-```bash
+Le dossier `apprentissage` regroupe les scripts réalisés lors de la phase d'expérimentation et d’apprentissage
 git clone https://github.com/Y4nnSec/Script-AIS.git
 cd Script-AIS
 👨‍💻 Auteur
