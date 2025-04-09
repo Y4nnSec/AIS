@@ -1,4 +1,4 @@
-# Script-AIS
+# Script-python
 
 Un script développé pour automatiser certaines tâches liées à l'administration d'infrastructure sécurisée, en particulier pour l'environnement de l'AIS (Administrateur d'Infrastructure Sécurisée).
 
