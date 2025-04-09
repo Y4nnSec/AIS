@@ -42,8 +42,6 @@ Le dossier `apprentissage` regroupe les scripts réalisés lors de la phase d'ex
   - `subprocess`
   - `os`
 
-> *(Ajoutez ici toute autre bibliothèque si nécessaire, ex : `requests`, `argparse`, `shutil`…)*
-
 ---
 
 ## 🚀 Installation
