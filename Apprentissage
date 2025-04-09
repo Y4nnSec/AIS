@@ -1,5 +1,3 @@
-Boucles et conditions
-
 fruits = ["pomme", "banane", "cerise"]
 
 for f in fruits:
