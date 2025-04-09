@@ -17,9 +17,9 @@ Il permet notamment :
 
 ## ⚙️ Fonctionnalités
 
-- 🔐 Vérification de l'intégrité de fichiers critiques
-- 🧪 Lancement de tests de sécurité (scripts de test)
-- 🔧 Gestion et vérification des configurations réseau (pare-feu, ports, etc.)
+- 🔐 Vérification de l'intégrité de fichiers critiques  
+- 🧪 Lancement de tests de sécurité (scripts de test)  
+- 🔧 Gestion et vérification des configurations réseau (pare-feu, ports, etc.)  
 - 📊 Export ou affichage de résultats pour analyse
 
 ---
@@ -28,6 +28,8 @@ Il permet notamment :
 
 Script-AIS/ │ ├── apprentissage/ │ ├── test.py # Script de test initial │ └── test6.py # Deuxième script de test │ └── README.md # Présentation du projet
 
+yaml
+Copier le code
 
 Le dossier `apprentissage` regroupe les scripts réalisés lors de la phase d'expérimentation et d’apprentissage.
 
@@ -51,7 +53,6 @@ Cloner ce dépôt GitHub :
 ```bash
 git clone https://github.com/Y4nnSec/Script-AIS.git
 cd Script-AIS
-
-Auteur
+👨‍💻 Auteur
 Y4nnSec
 Développeur principal – Formation AIS (Administrateur d’Infrastructure Sécurisée)
