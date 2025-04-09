@@ -13,19 +13,6 @@ Il permet notamment :
 - l'exécution de tests sur des serveurs,
 - la gestion de configurations critiques (pare-feu, conformité, etc.).
 
----
-
-## ⚙️ Fonctionnalités
-
-- 🔐 Vérification de l'intégrité de fichiers critiques  
-- 🧪 Lancement de tests de sécurité (scripts de test)  
-- 🔧 Gestion et vérification des configurations réseau (pare-feu, ports, etc.)  
-- 📊 Export ou affichage de résultats pour analyse
-
----
-
-## 📁 Structure du dépôt
-
 Script-AIS/ │ ├── apprentissage/ │ ├── test.py # Script de test initial │ └── test6.py # Deuxième script de test │ └── README.md # Présentation du projet
 
 yaml
