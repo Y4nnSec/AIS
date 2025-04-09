@@ -24,3 +24,7 @@ Ce script a pour but d'automatiser la gestion de diverses configurations de séc
    ```bash
    git clone https://github.com/Y4nnSec/Script-AIS.git
    cd Script-AIS
+
+Auteurs
+
+Y4nnSec : Développeur principal
