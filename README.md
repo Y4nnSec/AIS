@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="yannsec_banner.png" alt="YannSec Banner" width="800">
+</p>
+
+<h1 align="center">🐍 Script-Python – Automatisation pour l’AIS & 📚 Initiation à la classification des vulnérabilités & 🧾 DAT – Environnement de test</h1>
+
 # 🐍 Script-Python – Automatisation pour l’AIS & 📚 Initiation à la classification des vulnérabilités & 🧾 DAT – Environnement de test
 
 Ce dépôt contient trois volets complémentaires :  
