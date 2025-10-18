@@ -4,7 +4,7 @@ Ce dépôt contient trois volets complémentaires :
 
 - [1️⃣ Script-Python AIS](#1-script-python--automatisation-ais) – automatisation de tâches liées à l'administration sécurisée.  
 - [2️⃣ Initiation à la classification des vulnérabilités](#2-initiation-à-la-classification-des-vulnérabilités) – document d’introduction à la classification des vulnérabilités (réalisé en juin 2025).  
-- [3️⃣ DAT – Environnement de test](#3-dat--environnement-de-test) – Document d’Architecture Technique décrivant un lab (AD, Windows, Linux) avec toutes les captures et le schéma réseau inclus dans le PDF (réalisé en octobre 2025).
+- [3️⃣ DAT – Environnement de test](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_LAB_Environnement%20de%20test.pdf) – Document d’Architecture Technique décrivant un lab (AD, Windows, Linux) avec toutes les captures et le schéma réseau inclus dans le PDF (réalisé en octobre 2025).
 
 ---
 
