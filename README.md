@@ -11,9 +11,9 @@ Ce dépôt contient trois volets complémentaires :
 ---
 
 ## 📌 Sommaire
-- [Script-Python AIS](test.py) / [test6.py]
-- [Initiation à la classification des vulnérabilités](Initiation à la classification des vulnérabilités)
-- [DAT – Environnement de test](DAT_LAB_Environnement de test.pdf)
+- [Script-Python AIS](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test.py) / [test6.py](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test6.py)
+- [Initiation à la classification des vulnérabilités](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/Initiation%20%C3%A0%20la%20classification%20des%20vuln%C3%A9rabilit%C3%A9s)
+- [DAT – Environnement de test](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_LAB_Environnement%20de%20test.pdf)
 
 ### Arborescence (extrait)
 apprentissage/
@@ -54,7 +54,7 @@ Il présente les différentes catégories de vulnérabilités, leur gravité et 
 | `Initiation à la classification des vulnérabilités` |
 
 ### Accès au document
-[📄 Ouvrir le document](Initiation à la classification des vulnérabilités)
+[📄 Ouvrir le document](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/Initiation%20%C3%A0%20la%20classification%20des%20vuln%C3%A9rabilit%C3%A9s)
 
 ---
 
@@ -72,7 +72,7 @@ Toutes les captures et le schéma réseau sont inclus dans le PDF.
 ### Accès au DAT
 [📄 Ouvrir le DAT en PDF](DAT_LAB_Environnement de test.pdf)  
 
-[![Aperçu PDF DAT](DAT_preview.png)](DAT_LAB_Environnement de test.pdf)
+[![Aperçu PDF DAT](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_preview.png)](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_LAB_Environnement%20de%20test.pdf)
 
 ---
 
