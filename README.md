@@ -4,7 +4,7 @@ Ce dépôt contient trois volets complémentaires :
 
 - [1️⃣ Script-Python AIS – Automatisation de tâches](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test.py) / [test6.py](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test6.py)     
 - [2️⃣ Initiation à la classification des vulnérabilités](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/Initiation%20%C3%A0%20la%20classification%20des%20vuln%C3%A9rabilit%C3%A9s) – document d’introduction à la classification des vulnérabilités (réalisé en juin 2025).  
-- [3️⃣ DAT – Environnement de test] – Document d’Architecture Technique décrivant un lab (AD, Windows, Linux) avec toutes les captures et le schéma réseau inclus dans le PDF (réalisé en octobre 2025).
+- [3️⃣ DAT – Environnement de test][![Aperçu PDF DAT]()](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_LAB_Environnement%20de%20test.pdf) – Document d’Architecture Technique décrivant un lab (AD, Windows, Linux) avec toutes les captures et le schéma réseau inclus dans le PDF (réalisé en octobre 2025).
 
 ---
 
