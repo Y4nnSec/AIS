@@ -9,9 +9,9 @@ Ce dépôt contient trois volets complémentaires :
 ---
 
 ## 📌 Sommaire
-- [Script-Python AIS](#1️⃣-script-python--automatisation-ais)
-- [Initiation à la classification des vulnérabilités](#2️⃣-initiation-à-la-classification-des-vulnérabilités)
-- [DAT – Environnement de test](#3️⃣-dat--environnement-de-test)
+- [Script-Python AIS](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test.py) / [test6.py](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test6.py)
+- [Initiation à la classification des vulnérabilités](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/Initiation%20%C3%A0%20la%20classification%20des%20vuln%C3%A9rabilit%C3%A9s)
+- [DAT – Environnement de test](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_LAB_Environnement%20de%20test.pdf)
 
 ### Arborescence (extrait)
 apprentissage/
