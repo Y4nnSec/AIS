@@ -1,14 +1,17 @@
-# 🐍 Script-Python – Automatisation pour l’AIS & DAT – Environnement de test
- 
+# 🐍 Script-Python – Automatisation pour l’AIS & 📚 Initiation à la classification des vulnérabilités & 🧾 DAT – Environnement de test
 
-- [1️⃣ Script-Python AIS]() – automatisation de tâches liées à l'administration sécurisée.  
-- [2️⃣ DAT – Environnement de test](#2-dat--environnement-de-test) – Document d’Architecture Technique décrivant un lab (AD, Windows, Linux) avec toutes les captures et le schéma réseau inclus dans le PDF.
+Ce dépôt contient trois volets complémentaires :  
+
+- [1️⃣ Script-Python AIS](#1-script-python--automatisation-ais) – automatisation de tâches liées à l'administration sécurisée.  
+- [2️⃣ Initiation à la classification des vulnérabilités](#2-initiation-à-la-classification-des-vulnérabilités) – document d’introduction à la classification des vulnérabilités (réalisé en juin 2025).  
+- [3️⃣ DAT – Environnement de test](#3-dat--environnement-de-test) – Document d’Architecture Technique décrivant un lab (AD, Windows, Linux) avec toutes les captures et le schéma réseau inclus dans le PDF (réalisé en octobre 2025).
 
 ---
 
 ## 📌 Sommaire
 - [Script-Python AIS](#1-script-python--automatisation-ais)  
-- [DAT – Environnement de test](#2-dat--environnement-de-test)  
+- [Initiation à la classification des vulnérabilités](#2-initiation-à-la-classification-des-vulnérabilités)  
+- [DAT – Environnement de test](#3-dat--environnement-de-test)  
   - [Services et points clés](#services-et-points-clés)  
 - [Notes pratiques](#notes-pratiques)
 
@@ -26,9 +29,10 @@ Fonctionnalités principales :
 
 ### Arborescence (extrait)
 apprentissage/
-├── README.md ← ce fichier
+├── README.md
+├── Initiation à la classification des vulnérabilités
 ├── DAT_LAB_Environnement_de_test.pdf
-├── DAT_preview.png ← vignette cliquable
+├── DAT_preview.png
 ├── test.py
 └── test6.py
 
@@ -41,7 +45,23 @@ _Projet réalisé : Avril 2025_
 
 ---
 
-## 2️⃣ DAT – Environnement de test
+## 2️⃣ Initiation à la classification des vulnérabilités
+
+### Description
+Ce document introduit la **classification des vulnérabilités** dans un environnement informatique.  
+Il présente les différentes catégories de vulnérabilités, leur gravité et des exemples pratiques.
+
+### Contenu du dépôt
+| Fichier | Description |
+|---------|-------------|
+| `Initiation à la classification des vulnérabilités` | Document PDF ou texte décrivant les vulnérabilités et leur classification |
+
+### Accès au document
+[📄 Ouvrir le document](./Initiation%20à%20la%20classification%20des%20vulnérabilités)
+
+---
+
+## 3️⃣ DAT – Environnement de test
 
 ### Présentation
 Lab vulnérable pour pratiquer l’administration Windows et Linux.  
@@ -71,5 +91,5 @@ Toutes les captures et le schéma réseau sont inclus dans le PDF.
 ### Auteur DAT
 **Yann – Alternance Administrateur Infrastructures Sécurisées**  
 _Projet réalisé : Octobre 2025_
- Infrastructures Sécurisées
-Projet réalisé en octobre 2025
+
+---
