@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/Y4nnSec/AIS/blob/main/apprentissage/yannsec_banner.png" alt="YannSec Banner" width="600">
+  <img src="https://github.com/Y4nnSec/AIS/blob/main/apprentissage/yannsec_banner.png" alt="YannSec Banner" width="800">
 </p>
 
 <h1 align="center">🐍 Script-Python – Automatisation pour l’AIS & 📚 Initiation à la classification des vulnérabilités & 🧾 DAT – Environnement de test</h1>
