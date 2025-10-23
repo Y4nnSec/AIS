@@ -1,29 +1,3 @@
-# **Apprentissage et script Powershell**
-
-1.Vérifiez à l'aide d'un langage de script si vous avez les KB5049622, KB5049625 et Un KB présent de votre choix présent sur votre OS
-
-Windows. Le script devra afficher en Vert les KB présents et en rouge les KB absents.
-
-```powershell
-$kbs = @("KB5049622", "KB5049625", "KB5054156")
-$installed = (Get-HotFix).HotFixID
-$kbs | Out-File "kb_list.txt"
-foreach ($kb in $kbs) {
-    if ($installed -contains $kb) {
-        Write-Host "$kb est présent" -ForegroundColor Green
-    }
-    else {
-        Write-Host "$kb est absent" -ForegroundColor Red
-    }
-}
-```
-![alt text](<../Image/Kb listés.png>)
-
-2. Une fois que votre script fonctionne, placer la liste des KB dans un fichier texte nommé kb_list.txt, le script devra lire ce
-
-fichier pour obtenir la liste des KB.
-
-```powershell
 $kbs = @("KB5049622", "KB5049625", "KB5054156")
 $installed = (Get-HotFix).hotfixID
 $kbs | Out-File "kb_list.txt"
@@ -36,41 +10,6 @@ else {
     write-host "$kb est absent" -foregroundcolor Red
 }
 }
-```
-![alt text](<../Image/List kb.png>)
-
-3. Proposer une procédure, à écrire en commentaire du script, pour appliquer ce script sur un parc Windows AD.
-
-PROCÉDURE DE DÉPLOIEMENT DU SCRIPT SUR UN PARC WINDOWS AD
-
-Objectif :
-
-Vérifier la présence de correctifs (KB) sur tous les postes
-d’un domaine Active Directory via une GPO.
-
-Étapes :
-Copier le script PowerShell check_kb.ps1 et le fichier kb_list.txt dans un dossier partagé accessible :
-"\\Réseau\sysvol\share\scripts\check_kb.ps1"
-
-Ouvrir la console "Gestion des stratégies de groupe" (GPMC.msc)
-Créer une nouvelle GPO nommée :
-"Vérification des KB Windows"
-Éditer la GPO :
-
-Configuration ordinateur → Stratégies → Scripts (Démarrage/Arrêt)
-Ajouter un script de démarrage avec la commande suivante :
-powershell.exe -ExecutionPolicy Bypass -File "\\Réseau\sysvol\share\scripts\check_kb.ps1"
-
-Lier la GPO à l’unité d’organisation (OU) contenant les postes ciblés.
-Forcer l’application de la stratégie sur un poste :
-gpupdate /force
-
-Résultat :
-À chaque démarrage du poste, le script s’exécute et affiche
-la présence ou l’absence des KB listés.
-
-
-4. Signer votre script afin d'en prouver l'integrité et l'authenticité. (Certificat autosigné toleré)
 
 # SIG # Begin signature block
 # MIIFZwYJKoZIhvcNAQcCoIIFWDCCBVQCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
@@ -103,7 +42,3 @@ la présence ou l’absence des KB listés.
 # Msnm5eOwEyJo2MdyEz33IIYST6UaiQChVAtQ4n5fAFeqsMQddX762/0rUjtvpj/W
 # cyR+LRPOOjwvKA23LhYv1uVvpYfBbwVTjM192OAIc9LMR1nkKABbTRe3JA==
 # SIG # End signature block
-
-![alt text](<../Image/Signature script.png>)
-
-![alt text](<../Image/vérification signature.png>)
