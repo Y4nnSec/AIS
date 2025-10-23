@@ -17,7 +17,7 @@ foreach ($kb in $kbs) {
     }
 }
 ```
-![alt text](<../Image/Kb listés.png>)
+![alt text](<../Images/Kb listés.png>)
 
 2. Une fois que votre script fonctionne, placer la liste des KB dans un fichier texte nommé kb_list.txt, le script devra lire ce
 
@@ -37,7 +37,7 @@ else {
 }
 }
 ```
-![alt text](<../Image/List kb.png>)
+![alt text](<../Images/List kb.png>)
 
 3. Proposer une procédure, à écrire en commentaire du script, pour appliquer ce script sur un parc Windows AD.
 
@@ -104,6 +104,6 @@ la présence ou l’absence des KB listés.
 # cyR+LRPOOjwvKA23LhYv1uVvpYfBbwVTjM192OAIc9LMR1nkKABbTRe3JA==
 # SIG # End signature block
 
-![alt text](<../Image/Signature script.png>)
+![alt text](../Images/signature.png)
 
-![alt text](<../Image/vérification signature.png>)
+![alt text](<../Images/vérification signature.png>)
