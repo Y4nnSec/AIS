@@ -8,10 +8,13 @@ Windows. Le script devra afficher en Vert les KB présents et en rouge les KB ab
 
 $kbs = @("KB5049622", "KB5049625", "KB5054156")
 $installed = (Get-HotFix).HotFixID
+$kbs | Out-File "kb_list.txt"
+
 foreach ($kb in $kbs) {
     if ($installed -contains $kb) {
         Write-Host "$kb est présent" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "$kb est absent" -ForegroundColor Red
     }
 }
