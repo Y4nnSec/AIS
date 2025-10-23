@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/Y4nnSec/AIS/blob/Powershell/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="400">
+  <img src="https://github.com/Y4nnSec/AIS/blob/Powershell/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="800">
 </p>
 
 # **Apprentissage et script Powershell**
