@@ -1,7 +1,5 @@
 # **Apprentissage et script Powershell**
 
-
-
 1.Vérifiez à l'aide d'un langage de script si vous avez les KB5049622, KB5049625 et Un KB présent de votre choix présent sur votre OS
 
 Windows. Le script devra afficher en Vert les KB présents et en rouge les KB absents.
@@ -9,6 +7,7 @@ Windows. Le script devra afficher en Vert les KB présents et en rouge les KB ab
 \\\\\powershell
 
 $kbs = @("KB5049622", "KB5049625", "KB5054156")
+
 $installed = (Get-HotFix).HotFixID
 $kbs | Out-File "kb_list.txt"
 
