@@ -29,7 +29,9 @@ else {
 }
 }
 
-3. Proposer une procédure, à écrire en commentaire du script, pour appliquer ce script sur un parc Windows AD.
+3. Proposer une procédure, à écrire en commentaire du script, pour appliquer ce
+
+script sur un parc Windows AD.
 
 
 
@@ -67,5 +69,3 @@ else {
 # Msnm5eOwEyJo2MdyEz33IIYST6UaiQChVAtQ4n5fAFeqsMQddX762/0rUjtvpj/W
 # cyR+LRPOOjwvKA23LhYv1uVvpYfBbwVTjM192OAIc9LMR1nkKABbTRe3JA==
 # SIG # End signature block
-
-Signature test.ps1.png
