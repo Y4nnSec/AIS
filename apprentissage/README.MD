@@ -34,11 +34,11 @@ fichier pour obtenir la liste des KB.
 
 $kbs = @("KB5049622", "KB5049625", "KB5054156")
 
-$installed = (Get-HotFix).hotfixID
+$installed = (Get-HotFix).hotFixID
 
-$kbs | Out-File"kb_list.txt"
+$kbs | Out-File "kb_list.txt"
 
-foreach ($kbin$kbs) {
+foreach ($kb in $kbs) {
 
     if ($installed-contains$kb)
 
