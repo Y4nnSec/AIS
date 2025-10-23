@@ -10,7 +10,7 @@ $kbs = @("KB5049622", "KB5049625", "KB5054156")
 
 $installed = (Get-HotFix).hotfixID
 
-foreach ($kbin$kbs) {
+foreach ($kb in $kbs) {
 
     if ($installed-contains$kb)
 
