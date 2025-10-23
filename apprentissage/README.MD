@@ -7,26 +7,15 @@
 Windows. Le script devra afficher en Vert les KB présents et en rouge les KB absents.
 
 $kbs = @("KB5049622", "KB5049625", "KB5054156")
-
-$installed = (Get-HotFix).hotfixID
-
+$installed = (Get-HotFix).HotFixID
 foreach ($kb in $kbs) {
-
-    if ($installed-contains$kb)
-
-{
-
-    write-host"$kb est present" -foregroundcolor Green
-
+    if ($installed -contains $kb) {
+        Write-Host "$kb est présent" -ForegroundColor Green
+    } else {
+        Write-Host "$kb est absent" -ForegroundColor Red
+    }
 }
 
-else {
-
-    write-host"$kb est absent" -foregroundcolor Red
-
-}
-
-}
 
 2. Une fois que votre script fonctionne, placer la liste des KB dans un fichier texte nommé kb_list.txt, le script devra lire ce
 
