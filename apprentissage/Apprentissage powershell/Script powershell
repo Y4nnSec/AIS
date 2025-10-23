@@ -4,7 +4,7 @@ Windows. Le script devra afficher en Vert les KB présents et en rouge les KB ab
 $kbs = @("KB5049622", "KB5049625", "KB5054156")
 $installed = (Get-HotFix).hotfixID
 foreach ($kb in $kbs) {
-    if ($installed -contains $kb) 
+    if ($installed -contains $kb
 {
     write-host "$kb est present" -foregroundcolor Green
 }

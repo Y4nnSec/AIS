@@ -1,35 +1,12 @@
 # **Apprentissage et script Powershell**
 
+
+
 1.Vérifiez à l'aide d'un langage de script si vous avez les KB5049622, KB5049625 et Un KB présent de votre choix présent sur votre OS
 
 Windows. Le script devra afficher en Vert les KB présents et en rouge les KB absents.
 
-$kbs = @("KB5049622", "KB5049625", "KB5054156")
-
-$installed = (Get-HotFix).hotfixID
-
-foreach ($kbin$kbs) {
-
-    if ($installed-contains$kb)
-
-{
-
-    write-host"$kb est present" -foregroundcolor Green
-
-}
-
-else {
-
-    write-host"$kb est absent" -foregroundcolor Red
-
-}
-
-}
-
-2. Une fois que votre script fonctionne, placer la liste des KB dans un fichier texte nommé kb_list.txt, le script devra lire ce
-
-fichier pour obtenir la liste des KB.
-
+\\\\\powershell
 
 $kbs = @("KB5049622", "KB5049625", "KB5054156")
 $installed = (Get-HotFix).HotFixID
@@ -43,6 +20,50 @@ foreach ($kb in $kbs) {
         Write-Host "$kb est absent" -ForegroundColor Red
     }
 }
+
+\\\\\
+
+2. Une fois que votre script fonctionne, placer la liste des KB dans un fichier texte nommé kb_list.txt, le script devra lire ce
+
+fichier pour obtenir la liste des KB.
+
+$kbs = @("KB5049622", "KB5049625", "KB5054156")
+$installed = (Get-HotFix).HotFixID
+$kbs | Out-File "kb_list.txt"
+
+<<<<<<< HEAD
+foreach ($kb in $kbs)
+    else
+========
+
+$installed = (Get-HotFix).hotFixID
+
+$kbs | Out-File "kb_list.txt"
+
+foreach ($kb in $kbs) {
+
+    if ($installed -contains$kb)
+
+{
+
+    write-host"$kb est present" -foregroundcolor Green
+
+}
+
+else {
+
+    write-host"$kb est absent" -foregroundcolor Red
+
+}
+
+>>>>>>> 56c1ca2e2898c7911350e4c44689a0456897f333
+>>>>>>> }
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>
+>>
 
 3. Proposer une procédure, à écrire en commentaire du script, pour appliquer ce
 
