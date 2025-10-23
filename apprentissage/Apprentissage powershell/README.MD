@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="/workspaces/AIS/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="400">
+</p>
+
 # **Apprentissage et script Powershell**
 
 1.Vérifiez à l'aide d'un langage de script si vous avez les KB5049622, KB5049625 et Un KB présent de votre choix présent sur votre OS
