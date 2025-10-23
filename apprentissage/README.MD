@@ -1,7 +1,5 @@
 # **Apprentissage et script Powershell**
 
-
-
 1.Vérifiez à l'aide d'un langage de script si vous avez les KB5049622, KB5049625 et Un KB présent de votre choix présent sur votre OS
 
 Windows. Le script devra afficher en Vert les KB présents et en rouge les KB absents.
@@ -32,28 +30,18 @@ else {
 
 fichier pour obtenir la liste des KB.
 
+
 $kbs = @("KB5049622", "KB5049625", "KB5054156")
+$installed = (Get-HotFix).HotFixID
+$kbs | Out-File "kb_list.txt"
 
-$installed = (Get-HotFix).hotfixID
-
-$kbs | Out-File"kb_list.txt"
-
-foreach ($kbin$kbs) {
-
-    if ($installed-contains$kb)
-
-{
-
-    write-host"$kb est present" -foregroundcolor Green
-
-}
-
-else {
-
-    write-host"$kb est absent" -foregroundcolor Red
-
-}
-
+foreach ($kb in $kbs) {
+    if ($installed -contains $kb) {
+        Write-Host "$kb est présent" -ForegroundColor Green
+    }
+    else {
+        Write-Host "$kb est absent" -ForegroundColor Red
+    }
 }
 
 3. Proposer une procédure, à écrire en commentaire du script, pour appliquer ce
@@ -123,6 +111,5 @@ script sur un parc Windows AD.
 # cyR+LRPOOjwvKA23LhYv1uVvpYfBbwVTjM192OAIc9LMR1nkKABbTRe3JA==
 
 # SIG # End signature block
-
 
 ![](https://file+.vscode-resource.vscode-cdn.net/d%3A/AIS/Github/AIS/apprentissage/Image/Signature%20test.ps1.png?version%3D1761228280663)
