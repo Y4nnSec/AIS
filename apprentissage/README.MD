@@ -29,7 +29,7 @@ $kbs | Out-File "kb_list.txt"
 
 foreach ($kb in $kbs) {
 
-    if ($installed-contains$kb)
+    if ($installed -contains$kb)
 
 {
 
