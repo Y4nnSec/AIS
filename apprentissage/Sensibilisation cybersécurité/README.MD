@@ -4,7 +4,6 @@
 
 INITIALISATION A LA CLASSIFICATION DES VULNERABILITEES
 
-
 **Eternal Blue :**
 
 1. **Donnez la référence CVE** :CVE-2017-0144
@@ -21,7 +20,7 @@ EternalBlue est une vulnérabilité dans le protocole SMBv1 de Windows qui perme
 
 4. **Trouvez, mettez à jour ou calculez le score base CVSS (dernière version)**
 
-Le score CVSS v3.1 pour la vulnérabilité EternalBlue (CVE-2017-0144) est évalué à 8.8 sur 10, ce qui correspond à un niveau de sévérité élevé.
+Le score CVSS v3.1 pour la vulnérabilité EternalBlue est évalué à 8.8 sur 10, ce qui correspond à un niveau de sévérité élevé.
 
 5. **Déterminer si un exploit est disponible publiquement, si oui en prendre connaissance et le citer en référence.**
 
@@ -51,7 +50,6 @@ Nmap a aussi des scripts de détection (ex : smb-vuln-ms17-010).
 Score EPSS (au 10 avril 2025) : 0.97587 (97.59%)
 Ce qui signifie une très forte probabilité.
 
-
 **Krack :**
 
 1. **Donnez la référence CVE :**
@@ -70,7 +68,7 @@ KRACK est une attaque contre le protocole WPA2 qui permet à un attaquant de ré
 
 4. **Trouvez, mettez à jour ou calculez le score base CVSS (dernière version) :**
 
-Le score CVSS v3.1 pour la vulnérabilité Crack (CVE-2017-13077) est évalué à 6.8 sur 10, ce qui correspond à un niveau de sévérité medium.
+Le score CVSS v3.1 pour la vulnérabilité Crack est évalué à 6.8 sur 10, ce qui correspond à un niveau de sévérité medium.
 
 Le vecteur d'attaque associé est le suivant : CVSS:3.1 AV:A/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N
 
@@ -89,7 +87,6 @@ Source https://github.com/vanhoefm/krackattacks-scripts
 6. **Trouver si un score EPSS existe pour cette vuln :**
 
 Environ 0,48%, indiquant une faible probabilité d'exploitation dans les 30 jours suivant la publication.
-
 
 **log4shell :**
 
@@ -132,7 +129,6 @@ Classement : Très élevé, ce qui indique une exploitation quasi immédiate apr
 
 Ce score montre que Log4Shell était une vulnérabilité à très haut risque d'exploitation rapide.
 
-
 **Looney-tunables :**
 
 1. **Donnez la référence CVE :**
@@ -164,7 +160,6 @@ Un module Metasploit est disponible, (`linux/local/glibc_tunables_priv_esc` (vé
 Score EPSS : ~0.78 (78,3%) (valeur élevée, exploitabilité très probable dans un court délai).
 
 la probabilité estimée d’exploitation dans les 30 jours est d’environ 78% .
-
 
 **CITRIX**
 
