@@ -12,7 +12,7 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 
 3. **Architecture réseau**
 
-![alt text](<../Apprentissage/Images/Diagramme Lab secu.png>)
+apprentissage/Images/Diagramme Lab secu.png
 
 
 
