@@ -36,4 +36,22 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 
 6. **Diagramme Projet**
 
+![alt text](<../Apprentissage/Images/Capture Diagramme projet.png>)
+
+
+7. Vérification des images (hashs/ signatures)
+
+Hash debian 13
+
+![alt text](<../Apprentissage/Images/Capture hash debian officiel 2025-10-18 074053.png>)
+
+Hash Windows server 2022
+
+![alt text](<../Apprentissage/Images/Capture vérification hash debian.png>)
+
+![alt text](<../Apprentissage/Images/Capture hash iso winserver.png>)
+
+
+
+
 
