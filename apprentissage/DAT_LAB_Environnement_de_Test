@@ -1,4 +1,8 @@
- **DAT_Lab: Environnement de test**
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
+</p>
+
+**DAT_Lab: Environnement de test**
 
 1. **Résumé :**
 
@@ -12,16 +16,7 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 
 3. **Architecture réseau**
 
-![alt text](<../Apprentissage/Images/Diagramme Lab secu.png>)
-
-
-
-
-
-
-
-
-
+![alt text](Images/Diagramme_Lab_secu.png)
 
 4. **Caractéristiques des machines**
 
@@ -41,69 +36,21 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 | Root               | Admin SRV Linux   | SRV_WEB             | Bitwarden                               |
 | SRV_WEB User       | SRV Linux         | SRV_WEB             | Bitwarden                               |
 
-![alt text](../Apprentissage/Images/Bitwarden.png?raw=true)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![alt text](Images/Bitwarden.png)
 
 6. **Diagramme Projet**
 
-![alt text](<../Apprentissage/Images/Capture Diagramme projet.png>)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![alt text](Images/Capture_Diagramme_projet.png)
 
 7. **Vérification des images (hashs/ signatures)**
 
 Hash debian 13
 
-![alt text](<../Apprentissage/Images/Capture hash debian officiel 2025-10-18 074053.png>)
+![alt text](Images/Capture_hash_debian_officiel.png)
 
 
-
-
-
-
-
-
-
+![alt text](Images/Capture_vérification_hash_debian.png)
 
 Hash Windows server 2022
 
-![alt text](<../Apprentissage/Images/Capture hash iso winserver.png>)
+![alt text](Images/Capture_hash_iso_winserver.png)
