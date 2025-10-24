@@ -1,4 +1,4 @@
-**DAT_Lab: Environnement de tes**t
+ **DAT_Lab: Environnement de test**
 
 1. **Résumé :**
 
@@ -12,7 +12,8 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 
 3. **Architecture réseau**
 
-![alt text](../Apprentissage/Images/Diagramme Lab secu.png)
+![alt text](<../Apprentissage/Images/Diagramme Lab secu.png>)
+
 
 4. **Caractéristiques des machines**
 
@@ -22,7 +23,7 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 | PC-yann              | PC client              | Windows 10 (ISO)          | 4                 | 4 GB            | 60 GB                | 192.168.79.144 | Joins AD                                 |
 | SRV-Linux            | Serveur Web            | Debian 12 (ISO)           | 2                 | 2 GB            | 20 GB                | 192.168.79.139 | WEB-VLA, SSH                             |
 
-5. Inventaire des comptes à privilèges
+5. **Inventaire des comptes à privilèges**
 
 | 👤**Compte** | 🧩**Rôle** | 💻**Machine** | 🔐**Emplacement du mot de passe** |
 | ------------------ | ----------------- | ------------------- | --------------------------------------- |
@@ -36,22 +37,16 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 
 6. **Diagramme Projet**
 
-![alt text](<../Apprentissage/Images/Capture Diagramme projet.png>)
+![alt text](../Apprentissage/Images/Capture Diagramme projet.png)
 
-
-7. Vérification des images (hashs/ signatures)
+7. **Vérification des images (hashs/ signatures)**
 
 Hash debian 13
 
-![alt text](<../Apprentissage/Images/Capture hash debian officiel 2025-10-18 074053.png>)
+![alt text](../Apprentissage/Images/Capture hash debian officiel 2025-10-18 074053.png)
 
 Hash Windows server 2022
 
-![alt text](<../Apprentissage/Images/Capture vérification hash debian.png>)
+![alt text](../Apprentissage/Images/Capture vérification hash debian.png)
 
-![alt text](<../Apprentissage/Images/Capture hash iso winserver.png>)
-
-
-
-
-
+![alt text](../Apprentissage/Images/Capture hash iso winserver.png)
