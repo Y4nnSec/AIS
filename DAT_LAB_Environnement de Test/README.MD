@@ -12,7 +12,7 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 
 3. **Architecture réseau**
 
-![alt text](<../Apprentissage/Images/Diagramme Lab secu.png>)
+![alt text](<../Apprentissage/Images/Diagramme Lab secu.png?raw=true>)
 
 
 4. **Caractéristiques des machines**
@@ -33,20 +33,20 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 | Root               | Admin SRV Linux   | SRV_WEB             | Bitwarden                               |
 | SRV_WEB User       | SRV Linux         | SRV_WEB             | Bitwarden                               |
 
-![alt text](<../Apprentissage/Images/Bitwarden.png>)
+![alt text](<../Apprentissage/Images/Bitwarden.png?raw=true>)
 
 6. **Diagramme Projet**
 
-![alt text](<../Apprentissage/Images/Capture Diagramme projet.png>)
+![alt text](<../Apprentissage/Images/Capture Diagramme projet.png?raw=true>)
 
 7. **Vérification des images (hashs/ signatures)**
 
 Hash debian 13
 
-![alt text](<../Apprentissage/Images/Capture hash debian officiel 2025-10-18 074053.png>)
+![alt text](<../Apprentissage/Images/Capture hash debian officiel 2025-10-18 074053.png?raw=true>)
 
 Hash Windows server 2022
 
-![alt text](<../Apprentissage/Images/Capture vérification hash debian.png>)
+![alt text](<../Apprentissage/Images/Capture vérification hash debian.png?raw=true>)
 
-![alt text](<../Apprentissage/Images/Capture hash iso winserver.png>)
+![alt text](<../Apprentissage/Images/Capture hash iso winserver.png?raw=true>)
