@@ -188,5 +188,6 @@ Vecteur (CVSS 4.0) : CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/
 
 Pas d'exploit public pour le moment.
 
-Auteur : ESCRIVA Yann
-Projet : Octobre 2025
+**Auteur : ESCRIVA Yann**
+
+**Projet : Octobre 2025**

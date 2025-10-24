@@ -22,7 +22,7 @@ foreach ($kb in $kbs) {
 }
 ```
 
-![alt text](<Images/Kb _istés.png>)
+![alt text](Images/Kb _istés.png)
 
 2. Une fois que votre script fonctionne, placer la liste des KB dans un fichier texte nommé kb_list.txt, le script devra lire ce
 
@@ -142,6 +142,6 @@ la présence ou l’absence des KB listés.
 ![alt text](Images/signature.png)
 ![alt text](Images/vérification_signature.png)
 
+**Auteur : ESCRIVA Yann**
 
-Auteur : ESCRIVA Yann
-Projet : Octobre 2025
+**Projet : Octobre 2025**
