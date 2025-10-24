@@ -33,20 +33,20 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 | Root               | Admin SRV Linux   | SRV_WEB             | Bitwarden                               |
 | SRV_WEB User       | SRV Linux         | SRV_WEB             | Bitwarden                               |
 
-![alt text](../Apprentissage/Images/Bitwarden.png)
+![alt text](<../Apprentissage/Images/Bitwarden.png>)
 
 6. **Diagramme Projet**
 
-![alt text](../Apprentissage/Images/Capture Diagramme projet.png)
+![alt text](<../Apprentissage/Images/Capture Diagramme projet.png>)
 
 7. **Vérification des images (hashs/ signatures)**
 
 Hash debian 13
 
-![alt text](../Apprentissage/Images/Capture hash debian officiel 2025-10-18 074053.png)
+![alt text](<../Apprentissage/Images/Capture hash debian officiel 2025-10-18 074053.png>)
 
 Hash Windows server 2022
 
-![alt text](../Apprentissage/Images/Capture vérification hash debian.png)
+![alt text](<../Apprentissage/Images/Capture vérification hash debian.png>)
 
-![alt text](../Apprentissage/Images/Capture hash iso winserver.png)
+![alt text](<../Apprentissage/Images/Capture hash iso winserver.png>)
