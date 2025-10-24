@@ -4,10 +4,11 @@
 
 INITIALISATION A LA CLASSIFICATION DES VULNERABILITEES
 
+
 **Eternal Blue :**
 
 1. **Donnez la référence CVE** :CVE-2017-0144
-3. **Description en une phrase :**
+2. **Description en une phrase :**
 
 EternalBlue est une vulnérabilité dans le protocole SMBv1 de Windows qui permet une exécution de code à distance sans authentification via des paquets, il est utilisé par des vers comme Wannacry et NotPetya.
 
@@ -20,7 +21,7 @@ EternalBlue est une vulnérabilité dans le protocole SMBv1 de Windows qui perme
 
 4. **Trouvez, mettez à jour ou calculez le score base CVSS (dernière version)**
 
-Le score CVSS v3.1 pour la vulnérabilité EternalBlue (CVE-2017-0144) est évalué à 8.8 sur 10, ce qui correspond à un niveau de sévérité élevé. 
+Le score CVSS v3.1 pour la vulnérabilité EternalBlue (CVE-2017-0144) est évalué à 8.8 sur 10, ce qui correspond à un niveau de sévérité élevé.
 
 5. **Déterminer si un exploit est disponible publiquement, si oui en prendre connaissance et le citer en référence.**
 
@@ -49,6 +50,7 @@ Nmap a aussi des scripts de détection (ex : smb-vuln-ms17-010).
 
 Score EPSS (au 10 avril 2025) : 0.97587 (97.59%)
 Ce qui signifie une très forte probabilité.
+
 
 **Krack :**
 
@@ -88,6 +90,7 @@ Source https://github.com/vanhoefm/krackattacks-scripts
 
 Environ 0,48%, indiquant une faible probabilité d'exploitation dans les 30 jours suivant la publication.
 
+
 **log4shell :**
 
 1. **Donnez la référence CVE :**
@@ -102,7 +105,6 @@ Log4Shell est une vulnérabilité dans la bibliothèque de journalisation Log4j 
 
 * Serveurs Web, notamment ceux utilisant des frameworks comme Apache Struts, Spring, ou Solr.
 * Applications Java qui intègrent Log4j 2.
-
 * Cloud services et plateformes utilisant Log4j 2 pour la gestion des logs.
 * Serveurs de base de données, API, et applications qui reposent sur cette bibliothèque de logging pour leurs services.
 
@@ -130,6 +132,7 @@ Classement : Très élevé, ce qui indique une exploitation quasi immédiate apr
 
 Ce score montre que Log4Shell était une vulnérabilité à très haut risque d'exploitation rapide.
 
+
 **Looney-tunables :**
 
 1. **Donnez la référence CVE :**
@@ -144,10 +147,8 @@ Cette vulnérabilité permet à un attaquant local de manipuler une variable d'e
 
 * Serveurs Linux exécutant des services critiques (web, bases de données, mail) avec des binaires SUID root.
 * Stations de travail Linux utilisées par les administrateurs ou développeurs.
-
 * Systèmes embarqués ou appliances utilisant glibc (routeurs, firewalls, IoT).
 * Conteneurs Docker ou autres environnements virtualisés basés sur des images Linux vulnérables.
-
 * Applications internes utilisant des scripts ou binaires dépendant de glibc pour le traitement de tâches automatisées avec élévation de privilèges.
 
 4. **Trouvez, mettez à jour ou calculez le score base CVSS (dernière version)**
@@ -163,6 +164,9 @@ Un module Metasploit est disponible, (`linux/local/glibc_tunables_priv_esc` (vé
 Score EPSS : ~0.78 (78,3%) (valeur élevée, exploitabilité très probable dans un court délai).
 
 la probabilité estimée d’exploitation dans les 30 jours est d’environ 78% .
+
+
+**CITRIX**
 
 1. **Donnez la référence CVE :**
 
