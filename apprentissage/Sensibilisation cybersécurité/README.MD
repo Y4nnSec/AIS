@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/Powershell/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
 </p>
 
 INITIALISATION A LA CLASSIFICATION DES VULNERABILITEES
@@ -50,7 +50,6 @@ Nmap a aussi des scripts de détection (ex : smb-vuln-ms17-010).
 Score EPSS (au 10 avril 2025) : 0.97587 (97.59%)
 Ce qui signifie une très forte probabilité.
 
-
 **Krack :**
 
 1. **Donnez la référence CVE :**
@@ -88,7 +87,6 @@ Source https://github.com/vanhoefm/krackattacks-scripts
 6. **Trouver si un score EPSS existe pour cette vuln :**
 
 Environ 0,48%, indiquant une faible probabilité d'exploitation dans les 30 jours suivant la publication.
-
 
 **log4shell :**
 
@@ -131,7 +129,6 @@ Classement : Très élevé, ce qui indique une exploitation quasi immédiate apr
 
 Ce score montre que Log4Shell était une vulnérabilité à très haut risque d'exploitation rapide.
 
-
 **Looney-tunables :**
 
 1. **Donnez la référence CVE :**
@@ -164,7 +161,6 @@ Score EPSS : ~0.78 (78,3%) (valeur élevée, exploitabilité très probable dans
 
 la probabilité estimée d’exploitation dans les 30 jours est d’environ 78% .
 
-
 **CITRIX**
 
 1. **Donnez la référence CVE :**
@@ -191,3 +187,7 @@ Vecteur (CVSS 4.0) : CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/
 5. **Déterminer si un exploit est disponible publiquement, si oui en prendre connaissance et le citer en référence.**
 
 Pas d'exploit public pour le moment.
+
+
+Auteur : ESCRIVA Yann
+Projet : Octobre 2025

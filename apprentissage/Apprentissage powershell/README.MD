@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/Powershell/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
 </p>
 
 # **Apprentissage et script Powershell**
@@ -21,7 +21,8 @@ foreach ($kb in $kbs) {
     }
 }
 ```
-![alt text](<../Images/Kb listés.png>)
+
+![alt text](../Images/Kb listés.png)
 
 2. Une fois que votre script fonctionne, placer la liste des KB dans un fichier texte nommé kb_list.txt, le script devra lire ce
 
@@ -41,7 +42,8 @@ else {
 }
 }
 ```
-![alt text](<../Images/List kb.png>)
+
+![alt text](../Images/List kb.png)
 
 3. Proposer une procédure, à écrire en commentaire du script, pour appliquer ce script sur un parc Windows AD.
 
@@ -73,40 +75,72 @@ Résultat :
 À chaque démarrage du poste, le script s’exécute et affiche
 la présence ou l’absence des KB listés.
 
-
 4. Signer votre script afin d'en prouver l'integrité et l'authenticité. (Certificat autosigné toleré)
 
 # SIG # Begin signature block
+
 # MIIFZwYJKoZIhvcNAQcCoIIFWDCCBVQCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
+
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
+
 # AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUfDn8ZRc83f2l8c6E/niAcSi3
+
 # WDWgggMEMIIDADCCAeigAwIBAgIQETk/mXf2kL9DTIEiCJcazTANBgkqhkiG9w0B
+
 # AQsFADAYMRYwFAYDVQQDDA1TY3JpcHRTaWduaW5nMB4XDTI1MTAyMzEyNTM1M1oX
+
 # DTI2MTAyMzEzMTM1M1owGDEWMBQGA1UEAwwNU2NyaXB0U2lnbmluZzCCASIwDQYJ
+
 # KoZIhvcNAQEBBQADggEPADCCAQoCggEBAMx6mFVizyeYQP8B80bGbvAY/wxqfOUY
+
 # uRU7lCiFDR49Rg06Ge7x1QcZZyBeIKvBCIOGl3dRNg11hLdZ98iwJSQ5gGFHTxfZ
+
 # ZLY7+gFmVDEOOH1rA6sgFYF5tfTQwsYNKaf8obuxYWg4z9I48Gx4fVgclaLbxS0O
+
 # jEgNceDTqSFVcUFppa+l4mCyKVyMq0+2gQAUohjnvB56GBEl1byqm+DAklnS2o4d
+
 # IULUYTCePjZ0g7fo1MtWtj7qGaW4Jldaw+5L/7zMSOD00nuAfDLQc5Ov+kwOAPmZ
+
 # XbUIJFYkcSk1ya2sWaGPRF71pz08KNBfS68bajdG/VP2udtrj7YptRECAwEAAaNG
+
 # MEQwDgYDVR0PAQH/BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMDMB0GA1UdDgQW
+
 # BBQ2hRPrgLDdVg8hn1OzwG4yPWfG6zANBgkqhkiG9w0BAQsFAAOCAQEAbk4372vH
+
 # xRCmvLzZA34d952+ENqjrk0AJKbTTNqVxjGuc5WeXtcizZ1pCbLvYdlJQUQMih+b
+
 # NX6cvf3L1MB4112cK4yQ4icVYSkVqtjQmLZ9U/5KKYTRrLlBye7riuljKKvKn5Zp
+
 # HTBpPAVgtAeQOpZeJgfvftc3Vd1foh208j1sRT+W2lm44AY5eaudB3B1AWztSvBE
+
 # qQ5tqOhxgOmF8tWN24ksRq4tQRHp24gForrnsDZyFL0zTfJ+Sm3uqNeU3hVn9H0H
+
 # dLsrfG6FNukYlhDifRW296rnj3TG/aeABGMki4yX82FzTXFFK+D2M9KSAKVfKyP9
+
 # rWA8TJk0rFdinTGCAc0wggHJAgEBMCwwGDEWMBQGA1UEAwwNU2NyaXB0U2lnbmlu
+
 # ZwIQETk/mXf2kL9DTIEiCJcazTAJBgUrDgMCGgUAoHgwGAYKKwYBBAGCNwIBDDEK
+
 # MAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3
+
 # AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUJw6tb8B5AINT4fmu
+
 # rMsNzUAkAoYwDQYJKoZIhvcNAQEBBQAEggEAGuOGcjDAQ3u/denjYMZYGzI+9mqu
+
 # 5fzwvJaNCZ1uh3SRp/mGGzEJzJ0Zme1OOwaLv5T4F0X9e99LywUqzSj0GmPolm0w
+
 # dZNiFR46h2c157fq+qANqpp2t4Lvx01rpxJn9sBoPnXfDZU8upZc2802zj5xtxzr
+
 # D2grdeA5nhf7l7ksGNF+S/VtLhA5pguyswEYlz6FFT3mP2N7mfAGOzgyGL3uzOCQ
+
 # Msnm5eOwEyJo2MdyEz33IIYST6UaiQChVAtQ4n5fAFeqsMQddX762/0rUjtvpj/W
+
 # cyR+LRPOOjwvKA23LhYv1uVvpYfBbwVTjM192OAIc9LMR1nkKABbTRe3JA==
+
 # SIG # End signature block
 
 ![alt text](../Images/signature.png)
-![alt text](<../Images/vérification signature.png>)
+![alt text](../Images/vérification signature.png)
+
+Auteur : ESCRIVA Yann
+Projet : Octobre 2025
