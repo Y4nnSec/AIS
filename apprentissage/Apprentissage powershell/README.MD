@@ -109,5 +109,4 @@ la présence ou l’absence des KB listés.
 # SIG # End signature block
 
 ![alt text](../Images/signature.png)
-
 ![alt text](<../Images/vérification signature.png>)
