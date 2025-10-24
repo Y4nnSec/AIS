@@ -16,7 +16,20 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 
 3. **Architecture réseau**
 
+<<<<<<< HEAD:apprentissage/DAT_LAB_Environnement_de_Test
 ![alt text](Images/Diagramme_Lab_secu.png)
+=======
+apprentissage/Images/Diagramme Lab secu.png
+
+
+
+
+
+
+
+
+
+>>>>>>> 42f01e39817bc068e9ceb56dc9e0a231e1994317:DAT_LAB_Environnement de Test/README.MD
 
 4. **Caractéristiques des machines**
 
