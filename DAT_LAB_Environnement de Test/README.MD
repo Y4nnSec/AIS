@@ -15,3 +15,6 @@ Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entrep
 ![alt text](../Apprentissage/Images/Diagramme Lab secu.drawio.png)
 
 4 Caractéristiques des machines
+![
+](<../Apprentissage/Images/Diagramme Lab secu.drawio.png>)
+
