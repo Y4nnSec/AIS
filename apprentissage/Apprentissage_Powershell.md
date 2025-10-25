@@ -22,7 +22,7 @@ foreach ($kb in $kbs) {
 }
 ```
 
-![alt text](Images/Kb _istés.png)
+![alt text](<Images/Kb _istés.png>)
 
 2. Une fois que votre script fonctionne, placer la liste des KB dans un fichier texte nommé kb_list.txt, le script devra lire ce
 
