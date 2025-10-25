@@ -2,90 +2,68 @@
   <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="800">
 </p>
 
-<h1 align="center">🐍 Script-Python – Automatisation pour l’AIS & 📚 Initiation à la classification des vulnérabilités & 🧾 DAT – Environnement de test</h1>
+<h1 align="center">💻 Projet AIS - Apprentissage & Sécurité</h1>
 
-Ce dépôt contient trois volets complémentaires :  
-
-- [1️⃣ Script-Python AIS – Automatisation de tâches](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test.py) / [test6.py](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test6.py)     
-- [2️⃣ Initiation à la classification des vulnérabilités](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/Initiation%20%C3%A0%20la%20classification%20des%20vuln%C3%A9rabilit%C3%A9s) – document d’introduction à la classification des vulnérabilités (réalisé en juin 2025).  
-- [3️⃣ DAT – Environnement de test](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_LAB_Environnement%20de%20test.pdf) – Document d’Architecture Technique décrivant un lab (AD, Windows, Linux) avec toutes les captures et le schéma réseau inclus dans le PDF (réalisé en octobre 2025).
-
-[![Aperçu PDF DAT](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_preview.png)](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_LAB_Environnement%20de%20test.pdf)
-
----
-
-## 📌 Sommaire
-- [Script-Python AIS](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test.py) / [test6.py](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/test6.py)
-- [Initiation à la classification des vulnérabilités](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/Initiation%20%C3%A0%20la%20classification%20des%20vuln%C3%A9rabilit%C3%A9s)
-- [DAT – Environnement de test](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_LAB_Environnement%20de%20test.pdf)
-
-### Arborescence (extrait)
-apprentissage/
-├── README.md
-├── Initiation à la classification des vulnérabilités
-├── DAT_LAB_Environnement de test.pdf
-├── DAT_preview.png
-├── test.py
-└── test6.py
+<p align="center">
+  <a href="https://github.com/Y4nnSec/AIS"><img src="https://img.shields.io/badge/Repo-AIS-blue?style=for-the-badge"></a>
+  <a href="https://github.com/Y4nnSec"><img src="https://img.shields.io/badge/Author-Y4nnSec-green?style=for-the-badge"></a>
+  <img src="https://img.shields.io/badge/Language-Markdown-blueviolet?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Language-Python-yellow?style=for-the-badge&logo=python">
+  <img src="https://img.shields.io/badge/Security-Cyber-orange?style=for-the-badge&logo=security">
+</p>
 
 ---
 
-## 1️⃣ Script-Python – Automatisation AIS
+## 🧠 À propos du projet
 
-### Description
-Ce projet facilite la gestion de la sécurité sur un réseau ou une infrastructure via des scripts Python.  
-Fonctionnalités principales :
-
-- Automatisation de vérifications de sécurité  
-- Exécution de tests sur des serveurs  
-- Gestion de configurations critiques (pare-feu, conformité, etc.)
-
-### Auteur
-**Yann – Alternance Administrateur Infrastructures Sécurisées**  
-_Projet réalisé : Avril 2025_
+Ce dépôt regroupe mes travaux réalisés dans le cadre de mon **alternance en Administration d’Infrastructures Sécurisées (AIS)**.
+Il contient divers **projets techniques**, **études comparatives** et **scripts** autour de la cybersécurité, de l’automatisation et des environnements de test.
 
 ---
 
-## 2️⃣ Initiation à la classification des vulnérabilités
+## 📂 Contenu du dépôt
 
-### Description
-Ce document introduit la **classification des vulnérabilités** dans un environnement informatique.  
-Il présente les différentes catégories de vulnérabilités, leur gravité et des exemples pratiques.
-
-### Contenu du dépôt
-| Fichier | Description |
-|---------|-------------|
-| `Initiation à la classification des vulnérabilités` |
-
-### Accès au document
-[📄 Ouvrir le document](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/Initiation%20%C3%A0%20la%20classification%20des%20vuln%C3%A9rabilit%C3%A9s)
-
----
-
-## 3️⃣ DAT – Environnement de test
-
-### Présentation
-Lab vulnérable pour pratiquer l’administration Windows et Linux.  
-Toutes les captures et le schéma réseau sont inclus dans le PDF.
-
-### Contenu du dépôt
-| Fichier / Dossier | Description |
-|------------------|-------------|
-| `DAT_LAB_Environnement de test.pdf` | Document complet DAT (captures et schéma inclus) |
-
-### Accès au DAT
-[📄 Ouvrir le DAT en PDF](DAT_LAB_Environnement de test.pdf)  
-
-[![Aperçu PDF DAT](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_preview.png)](https://github.com/Y4nnSec/AIS/blob/main/apprentissage/DAT_LAB_Environnement%20de%20test.pdf)
+| Dossier / Fichier                                                   | Description                                       |
+| ------------------------------------------------------------------- | ------------------------------------------------- |
+| 📁**apprentissage/**                                          | Ressources et exercices liés à l’apprentissage |
+| 🖼️**Images/**                                               | Bannières, schémas et illustrations             |
+| 📄**Apprentissage_Powershell.md**                             | Exercices et exemples PowerShell                  |
+| 📄**DAT_LAB_Environnement_de_Test.md**                        | Configuration du lab (AD + Linux)                 |
+| 📄**Etude_comparative_des_differentes_solutions_Bastions.md** | Analyse technique de solutions Bastion            |
+| 📄**Sensibilisation_Cybersécurité.md**                      | Support de sensibilisation à la cybersécurité  |
+| 🐍**test.py / test6.py**                                      | Scripts Python d’essai                           |
+| 📘**README.md**                                               | Ce fichier de présentation                       |
 
 ---
 
-### Services et points clés
-- **Active Directory** : gestion des utilisateurs, OU, GPO  
-- **SSH / Linux et Windows** : administration distante sécurisée  
-- **SMB** : partages Readonly / WriteAccess  
-- **VulnerableLightApp** : application Web Debian — pour audit plus tard
+## 🧰 Technologies utilisées
 
-### Auteur DAT
-**Yann – Alternance Administrateur Infrastructures Sécurisées**  
-_Projet réalisé : Octobre 2025_
+| Catégorie                  | Outils / Technologies                |
+| --------------------------- | ------------------------------------ |
+| 🐧**Systèmes**       | Linux (Kali, Debian), Windows Server |
+| ☁️**Cloud & Infra** | Azure (Bastion, VM, Sécurité)      |
+| 💻**Langages**        | PowerShell, Bash, Python             |
+| 🔐**Sécurité**      | Wireshark, OSINT, Audit réseau      |
+| 🧱**Documentation**   | Markdown, Git, GitHub                |
+
+---
+
+## 🚀 Objectifs du dépôt
+
+- Centraliser mes **projets techniques** et **rapports** d’apprentissage
+- Mettre en pratique les **bonnes pratiques en Administration Systèmes, Réseaux et Cybersécurité**
+- Fournir une base utile pour d’autres étudiants en **Administration Infrastructures Sécurisées**
+- Présenter mes compétences techniques sur GitHub
+
+## 🧑‍💻 Auteur
+
+**Yann (Y4nnSec)**
+🔗 [Profil GitHub](https://github.com/Y4nnSec)
+💼 Étudiant en **Administration d’Infrastructures Sécurisées (AIS)**
+⚙️ Passionné par la **cybersécurité**, la **virtualisation**, **l’****automatisation** et le **systèmes et réseaux**
+
+---
+
+<p align="center">
+  <sub>© 2025 Y4nnSec - Projet AIS | Fait avec ❤️ et Markdown</sub>
+</p>
