@@ -142,6 +142,10 @@ la présence ou l’absence des KB listés.
 ![alt text](Images/signature.png)
 ![alt text](Images/vérification_signature.png)
 
+
+
+
+
 **Auteur : ESCRIVA Yann**
 
 **Projet : Octobre 2025**

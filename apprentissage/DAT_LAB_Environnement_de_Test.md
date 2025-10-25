@@ -60,13 +60,13 @@ J’ai installé et configuré mes 3 machines virtuelles sur un hyperviseur de t
 
 Mise à jour de sécurité Windows server 2022 :
 
-![alt text](Images/Mise_à jour_windows_server.png)
+![alt text](Images/Mise_a_jour_windows_server.png)
 
 ![alt text](Images/Visuel_windows_server.png)
 
 ![alt text](Images/Gestionnaire_DHCP.png)
 
-![alt text](Images/Nom_de_domaine_et nom_de_serveur.png)
+![alt text](Images/Nom_de_domaine_et_nom_de_serveur.png)
 
 **Fichier partage SMB :**
 
@@ -96,7 +96,7 @@ Lancement du script BadBlood :
 
 Mise à jour de sécurité Windows 10 :
 
-![alt text](Images/Mise_à jour_windows_server.png)
+![alt text](<Images/Mise_a jour_windows_10.png>)
 
 Windows 10 au domaine :
 
@@ -143,7 +143,10 @@ L’ensemble des services a été vérifié : connexions SSH et WinRM réussies,
 
  En conclusion, ce laboratoire constitue une base solide pour les futurs audits de sécurité, tests d’exploitation et exercices de pentest.
 
+
+
+
+
 **Auteur : ESCRIVA Yann**
 
 **Projet : Octobre 2025**
-
