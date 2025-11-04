@@ -68,6 +68,66 @@ Cisco propose le DHCP Snooping : il distingue les ports fiables et non fiables p
   * config sécurisée des serveurs (pas d’open resolvers), monitoring, et validation des réponses.
 
 
+7. **Qu’est-ce que `DNSSec` ? `DNS over TLS` ou `DNS over HTTPS` ?**
+
+* **DNSSEC** : extensions de sécurité DNS qui ajoutent des signatures numériques aux enregistrements DNS pour garantir intégrité/authenticité (ne chiffre pas, mais signe). DNS chiffré via TLS.
+* **DNS over HTTPS (DoH)** : DNS chiffré via HTTPS, mélange avec trafic HTTPS (protection de la vie privée et évasion). Les deux protègent contre l’espionnage on‑path; DoH se confond dans HTTPS.
+
+
+8. **Dans quels cas trouve-t-on du DNS sur TCP ?**
+
+Par défaut DNS = UDP, mais **TCP** est utilisé quand :
+
+* la réponse dépasse la taille UDP (EDNS0) ;
+* pour les transferts de zone (AXFR/IXFR) ;
+* certaines résolutions recourent au TCP par fallback ou politiques RFC (RFC 7766).
+
+
+9. **Capturer un flux `HTTP`**
+
+
+9. **Qu’est-ce que le `HTTP Smuggling` ? Donner un exemple de `CVE`**
+
+
+C’est une astuce qui consiste à cacher une requête HTTP dans une autre en profitant du fait que deux éléments qui traitent les requêtes (par ex. un reverse-proxy devant un serveur web)  ne calculent pas la fin de la requête de la même façon .
+
+Résultat : le proxy pense « tout est normal », mais le serveur reçoit **une requête supplémentaire** (la « smuggled ») et l’exécute.
+
+**CVE-2022-22720** — Apache HTTP Server (<= 2.4.52) avait un comportement permettant du request smuggling ; correctif publié en mars 2022. [httpd.apache.org](https://httpd.apache.org/security/vulnerabilities_24.html?utm_source=chatgpt.com).
+
+
+10. **Comment mettre en place la confidentialité et l'authenticité pour HTTP ?**
+
+
+* **Confidentialité** : chiffrer le flux HTTP avec **TLS** pour que personne sur puisse lire les flux en clair
+* **Authenticité** : prouver que le serveur est bien celui qu’il prétend être — via un **certificat X.509** signé par une Autorité de Certification de confiance.
+* **Intégrité** : TLS garantit aussi que les données n’ont pas été modifiées en transit.
+* **Renforcement** : configurer TLS correctement, activer HSTS, cookies sécurisés, et en complément des headers de sécurité.
+
+
+12. **Qu’est-ce qu’une `PKI` ?**
+
+
+Une PKI est un système qui permet de créer, distribuer, vérifier et révoquer des certificats numériques pour assurer :
+
+* **Confidentialité** (on peut chiffrer)
+* **Authenticité** (on sait qui parle)
+* **Intégrité** (le message n’a pas été modifié)
+* **Non-répudiation**
+
+C’est le moteur derrière  **HTTPS** ,  **TLS** ,  **certificats serveurs** ,  **VPN d’entreprise** , etc...
+
+
+12. **Capturer un `mot de passe` HTTP via le projet VulnerableLightApp.**
+
+
+
+13. **Comment mettre en place la `confidentialité` pour ce service ?**
+
+Mettre un reverse proxy TLS et un certificat  avec nginx proxy manager par exemple et d’y déployer un certificat localement approuvé ou un certificat auto-signé (moins pratique).
+
+
+14. **Capturer un `handshake TLS`**
 
 
 
@@ -76,23 +136,14 @@ Cisco propose le DHCP Snooping : il distingue les ports fiables et non fiables p
 
 
 
-**Qu’est-ce que `DNSSec` ? `DNS over TLS` ou `DNS over HTTPS` ?**
 
-**Dans quels cas trouve-t-on du DNS sur TCP ?**
 
-**Capturer un flux `HTTP`**
 
-**Qu’est-ce que le `HTTP Smuggling` ? Donner un exemple de `CVE`**
 
-**Comment mettre en place la confidentialité et l'authenticité pour HTTP ?**
 
-**Qu’est-ce qu’une `PKI` ?**
 
-**Capturer un `mot de passe` HTTP via le projet VulnerableLightApp.**
 
-**Comment mettre en place la `confidentialité` pour ce service ?**
 
-**Capturer un `handshake TLS`**
 
 **Qu’est-ce qu’une autorité de certification (`AC`) racine ? Qu'est qu'une `AC intermediaire` ?**
 
