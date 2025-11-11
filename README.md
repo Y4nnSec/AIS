@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="800">
-</p>
-
 <h1 align="center">💻 Projet AIS - Apprentissage & Sécurité</h1>
 
 <p align="center">
@@ -14,53 +10,74 @@
 
 ---
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
+</p>
+
+---
+
 ## 🧠 À propos du projet
 
-Ce dépôt regroupe mes travaux réalisés dans le cadre de mon **alternance en Administration d’Infrastructures Sécurisées (AIS)**.
-Il contient divers **projets techniques**, **études comparatives** et **scripts** autour de la cybersécurité, de l’automatisation et des environnements de test.
+Ce dépôt regroupe mes travaux réalisés dans le cadre de mon **alternance en Administration d’Infrastructures Sécurisées (AIS)**.  
+Il contient divers **projets techniques**, **études comparatives**, **captures réseau** et **scripts** autour de la **cybersécurité**, de l’**automatisation** et des **environnements de test**.
 
 ---
 
 ## 📂 Contenu du dépôt
 
-| Dossier / Fichier                                                   | Description                                       |
-| ------------------------------------------------------------------- | ------------------------------------------------- |
-| 📁**apprentissage/**                                          | Ressources et exercices liés à l’apprentissage |
-| 🖼️**Images/**                                               | Bannières, schémas et illustrations             |
-| 📄**Apprentissage_Powershell.md**                             | Exercices et exemples PowerShell                  |
-| 📄**DAT_LAB_Environnement_de_Test.md**                        | Configuration du lab (AD + Linux)                 |
-| 📄**Etude_comparative_des_differentes_solutions_Bastions.md** | Analyse technique de solutions Bastion            |
-| 📄**Sensibilisation_Cybersécurité.md**                      | Support de sensibilisation à la cybersécurité  |
-| 🐍**test.py / test6.py**                                      | Scripts Python d’essai                           |
-| 📘**README.md**                                               | Ce fichier de présentation                       |
+| Dossier / Fichier | Description |
+| ------------------ | ------------ |
+| 📁 **apprentissage/** | Ressources, notes et exercices pratiques |
+| 🖼️ **Images/** | Schémas, bannières, captures Wireshark et illustrations |
+| 📄 **Apprentissage_Powershell.md** | Exercices et exemples PowerShell |
+| 📄 **DAT_LAB_Environnement_de_Test.md** | Configuration du lab (AD + Linux) |
+| 📄 **Etude_comparative_des_differentes_solutions_Bastions.md** | Étude des solutions Bastion (Azure, Guacamole, Teleport) |
+| 📄 **Sensibilisation_Cybersécurité.md** | Support de sensibilisation à la cybersécurité |
+| 📄 **Analyser_la_sécurité_du_trafic_réseau.md** | **Analyse complète du trafic réseau (DHCP, DNS, HTTP, TLS, SMB, etc.) avec captures Wireshark** |
+| 🐍 **test.py / test6.py** | Scripts Python d’essai |
+| 📘 **README.md** | Ce fichier de présentation |
+
+---
+
+## 📊 Focus : *Analyser la sécurité du trafic réseau*
+
+Cette partie du projet documente une **analyse complète du trafic réseau** dans un environnement de test :  
+- Capture et étude des protocoles **DHCP, DNS, HTTP, TLS, SMB, Kerberos, WinRM, SSH...**  
+- Illustration avec **Wireshark** et schémas explicatifs  
+- Explications sur les attaques classiques : DHCP Starvation, Rogue DHCP, DNS Spoofing, HTTP Smuggling, etc.  
+- Bonnes pratiques de **sécurisation et supervision réseau**
+
+🧾 [➡️ Lire l’analyse complète ici](./Analyser_la_sécurité_du_trafic_réseau.md)
 
 ---
 
 ## 🧰 Technologies utilisées
 
-| Catégorie                  | Outils / Technologies                |
-| --------------------------- | ------------------------------------ |
-| 🐧**Systèmes**       | Linux (Kali, Debian), Windows Server |
-| ☁️**Cloud & Infra** | Azure (Bastion, VM, Sécurité)      |
-| 💻**Langages**        | PowerShell, Bash, Python             |
-| 🔐**Sécurité**      | Wireshark, OSINT, Audit réseau      |
-| 🧱**Documentation**   | Markdown, Git, GitHub                |
+| Catégorie | Outils / Technologies |
+| ---------- | -------------------- |
+| 🐧 **Systèmes** | Linux (Kali, Debian), Windows Server |
+| ☁️ **Cloud & Infra** | Azure (Bastion, VM, Sécurité) |
+| 💻 **Langages** | PowerShell, Bash, Python |
+| 🔐 **Sécurité** | Wireshark, OSINT, Audit réseau |
+| 🧱 **Documentation** | Markdown, Git, GitHub |
 
 ---
 
 ## 🚀 Objectifs du dépôt
 
-- Centraliser mes **projets techniques** et **rapports** d’apprentissage
-- Mettre en pratique les **bonnes pratiques en Administration Systèmes, Réseaux et Cybersécurité**
-- Fournir une base utile pour d’autres étudiants en **Administration Infrastructures Sécurisées**
-- Présenter mes compétences techniques sur GitHub
+- Centraliser mes **projets techniques** et **rapports** d’apprentissage  
+- Mettre en pratique les **bonnes pratiques d’administration et de cybersécurité**  
+- Servir de **base de référence** pour d’autres étudiants AIS  
+- Valoriser mes **compétences techniques** sur GitHub
+
+---
 
 ## 🧑‍💻 Auteur
 
-**Yann (Y4nnSec)**
-🔗 [Profil GitHub](https://github.com/Y4nnSec)
-💼 Étudiant en **Administration d’Infrastructures Sécurisées (AIS)**
-⚙️ Passionné par la **cybersécurité**, la **virtualisation**, **l’****automatisation** et le **systèmes et réseaux**
+**Yann (Y4nnSec)**  
+🔗 [Profil GitHub](https://github.com/Y4nnSec)  
+💼 Étudiant en **Administration d’Infrastructures Sécurisées (AIS)**  
+⚙️ Passionné par la **cybersécurité**, la **virtualisation**, l’**automatisation** et les **systèmes & réseaux**
 
 ---
 
