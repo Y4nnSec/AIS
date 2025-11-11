@@ -29,7 +29,7 @@ L'adresse de la passerelle est : 192.168.79.2
 
 1. **Capturer le processus `DORA` du protocole DHCP**
 
-
+![alt text](Images/Dora.png)
 
 2. **qu’est ce que le `DHCP Starvation` / `snooping` ? `Rogue DHCP` ?**
 
