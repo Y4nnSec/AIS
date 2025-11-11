@@ -47,7 +47,7 @@ Cette partie du projet documente une **analyse complète du trafic réseau** dan
 - Explications sur les attaques classiques : DHCP Starvation, Rogue DHCP, DNS Spoofing, HTTP Smuggling, etc.  
 - Bonnes pratiques de **sécurisation et supervision réseau**
 
-[➡️ Lire l’analyse complète ici](./Analyser_la_sécurité_du_trafic_réseau.md)
+[➡️ Lire l’analyse complète ici](./ANALYSER_LA_SECURITE_DU_TRAFIC_RESEAU.md)
 
 ---
 
