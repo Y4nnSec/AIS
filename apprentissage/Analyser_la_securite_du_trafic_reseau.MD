@@ -184,3 +184,16 @@ Pour protéger la confidentialité d'un partage SMB, il faut :
 * **Limiter les ports SMB** aux réseaux de confiance via le pare-feu.
 
 * **VPN ou tunnel sécurisé** si les partages sont accessibles depuis l’extérieur.
+
+
+
+
+
+**Auteur : ESCRIVA Yann**
+
+**Projet : Octobre 2025**
+
+
+
+
+![alt text](Images/kerberos.png)

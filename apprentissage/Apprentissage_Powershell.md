@@ -153,4 +153,5 @@ la présence ou l’absence des KB listés.
 
 
 
-![alt text](Images/RDP.png)
+
+![alt text](Images/kerberos.png)
