@@ -29,7 +29,7 @@ L'adresse de la passerelle est : 192.168.79.2
 
 1. **Capturer le processus `DORA` du protocole DHCP**
 
-
+![alt text](Images/Dora.png)
 
 2. **qu’est ce que le `DHCP Starvation` / `snooping` ? `Rogue DHCP` ?**
 
@@ -53,7 +53,7 @@ Cisco propose le DHCP Snooping : il distingue les ports fiables et non fiables p
 
 5. **Capturer une `requête DNS` et sa réponse**
 
-
+![alt text](Images/DNS.png)
 
 6. **Qu’est-ce que le `DNS Spoofing` ? Comment s’en protéger ?**
 
@@ -79,9 +79,9 @@ Par défaut DNS = UDP, mais **TCP** est utilisé quand :
 
 9. **Capturer un flux `HTTP`**
 
+![alt text](Images/HTTP.png)
 
-
-
+![alt text](Images/http2.png)
 
 10. **Qu’est-ce que le `HTTP Smuggling` ? Donner un exemple de `CVE`**
 C’est une astuce qui consiste à cacher une requête HTTP dans une autre en profitant du fait que deux éléments qui traitent les requêtes (par ex. un reverse-proxy devant un serveur web)  ne calculent pas la fin de la requête de la même façon .
@@ -111,7 +111,7 @@ C’est le moteur derrière  **HTTPS** ,  **TLS** ,  **certificats serveurs** , 
 
 13. **Capturer un `mot de passe` HTTP via le projet VulnerableLightApp.**
 
-
+![alt text](Images/HTTP3.png)
 
 14. **Comment mettre en place la `confidentialité` pour ce service ?**
 
@@ -119,7 +119,7 @@ Mettre un reverse proxy TLS et un certificat  avec nginx proxy manager par exemp
 
 15. **Capturer un `handshake TLS`**
 
-
+![alt text](Images/TLS_Handshake.png)
 
 16. **Qu’est-ce qu’une autorité de certification (`AC`) racine ? Qu'est qu'une `AC intermediaire` ?**
 
@@ -129,15 +129,15 @@ Mettre un reverse proxy TLS et un certificat  avec nginx proxy manager par exemp
 
 17. **Connectez-vous sur `taisen.fr` et affichez la `chaine de confiance` du certificat**
 
-
+![alt text](Images/taisen.fr.png)
 
 18. **Capturer une authentification `Kerberos` (mettre en place le service si nécessaire), identifier l'`AS_REQ`, `AS_REP` et les messages suivants.**
 
-
+![alt text](Images/kerberos.png)
 
 19. **Capturer une `authentification RDP` (mettre en place le service si nécessaire), quel est le protocole d'authentification capturé ?**
 
-
+![alt text](Images/RDP.png)
 
 Protocol utilisé : 3389
 
@@ -157,15 +157,15 @@ Attaques connues contre NetLM :
 
 21. **Capturer une `authentification WinRM` (Vous pouvez utiliser EvilWinRM si nécessaire côté client.), quel est le protocole d'authentification capturé ?**
 
-
+![alt text](Images/winrm.png)
 
 22. **Capturer une `authentification SSH` ou SFTP (mettre en place le service si nécessaire)**
 
-
+![alt text](Images/SSH.png)
 
 23. **Intercepter un `fichier au travers du protocole SMB`**
 
-
+![alt text](Images/SMB.png)
 
 24. **Comment proteger l'`authenticité` et la `confidentialité` d'un partage SMB ?**
 
@@ -191,9 +191,4 @@ Pour protéger la confidentialité d'un partage SMB, il faut :
 
 **Auteur : ESCRIVA Yann**
 
-**Projet : Octobre 2025**
-
-
-
-
-![alt text](Images/kerberos.png)
+**Projet : Novembre 2025**
