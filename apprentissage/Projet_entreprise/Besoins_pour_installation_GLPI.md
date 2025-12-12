@@ -18,7 +18,7 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
 ## 2. Analyse des Risques
 *(Voir la matrice des risques détaillée ci-dessous)*
 
-![alt text](<Images/Matrice des risques.png>)
+![alt text](<../Images/Matrice des risques.png>)
 
 
 ## 3. Prérequis Infrastructure (Hardware)
@@ -47,7 +47,7 @@ Sur la base Debian 13, l'architecture suivante sera déployée :
 
 ### Configuration IP
 * **Adressage :** 1 Adresse IPv4 fixe.
-* **DNS :** Enregistrement de type **A** pointant vers l'IP.
+* **DNS :** Enregistrement de type **A** pointant vers l'IP de la machine debian.
 
 ### Matrice de Flux (Firewall)
 
@@ -56,8 +56,8 @@ Sur la base Debian 13, l'architecture suivante sera déployée :
 | **IN** | TCP | **80** | HTTP | Redirection automatique vers HTTPS. |
 | **IN** | TCP | **443** | HTTPS | Accès sécurisé pour les utilisateurs et agents. |
 | **IN** | TCP | **22** | SSH | Administration système (Restreint aux IPs Admins). |
-| **OUT** | TCP | **636** | LDAPS | Liaison sécurisée vers l'Active Directory (Authentification). |
-| **OUT** | TCP | **587** | SMTP | Relais vers serveur de messagerie (Envoi des notifications). |
+| **OUT** | TCP | **636** | LDAPS | Liaison sécurisée vers l'Active Directory. |
+| **OUT** | TCP | **587** | SMTP | Relais vers serveur de messagerie. |
 
 
 ## 6. Stratégie de Sécurité
