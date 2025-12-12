@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
+</p>
+
+
 # Projet : Besoins et procédure d'installation et de Déploiement GLPI
 
 **Contexte :** Mise en place d'une solution de gestion de parc informatique sur **Debian 13**.
