@@ -351,4 +351,7 @@ sudo rm /var/www/glpi/install/install.php
 
 **En suivant ce tutoriel pas à pas, vous devriez être en mesure d'installer GLPI sur un serveur Debian 13 !**A quelques détails près, cette procédure peut s'appliquer à d'autres systèmes et versions.
 
-Procédure GLPI projet - Infrastructure yann ESCRIVA | Décembre 2025
+**Auteur : ESCRIVA Yann**
+
+**Projet : Décembre 2025**
+

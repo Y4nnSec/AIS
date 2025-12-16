@@ -80,4 +80,6 @@ Sur la base Debian 13, l'architecture suivante sera déployée :
 4. **Intégration :** Configuration de la liaison **LDAPS** (Active Directory) et du collecteur mail **SMTP**.
 5. **Recette :** Tests fonctionnels (Connexion utilisateur, Création de ticket, Remontée d'inventaire).
 
-*Besoins et procédure d'installation et de Déploiement GLPI - Infrastructure yann ESCRIVA | Décembre 2025*
+**Auteur : ESCRIVA Yann**
+
+**Projet : Décembre 2025**
