@@ -19,6 +19,8 @@ V. Conclusion
 
 **GLPI** est un logiciel libre de **gestion de parc informatique** permettant d'avoir une solution de ticketing gratuite pour le support informatique, de gérer l'inventaire des équipements, notamment les ordinateurs et les téléphones, de gérer ses contrats, ses licences, ses consommables, ses baies serveurs, etc.... Créé en 2003, GLPI est une solution populaire utilisée par des milliers d'entreprises et maintenue par un éditeur français nommé Teclib.
 
+![alt text](../Images/Interface_de_GLPI.png)
+
 **II. Préréquis de GLPI**
 
 Avant d'évoquer l'installation, parlons des prérequis. GLPI a besoin d'**un serveur Web, de PHP et d'une base de données** pour fonctionner. Bien que l'installation de GLPI soit possible sur Windows Server via IIS, l'installation sur Linux est recommandée. D'une façon générale, GLPI supporte **plusieurs serveurs Web** : Apache2, Nginx, lighttpd et IIS.
@@ -95,6 +97,8 @@ Ensuite, nous allons changer le mot de passe root, supprimer les utilisateurs an
 
 Ci dessous un exemple de bonne configuration.
 
+![alt text](../Images/Changer_mdp_root_GLPI.png)
+
 Ensuite, nous allons créer **une base de données dédiée pour GLPI** et celle-ci sera accessible par **un utilisateur dédié**. Hors de question d'utiliser le compte root de MariaDB : appliquons le principe de moindre privilège. Donc : une base de données = un utilisateur.
 
 Se connecter à l'instance MariaDB: 
@@ -110,6 +114,8 @@ CREATE DATABASE **db25_glpi**;
 GRANT ALL PRIVILEGES ON **db25_glpi**.* TO **glpi_adm**@localhost IDENTIFIED BY "**MotDePasseRobuste**"; FLUSH PRIVILEGES;
 EXIT
 ```
+
+![alt text](../Images/Création_de_basee_de_donnée.png)
 
 **C. Télécharger GLPI**
 
@@ -225,7 +231,9 @@ Passons à la configuration du serveur web Apache2. Nous allons créer un nouvea
 sudo nano /etc/apache2/sites-available/support.it-connectlab.fr.conf
 ```
 
-Capture configuration d'Apache 2
+![alt text](../Images/Configuration_Apache_2.png)
+
+![alt text](../Images/Configuration_Apache_2,2.png)
 
 Puis, nous allons **activer ce nouveau site dans Apache2**:
 
@@ -308,6 +316,8 @@ Pour finir, nous allons modifier le virtualHost pour dire à Apache que PHP-FPM 
 
 Ci dessous un exemple :
 
+![alt text](../Images/Virtualhost.png)
+
 Quand c'est fait, on relance apache2:
 
 ```bash
@@ -322,11 +332,22 @@ Pour effectuer l'installation de GLPI, nous devons utiliser un navigateur Web af
 
 Si vous avez suivi toutes les étapes correctement, vous devriez obtenir la page visible ci-dessous. Cliquez simplement sur le bouton au centre.
 
+![alt text](../Images/Installation_de_GLPI.png)
+
 Nous allons commencer par choisir la langue.
+![alt text](../Images/Installation_de_GLPI2.png)
+![alt text](../Images/Installation_de_GLPI3.png)
+![alt text](../Images/Installation_de_GLPI4.png)
+![alt text](../Images/Installation_de_GLPI5.png)
+![alt text](../Images/Installation_de_GLPI6.png)
+![alt text](../Images/Installation_de_GLPI7.png)
+![alt text](../Images/Installation_de_GLPI8.png)
+![alt text](../Images/Installation_de_GLPI9.png)
 
 ```bash
 sudo rm /var/www/glpi/install/install.php
 ```
 
 **V. Conclusion**
+
 **En suivant ce tutoriel pas à pas, vous devriez être en mesure d'installer GLPI sur un serveur Debian 13 !**A quelques détails près, cette procédure peut s'appliquer à d'autres systèmes et versions.
