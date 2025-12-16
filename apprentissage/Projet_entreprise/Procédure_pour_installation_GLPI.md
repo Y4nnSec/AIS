@@ -253,3 +253,80 @@ sudo systemctl restart apache2
 
 **F. Utiliser PHP8.4-FPM avec Apache2**
 
+Pour utiliser PHP en tant que moteur de scripts avec Apache2, il y a deux possibilités : **utiliser le module PHP pour Apache2 (libapache2-mod-php8.4) ou utiliser PHP-FPM**. Il est **recommandé d'utiliser PHP-FPM** car il est plus performant et se présente comme un service indépendant. Dans l'autre mode, chaque processus Apache2 exécute son propre moteur de scripts PHP.
+
+Pour rappel, nous avons déjà fait le choix d'utiliser PHP-FPM : le paquet `php8.4-fpm` a été installé précédemment, au même moment que ceux pour Apache2 et MariaDB. Néanmoins, nous devons configurer l'intégration de PHP-FPM avec Apache.
+
+Commençons par activer deux modules dans Apache et la configuration de PHP-FPM, avant de recharger Apache2 :
+
+```bash
+sudo a2enmod proxy_fcgi setenvif
+sudo a2enconf php8.4-fpm
+sudo systemctl reload apache2
+```
+
+Pour configurer PHP-FPM pour Apache2, nous n'allons pas éditer le fichier /etc/php/8.4/apache2/php.ini. À la place, le fichier que vous devez éditer est celui-ci :
+
+```bash
+sudo nano /etc/php/8.4/fpm/php.ini
+```
+
+Dans ce fichier, recherchez l'option `session.cookie_httponly` (CTRL+W avec nano) et indiquez la valeur on pour l'activer, afin de protéger les cookies de GLPI.
+
+```bash
+; Whether or not to add the httpOnly flag to the cookie, which makes it
+; inaccessible to browser scripting languages such as JavaScript.
+; https://php.net/session.cookie-httponly
+session.cookie_httponly = on
+```
+
+Toujours pour renforcer la sécurité, configurez la directive `session.cookie_samesite` avec la valeur Lax conseillée par la documentation de GLPI. Elle contrôle la façon dont le navigateur envoie le cookie de session, ce qui bloque notamment certaines **attaques CSRF** (Cross-Site Request Forgery).
+
+```bash
+; Add SameSite attribute to cookie to help mitigate Cross-Site Request Forgery (CSRF/XSRF)
+; Current valid values are "Strict", "Lax" or "None". When using "None",
+; make sure to include the quotes, as `none` is interpreted like `false` in ini files.
+; https://tools.ietf.org/html/draft-west-first-party-cookies-07
+session.cookie_samesite = Lax
+```
+
+Enregistrez le fichier quand c'est fait. Par la suite, vous pourriez être amené à effectuer d'autres modifications, notamment pour augmenter la taille des uploads sur GLPI (`upload_max_filesize` limité à 2 Mo par défaut), etc. Je pense aussi à la directive `session.cookie_secure` que nous passerons sur `on` une fois GLPI accessible en HTTPS.
+
+Pour appliquer les modifications, nous devons redémarrer PHP-FPM :
+
+```bash
+sudo systemctl restart php8.4-fpm.service
+```
+
+Pour finir, nous allons modifier le virtualHost pour dire à Apache que PHP-FPM doit ètre utilisé pour les fichiers PHP. Editez le fichier `support.it-connectlab.fr.conf` pour ajouter ceci:
+
+```bash
+<FilesMatch \.php$>
+    SetHandler "proxy:unix:/run/php/php8.4-fpm.sock|fcgi://localhost/"
+</FilesMatch>
+```
+
+Ci dessous un exemple :
+
+Quand c'est fait, on relance apache2:
+
+```bash
+sudo systemctl restart apache2
+```
+
+Voilà tout est prêt, il ne reste plus qu'à relancer GLPI!
+
+**. Installation de GLPI**
+
+Pour effectuer l'installation de GLPI, nous devons utiliser un navigateur Web afin d'accéder à l'adresse du GLPI. Il s'agit de l'adresse déclarée dans le fichier de configuration Apache2 (`servername`).
+
+Si vous avez suivi toutes les étapes correctement, vous devriez obtenir la page visible ci-dessous. Cliquez simplement sur le bouton au centre.
+
+Nous allons commencer par choisir la langue.
+
+```bash
+sudo rm /var/www/glpi/install/install.php
+```
+
+**V. Conclusion**
+**En suivant ce tutoriel pas à pas, vous devriez être en mesure d'installer GLPI sur un serveur Debian 13 !**A quelques détails près, cette procédure peut s'appliquer à d'autres systèmes et versions.
