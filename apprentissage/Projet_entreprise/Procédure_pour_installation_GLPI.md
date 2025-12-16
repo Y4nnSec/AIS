@@ -1,8 +1,12 @@
+```
+
+```
+
 # Procédure pour installation de GLPI 11 sur Débian 13
 
 **Sommaire :**
 
-I. Présentation
+I. Présentation``
 
 II. Prérequis de GLPI
 
@@ -29,10 +33,10 @@ Avant d'évoquer l'installation, parlons des prérequis. GLPI a besoin d'**un se
 
 Pour l'**installation** de GLPI, nous avons besoin de :
 
-*   **Version de PHP** : au minimum **PHP 8.2** pour GLPI 11.
-*   Base de données
-    *   MySQL 8.0 minimum
-    *   MariaDB 10.6 minimum
+* **Version de PHP** : au minimum **PHP 8.2** pour GLPI 11.
+* Base de données
+  * MySQL 8.0 minimum
+  * MariaDB 10.6 minimum
 
 Il y aura également plusieurs extensions PHP à installer pour que GLPI puisse fonctionner.
 
@@ -40,9 +44,13 @@ III. **Préparer le sereveur pour installer GLPI**
 
 Commençons par l'installation par une **mise à jour des paquets sur la machine Debian 13**. Bien Penser également à lui attribuer une adresse IP, un nom d'hôte (avec un enregistrement DNS pour notre application) et à effectuer la configuration du système.
 
-La suite des opérations s'effectue directement depuis le Terminal :  
+La suite des opérations s'effectue directement depuis le Terminal :
 
-`sudo apt update && sudo apt upgrade`
+```bash
+sudo apt update && sudo apt upgrade
+```
+
+sudo apt update && sudo apt upgrade
 
 **A. Installer le socle LAMP**
 
@@ -58,16 +66,16 @@ Puis, nous allons installer toutes les extensions nécessaires au bon fonctionne
 
 Voici, à titre d'information, le rôle de chaque extension installée :
 
-*   `**curl**` : utilisée pour accéder à des ressources distantes (marketplace, flux RSS, etc.).
-*   `**gd**` : permet la manipulation et la génération d’images.
-*   `**intl**` : fournit les fonctions d’internationalisation (formats, locale, conversions…).
-*   `**mysql**` : gère la connexion et les opérations avec une base de données MySQL/MariaDB.
-*   `**zlib**` : nécessaire pour la compression/décompression, notamment pour les paquets gzip du marketplace et la génération de PDF.
-*   `**bcmath**` : utilisé pour générer des QR codes (calculs de précision arbitraire).
-*   `**mbstring**` : indispensable pour la gestion des chaînes de caractères multioctets (UTF-8, conversions, compatibilité internationale).
-*   `**xml**` (inclut `**dom**`, `**simplexml**`, `**xmlreader**`, `**xmlwriter**`) : fournit les outils nécessaires au traitement XML utilisés par diverses fonctions de l’application.
-*   `**openssl**` : permet la communication chiffrée (connexion HTTPS, authentification OAuth 2.0, etc.).
-*   `**bz2**` : pour le bon fonctionnement de la marketplace.
+* `**curl**` : utilisée pour accéder à des ressources distantes (marketplace, flux RSS, etc.).
+* `**gd**` : permet la manipulation et la génération d’images.
+* `**intl**` : fournit les fonctions d’internationalisation (formats, locale, conversions…).
+* `**mysql**` : gère la connexion et les opérations avec une base de données MySQL/MariaDB.
+* `**zlib**` : nécessaire pour la compression/décompression, notamment pour les paquets gzip du marketplace et la génération de PDF.
+* `**bcmath**` : utilisé pour générer des QR codes (calculs de précision arbitraire).
+* `**mbstring**` : indispensable pour la gestion des chaînes de caractères multioctets (UTF-8, conversions, compatibilité internationale).
+* `**xml**` (inclut `**dom**`, `**simplexml**`, `**xmlreader**`, `**xmlwriter**`) : fournit les outils nécessaires au traitement XML utilisés par diverses fonctions de l’application.
+* `**openssl**` : permet la communication chiffrée (connexion HTTPS, authentification OAuth 2.0, etc.).
+* `**bz2**` : pour le bon fonctionnement de la marketplace.
 
 Ces commandes vont permettre de récupérer les versions de ces extentions pour php 8.4
 
@@ -109,7 +117,7 @@ Saisir le mot de passe root qu'on vient de définir à l'étape précédente.
 
 Maintenant, nous allons télécharger l'archive **".tgz"** qui contient les sources d'installation de GLPI. À partir du **GitHub de GLPI**, récupérez le lien vers la dernière version. Ici, c'est la version **GLPI 11.0.4** qui est installée.
 
-*   [https://github.com/glpi-project/glpi/releases/](https://github.com/glpi-project/glpi/releases/)
+* [https://github.com/glpi-project/glpi/releases/](https://github.com/glpi-project/glpi/releases/)
 
 l'archive sera téléchargé dans le répertoire `/tmp` :
 
