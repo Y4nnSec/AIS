@@ -18,7 +18,7 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
 
 *(Voir la matrice des risques détaillée ci-dessous)*
 
-![alt text](../Images/Matrice des risques.png)
+![alt text](../Images/Matrice_des_risques.png)
 
 ## 3. Prérequis Infrastructure (Hardware)
 
