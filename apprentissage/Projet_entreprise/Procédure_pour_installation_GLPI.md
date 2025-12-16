@@ -4,15 +4,8 @@
 
 # Procédure pour installation de GLPI 11 sur Débian 13
 
-**Sommaire :**
-
-I. Présentation``
-
-II. Prérequis de GLPI
-
 III. Préparation du serveur pour installer GLPI
 
-```
 A. Installer le socle LAMP
 B. Préparer une base de donnée pour GLPI
 C. Télécharger GLPI
@@ -21,7 +14,6 @@ E. Configurer Apache2 pour GLPI
 F. Utiliser PHP8.4-FPM avec Apache 2
 IV. Installation de GLPI
 V. Conclusion
-```
 
 **I. Présentation**
 
@@ -50,38 +42,42 @@ La suite des opérations s'effectue directement depuis le Terminal :
 sudo apt update && sudo apt upgrade
 ```
 
-sudo apt update && sudo apt upgrade
-
 **A. Installer le socle LAMP**
 
 La première grande étape consiste à installer les paquets du socle LAMP : **Linux Apache2 MariaDB PHP**. Sous **Debian 13 Trixie** qui est la dernière version majeure stable de Debian, **PHP 8.4** est distribué par défaut dans les dépôts officiels. Il est à noter que l'intégration de PHP sera effectuée via PHP-FPM plutôt que l'extension PHP pour Apache, pour des raisons de performance.
 
 Commençons par installer les trois paquets principaux :
 
-`sudo apt-get install apache2 php8.4-fpm mariadb-server`
+```bash
+sudo apt-get install apache2 php8.4-fpm mariadb-server
+```
 
-Puis, nous allons installer toutes les extensions nécessaires au bon fonctionnement de GLPI et qui ne sont pas intégrées au paquet `**php8.4-common.**`
+Puis, nous allons installer toutes les extensions nécessaires au bon fonctionnement de GLPI et qui ne sont pas intégrées au paquet **php8.4-common.**
 
- `sudo apt install php8.4-{curl,gd,intl,mysql,zip,bcmath,mbstring,xml,bz2}`
+```bash
+sudo apt install php8.4-{curl,gd,intl,mysql,zip,bcmath,mbstring,xml,bz2}
+```
 
 Voici, à titre d'information, le rôle de chaque extension installée :
 
-* `**curl**` : utilisée pour accéder à des ressources distantes (marketplace, flux RSS, etc.).
-* `**gd**` : permet la manipulation et la génération d’images.
-* `**intl**` : fournit les fonctions d’internationalisation (formats, locale, conversions…).
-* `**mysql**` : gère la connexion et les opérations avec une base de données MySQL/MariaDB.
+* **curl** : utilisée pour accéder à des ressources distantes (marketplace, flux RSS, etc.).
+* **gd** : permet la manipulation et la génération d’images.
+* **intl** : fournit les fonctions d’internationalisation (formats, locale, conversions…).
+* **mysql** : gère la connexion et les opérations avec une base de données MySQL/MariaDB.
 * `**zlib**` : nécessaire pour la compression/décompression, notamment pour les paquets gzip du marketplace et la génération de PDF.
-* `**bcmath**` : utilisé pour générer des QR codes (calculs de précision arbitraire).
-* `**mbstring**` : indispensable pour la gestion des chaînes de caractères multioctets (UTF-8, conversions, compatibilité internationale).
-* `**xml**` (inclut `**dom**`, `**simplexml**`, `**xmlreader**`, `**xmlwriter**`) : fournit les outils nécessaires au traitement XML utilisés par diverses fonctions de l’application.
-* `**openssl**` : permet la communication chiffrée (connexion HTTPS, authentification OAuth 2.0, etc.).
-* `**bz2**` : pour le bon fonctionnement de la marketplace.
+* **bcmath** : utilisé pour générer des QR codes (calculs de précision arbitraire).
+* **mbstring** : indispensable pour la gestion des chaînes de caractères multioctets (UTF-8, conversions, compatibilité internationale).
+* **xml** (inclut **dom**, **simplexml**, **xmlreader**, **xmlwriter**) : fournit les outils nécessaires au traitement XML utilisés par diverses fonctions de l’application.
+* **openssl** : permet la communication chiffrée (connexion HTTPS, authentification OAuth 2.0, etc.).
+* **bz2** : pour le bon fonctionnement de la marketplace.
 
 Ces commandes vont permettre de récupérer les versions de ces extentions pour php 8.4
 
 Pour associer GLPI avec un annuaire LDAP comme active directory, on doit installer l'extention LDAP de PHP, sinon sinon ce n'est pas nécessaire
 
-`sudo apt install php8.4-ldap`
+```bash
+sudo apt install php8.4-ldap
+```
 
 Nous venons d'installer Apache2, MariaDB, PHP et un ensemble d'extensions.
 
@@ -89,11 +85,11 @@ Nous venons d'installer Apache2, MariaDB, PHP et un ensemble d'extensions.
 
 Nous allons préparer MariaDB afin qu'il puisse héberger la base de données de GLPI, La première action à effectuer, c'est d'exécuter la commande ci-dessous pour **effectuer le minimum syndical en matière de sécurisation de MariaDB**
 
-`sudo mariadb-secure-installation`
-
-`# Si vous utilisez MySQL :`
-
-`sudo mysql_secure_installation`
+```bash
+sudo mariadb-secure-installation
+#  Si vous utilisez MySQL : 
+sudo mysql_secure_installation
+```
 
 Ensuite, nous allons changer le mot de passe root, supprimer les utilisateurs anonnymes et désactiver l'accès root à distance.
 
@@ -103,15 +99,17 @@ Ensuite, nous allons créer **une base de données dédiée pour GLPI** et celle
 
 Se connecter à l'instance MariaDB: 
 
-`sudo mysql -u root -p`
+```bash
+sudo mysql -u root -p
+```
 
 Saisir le mot de passe root qu'on vient de définir à l'étape précédente.
 
-`CREATE DATABASE **db25_glpi**;`
-
-`GRANT ALL PRIVILEGES ON **db25_glpi**.* TO **glpi_adm**@localhost IDENTIFIED BY "**MotDePasseRobuste**"; FLUSH PRIVILEGES;`
-
-`EXIT`
+```bash
+CREATE DATABASE **db25_glpi**;
+GRANT ALL PRIVILEGES ON **db25_glpi**.* TO **glpi_adm**@localhost IDENTIFIED BY "**MotDePasseRobuste**"; FLUSH PRIVILEGES;
+EXIT
+```
 
 **C. Télécharger GLPI**
 
@@ -121,16 +119,137 @@ Maintenant, nous allons télécharger l'archive **".tgz"** qui contient les sour
 
 l'archive sera téléchargé dans le répertoire `/tmp` :
 
-`cd /tmp wget` [`https://github.com/glpi-project/glpi/releases/download/11.0.4/glpi-11.0.4.tgz`](https://github.com/glpi-project/glpi/releases/download/11.0.4/glpi-11.0.4.tgz)
+```bash
+cd /tmp 
+wget https://github.com/glpi-project/glpi/releases/download/11.0.4/glpi-11.0.4.tgz
+```
 
-Ensuite, nous allons exécuter la commande ci-dessous pour **décompresser l'archive .tgz dans le répertoire** `**/var/www/**`, ce qui donnera le chemin d'accès `**/var/www/glpi**` pour GLPI.
+Ensuite, nous allons exécuter la commande ci-dessous pour **décompresser l'archive .tgz dans le répertoire** `/var/www/`, ce qui donnera le chemin d'accès `/var/www/glpi` pour GLPI.
 
-`sudo tar -xzvf glpi-11.0.4.tgz -C /var/www/`
+```bash
+sudo tar -xzvf glpi-11.0.4.tgz -C /var/www/
+```
 
 **D. Préparer l'installation**
 
 Nous allons préparer l'**installation de GLPI 11** via la création de plusieurs répertoires et la personnalisation des permissions.
 
-Tout d'abord, nous allons définir l'utilisateur `**www-data**` correspondant à **Apache2** (sur Debian/Ubuntu), en tant que **propriétaire** sur les fichiers GLPI.
+Tout d'abord, nous allons définir l'utilisateur `www-data` correspondant à **Apache2** (sur Debian/Ubuntu), en tant que **propriétaire** sur les fichiers GLPI.
 
-`sudo chown www-data /var/www/glpi/ -R`
+```bash
+sudo chown www-data /var/www/glpi/ -R
+```
+
+Ensuite, nous allons devoir **créer plusieurs dossiers** et sortir des données de la racine Web (/var/www/glpi) de manière à les stocker dans les nouveaux dossiers que nous allons créer. Ceci va permettre de faire une **installation sécurisée de GLPI, qui suit les recommandations de l'éditeur.**
+
+* Le répertoire `/etc/glpi`
+
+Commencez par **créer le répertoire** `/etc/glpi` qui va recevoir les fichiers de configuration de GLPI. Nous donnons des autorisations à `www-data` sur ce répertoire car il a besoin de pouvoir y accéder.
+
+```bash
+sudo mkdir /etc/glpi
+sudo chown www-data /etc/glpi/
+```
+
+Puis nous allons déplacerle répertoire sensible config de GLPI vers ce nouveau dossier:
+
+```bash
+sudo mv /var/www/glpi/config /etc/glpi
+```
+
+* **Le répertoire**  `/var/lib/glpi`:
+
+Répétons la même opération avec la création du répertoire `/var/lib/glpi`:
+
+```bash
+sudo mkdir /var/lib/glpi
+sudo chown www-data /var/lib/glpi/
+```
+
+Dans lequel nous déplaçons également le dossier files qui contient la majorité des fichiers de GLPI : CSS, plugins, etc.
+
+```bash
+sudo mv /var/www/glpi/files /var/lib/glpi
+```
+
+* **Le répertoire** `/var/log/glpi`
+
+erminons par la création du répertoire `/var/log/glpi` destiné à stocker les journaux de GLPI. Toujours sur le même principe :
+
+```bash
+sudo mkdir /var/log/glpi
+sudo chown www-data /var/log/glpi
+```
+
+* **Créer les fichiers de configuration**
+
+Nous allons déclarer les nouveaux répertoires fraichement créés. Nous allons créer ce premier fichier :
+
+```bash
+sudo nano /var/www/glpi/inc/downstream.php
+```
+
+Afin d'ajouter le contenu ci-dessous qui indique le chemin vers le **répertoire de configuration**:
+
+```bash
+<?php
+define('GLPI_CONFIG_DIR', '/etc/glpi/');
+if (file_exists(GLPI_CONFIG_DIR . '/local_define.php')) {
+    require_once GLPI_CONFIG_DIR . '/local_define.php';
+}
+```
+
+Ensuite, nous allons créer ce second fichier :
+
+```bash
+sudo nano /etc/glpi/local_define.php
+```
+
+Afin d'ajouter le contenu ci-dessous permettant **de déclarer deux variables** permettant de préciser les chemins vers **les répertoires files et log**. Pour rappel, ces deux répertoires ont été préparés précédemment.
+
+```bash
+<?php
+define('GLPI_VAR_DIR', '/var/lib/glpi/files');
+define('GLPI_LOG_DIR', '/var/log/glpi');
+```
+
+GLPI prend en charge de nombreuses variables pour personnaliser l'emplacement des répertoires, bien au-delà des deux variables spécifiées ci-dessus. Par exemple, la variable `GLPI_CACHE_DIR` sert à spécifier un emplacement personnalisé pour le stockage du cache.
+
+Voilà, cette étape est terminée.
+
+**E. Configurer Apache2 pour GLPI**
+
+Passons à la configuration du serveur web Apache2. Nous allons créer un nouveau fichier de configuration qui va permettre de configurer le VirtualHost dédié à GLPI. Dans mon cas, le fichier s'appelle `support.it-connectlab.fr.conf` en référence au nom de domaine choisi pour accéder à GLPI : `support.it-connectlab.fr`. L'idéal étant d'avoir un nom de domaine (même interne) pour accéder à GLPI afin de pouvoir positionner un certificat TLS/SSL par la suite.
+
+```bash
+sudo nano /etc/apache2/sites-available/support.it-connectlab.fr.conf
+```
+
+Capture configuration d'Apache 2
+
+Puis, nous allons **activer ce nouveau site dans Apache2**:
+
+```bash
+sudo a2ensite support.it-connectlab.fr.conf
+```
+
+Nous en profitons également pour désactiver le site par défaut car il est inutile :
+
+```bash
+sudo a2dissite 000-default.conf
+```
+
+Nous allons aussi **activer le module** `rewrite` (nécessaire pour activer la prise en charge des règles de réécriture) car nous l'avons utilisé dans le fichier de configuration du VirtualHost (via les directives `RewriteCond` / `RewriteRule`).
+
+```bash
+sudo a2enmod rewrite
+```
+
+Il ne reste plus qu'à **redémarrer le service Apache2**:
+
+```bash
+sudo systemctl restart apache2
+```
+
+**F. Utiliser PHP8.4-FPM avec Apache2**
+
