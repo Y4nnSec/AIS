@@ -1,6 +1,6 @@
-```
-
-```
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
+</p>
 
 # Procédure pour installation de GLPI 11 sur Débian 13
 
@@ -232,7 +232,6 @@ sudo nano /etc/apache2/sites-available/support.it-connectlab.fr.conf
 ```
 
 ![alt text](../Images/Configuration_Apache_2.png)
-
 ![alt text](../Images/Configuration_Apache_2,2.png)
 
 Puis, nous allons **activer ce nouveau site dans Apache2**:
@@ -351,3 +350,5 @@ sudo rm /var/www/glpi/install/install.php
 **V. Conclusion**
 
 **En suivant ce tutoriel pas à pas, vous devriez être en mesure d'installer GLPI sur un serveur Debian 13 !**A quelques détails près, cette procédure peut s'appliquer à d'autres systèmes et versions.
+
+Procédure GLPI projet - Infrastructure yann ESCRIVA | Décembre 2025
