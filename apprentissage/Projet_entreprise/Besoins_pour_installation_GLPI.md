@@ -4,23 +4,52 @@
 
 # Projet : Besoins et procédure d'installation et de Déploiement GLPI
 
-**Contexte :** Mise en place d'une solution de gestion de parc informatique sur **Debian 13**.
 
-## 1. Analyse des Besoins Clients
+### Contexte :
+
+Mise en place d’une solution GLPI destinée à la gestion de parc informatique et au support utilisateurs, dans un premier temps en environnement de test, avec une mise en production ultérieure.
+
+L’infrastructure repose sur une Machine Virtuelle hébergée sur un hyperviseur Proxmox et un système d’exploitation Debian 13.
+
+### 1. Analyse des Besoins Clients
 
 Avant tout déploiement technique, il est nécessaire de valider le périmètre avec le client :
 
-* **Volumétrie :** Nombre d'utilisateurs finaux et nombre d'agents techniques.
-* **Usage cible :** Gestion de parc (Inventaire), Helpdesk (Tickets), ou les deux.
-* **Environnement existant :** Présence d'un Active Directory
+**1.1 Périmètre fonctionnel**
 
-## 2. Analyse des Risques
+* Gestion de parc informatique :
+  * Inventaire matériel et logiciel
+  * Suivi du cycle de vie des équipements
+  * Historique des modifications
+
+* Helpdesk :
+  * Gestion des tickets (Incidents, demandes)
+  * Affectation aux agents (support informatique, administrateurs, prestataires)
+  * Notification par mail
+
+* Gestion des utilisateurs :
+  * Authentification centralisés via Active Directory (LDAPS)
+  * Gestion des rôles et profils utilisateurs 
+
+**1.2 Volumétrie**
+
+Nombre d’utilisateurs finaux : à valider
+Nombre d’agents techniques : à valider
+Nombre estimé d’équipements inventoriés : à valider
+
+**1.3 Environnement existant**
+
+* Présence d'un active directory
+* Infrastructure virtualisée sous proxmox
+* Serveur de de messagerie existant
+
+### 2. Analyse des Risques
 
 *(Voir la matrice des risques détaillée ci-dessous)*
 
 ![alt text](../Images/Matrice_des_risques.png)
 
-## 3. Prérequis Infrastructure (Hardware)
+### 3. Prérequis Infrastructure (Hardware)
 
 Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur un hyperviseur **Proxmox**.
 
@@ -34,22 +63,37 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 | **Stockage**        | **50 Go (SSD)**  | OS + Base de données + Stockage des pièces jointes/Documents.                  |
 | **Partitionnement** | **LVM Standard** | Séparer`/var` et `/home` si possible pour la sécurité et la gestion des logs. |
 
-## 4. Prérequis Logiciels (LAMP)
+### 4. Prérequis Logiciels
 
-Sur la base Debian 13, l'architecture suivante sera déployée :
+**4.1 Système**
 
-* **Serveur Web :** `Apache2`
-* **Base de données :** `MariaDB 10.11` (minimum) ou `MySQL 8.0`.
-* **Langage :** `PHP 8.2` (minimum).
+  * OS : Debian 13
 
-## 5. Prérequis Réseau et Flux
+**4.2 Stack applicative (LAMP)**
 
-### Configuration IP
+  * Serveur Web : Apache2
+  * Base de données : MariaDB 10.11 minimum (ou MySQL 8.0)
+  * Langage : PHP 8.2 minimum
 
-* **Adressage :** 1 Adresse IPv4 fixe.
-* **DNS :** Enregistrement de type **A** pointant vers l'IP de la machine debian.
+**4.3 Extensions PHP requises**
 
-### Matrice de Flux (Firewall)
+  * php-mysqli
+  * php-curl
+  * php-gd
+  * php-intl
+  * php-ldap
+  * php-zip
+  * php-mbstring
+  * php-xml
+
+### 5. Prérequis Réseau et Flux
+
+**5.1 Configuration IP**
+
+  * Adresse IPv4 fixe
+  * Enregistrement DNS de type A pointant vers la VM GLPI
+
+**Matrice de Flux (Firewall)**
 
 
 |  Sens  | Protocole |  Port  | Service | Description                                         |
@@ -60,25 +104,57 @@ Sur la base Debian 13, l'architecture suivante sera déployée :
 | **OUT** |    TCP    | **636** | LDAPS   | Liaison sécurisée vers l'Active Directory.        |
 | **OUT** |    TCP    | **587** | SMTP    | Relais vers serveur de messagerie.                  |
 
-## 6. Stratégie de Sécurité
+### 6. Stratégie de Sécurité
 
-* **Chiffrement (HTTPS) :**
+**6.1 Sécurisation des accès**
 
-  * Mise en place obligatoire d'un certificat SSL.
-  * Utilisation de **Let’s Encrypt** via un Reverse Proxy (type *Nginx Proxy Manager*)
-* **Sauvegardes (PRA) :**
+  * Mise en place obligatoire du HTTPS
+  * Certificat SSL via Let’s Encrypt
+  * Reverse Proxy possible (ex : Nginx Proxy Manager)
+  
+**6.2 Durcissement du système**
+  * Désactivation de l’accès SSH root
+  * Authentification SSH par clé
+  * Pare-feu (UFW ou nftables)
+  * Fail2ban (SSH / Apache)
+  * Mises à jour de sécurité automatiques
 
-  * **Base de données :** Dump SQL quotidien (`mysqldump`).
-  * **Fichiers :** Sauvegarde du répertoire `/var/www/glpi` (documents, plugins).
-  * **Stockage :** Export automatique vers un stockage externe (NAS/Cloud).
+**6.3 Sauvegardes et PRA**
+  * Base de données : dump SQL quotidien
+  * Fichiers : sauvegarde de /var/www/glpi
+  * Stockage externe : NAS ou Cloud
+  * Restauration testée périodiquement
 
-## 7. Planning Prévisionnel de Mise en Œuvre
+### 7. Supervision et exploitation
 
-1. **Installation OS :** Installation complète de Debian 13 (NetInstall) et durcissement système.
-2. **Préparation LAMP :** Installation des paquets Apache2, MariaDB, PHP et optimisation des fichiers de configuration `php.ini` (memory_limit, upload_max_filesize).
-3. **Déploiement GLPI :** Téléchargement de l'archive, installation et suppression du dossier `/install`.
-4. **Intégration :** Configuration de la liaison **LDAPS** (Active Directory) et du collecteur mail **SMTP**.
-5. **Recette :** Tests fonctionnels (Connexion utilisateur, Création de ticket, Remontée d'inventaire).
+  * Surveillance des ressources : CPU, RAM, disque
+  * Supervision de la disponibilité HTTP(S)
+  * Centralisation et consultation des logs
+  * Outils possibles : Zabbix, Centreon
+
+### 8. Environnements
+
+  * Environnement de test
+  * VM dédiée
+  * Données fictives
+  * Validation des mises à jour
+  * Environnement de production
+  * Accès restreint
+  * Sauvegardes renforcées
+  * Procédure de mise à jour validée
+
+### 9. Planning prévisionnel
+
+  * Installation de Debian 13 et durcissement système
+  * Installation et configuration de la stack LAMP
+  * Déploiement de GLPI
+  * Suppression du dossier /install
+  * Configuration LDAP (LDAPS) et SMTP
+  * Tests fonctionnels (recette)
+  * Validation avant mise en production
+
+
+
 
 **Auteur : ESCRIVA Yann**
 
