@@ -41,7 +41,7 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
 
 * Présence d'un active directory
 * Infrastructure virtualisée sous proxmox
-* Serveur de de messagerie existant
+* Serveur de messagerie existant
 
 ### 2. Analyse des Risques
 
@@ -109,8 +109,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 **6.1 Sécurisation des accès**
 
   * Mise en place obligatoire du HTTPS
-  * Certificat SSL via Let’s Encrypt
-  * Reverse Proxy possible (ex : Nginx Proxy Manager)
+  * Reverse Proxy (ex : Nginx Proxy Manager)
   
 **6.2 Durcissement du système**
   
@@ -151,7 +150,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * Déploiement de GLPI
   * Suppression du dossier /install
   * Configuration LDAP (LDAPS) et SMTP
-  * Tests fonctionnels (recette)
+  * Tests fonctionnels
   * Validation avant mise en production
 
 
