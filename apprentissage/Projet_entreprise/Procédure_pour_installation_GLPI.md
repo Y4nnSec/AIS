@@ -6,14 +6,14 @@
 
 III. Préparation du serveur pour installer GLPI
 
-A. Installer le socle LAMP
-B. Préparer une base de donnée pour GLPI
-C. Télécharger GLPI
-D. Préparer l'installation
-E. Configurer Apache2 pour GLPI
-F. Utiliser PHP8.4-FPM avec Apache 2
-IV. Installation de GLPI
-V. Conclusion
+* A. Installer le socle LAMP
+* B. Préparer une base de donnée pour GLPI
+* C. Télécharger GLPI
+* D. Préparer l'installation
+* E. Configurer Apache2 pour GLPI
+* F. Utiliser PHP8.4-FPM avec Apache 2
+* IV. Installation de GLPI
+* V. Conclusion
 
 **I. Présentation**
 

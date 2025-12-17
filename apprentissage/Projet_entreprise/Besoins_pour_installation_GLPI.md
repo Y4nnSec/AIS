@@ -109,7 +109,6 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 **6.1 Sécurisation des accès**
 
   * Mise en place obligatoire du HTTPS
-  * Reverse Proxy (ex : Nginx Proxy Manager)
   
 **6.2 Durcissement du système**
   
@@ -117,10 +116,10 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * Authentification SSH par clé
   * Pare-feu (UFW)
   * Fail2ban (SSH / Apache)
-  * Mises à jour de sécurité automatiques
+  * Mises à jour de sécurité régulièrement
 
 **6.3 Sauvegardes et PRA**
-  * Base de données : dump SQL quotidien
+  * Base de données : dump mySQL compressé quotidien
   * Fichiers : sauvegarde de /var/www/glpi
   * Stockage externe : NAS ou Cloud
   * Restauration testée périodiquement
@@ -132,18 +131,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * Centralisation et consultation des logs
   * Outils possibles : Zabbix, Centreon
 
-### 8. Environnements
-
-  * Environnement de test
-  * VM dédiée
-  * Données fictives
-  * Validation des mises à jour
-  * Environnement de production
-  * Accès restreint
-  * Sauvegardes renforcées
-  * Procédure de mise à jour validée
-
-### 9. Planning prévisionnel
+### 8. Planning prévisionnel
 
   * Installation de Debian 13 et durcissement système
   * Installation et configuration de la stack LAMP
@@ -151,6 +139,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * Suppression du dossier /install
   * Configuration LDAP (LDAPS) et SMTP
   * Tests fonctionnels
+  * durcissement système
   * Validation avant mise en production
 
 ### Auteur : ESCRIVA Yann
