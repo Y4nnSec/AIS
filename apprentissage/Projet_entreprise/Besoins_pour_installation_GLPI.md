@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
 </p>
 
-# Projet : Besoins et procédure d'installation et de Déploiement GLPI
+# Projet : Document d'Architecture Technique de déploiement de GLPI
 
 
 ### Contexte :
@@ -33,9 +33,9 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
 
 **1.2 Volumétrie**
 
-Nombre d’utilisateurs finaux : à valider
-Nombre d’agents techniques : à valider
-Nombre estimé d’équipements inventoriés : à valider
+  * Nombre d’utilisateurs finaux : à valider
+  * Nombre d’agents techniques : à valider
+  * Nombre estimé d’équipements inventoriés : à valider
 
 **1.3 Environnement existant**
 
@@ -113,9 +113,10 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * Reverse Proxy possible (ex : Nginx Proxy Manager)
   
 **6.2 Durcissement du système**
+  
   * Désactivation de l’accès SSH root
   * Authentification SSH par clé
-  * Pare-feu (UFW ou nftables)
+  * Pare-feu (UFW)
   * Fail2ban (SSH / Apache)
   * Mises à jour de sécurité automatiques
 
