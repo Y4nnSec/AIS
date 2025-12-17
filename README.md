@@ -56,7 +56,7 @@ Le projet couvre :
 
 ---
 
-## 📊 Focus : *Analyser la sécurité du trafic réseau*
+## 📊 Focus : Analyser la sécurité du trafic réseau*
 
 Cette partie du projet documente une **analyse complète du trafic réseau** dans un environnement de test :  
 - Capture et étude des protocoles **DHCP, DNS, HTTP, TLS, SMB, Kerberos, WinRM, SSH...**  
