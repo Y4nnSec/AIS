@@ -29,13 +29,30 @@ Il contient divers **projets techniques**, **études comparatives**, **captures 
 | ------------------ | ------------ |
 | 📁 **apprentissage/** | Ressources, notes et exercices pratiques |
 | 🖼️ **Images/** | Schémas, bannières, captures Wireshark et illustrations |
+| 🏢 **Projet_entreprise/** | Projets réalisés en contexte professionnel |
 | 📄 **Apprentissage_Powershell.md** | Exercices et exemples PowerShell |
 | 📄 **DAT_LAB_Environnement_de_Test.md** | Configuration du lab (AD + Linux) |
 | 📄 **Etude_comparative_des_differentes_solutions_Bastions.md** | Étude des solutions Bastion (Azure, Guacamole, Teleport) |
 | 📄 **Sensibilisation_Cybersécurité.md** | Support de sensibilisation à la cybersécurité |
-| 📄 **Analyser_la_sécurité_du_trafic_réseau.md** | **Analyse complète du trafic réseau (DHCP, DNS, HTTP, TLS, SMB, etc.) avec captures Wireshark** |
+| 📄 **Analyser_La_Sécurité_Du_Trafic_Réseau.md** | Analyse complète du trafic réseau avec Wireshark |
 | 🐍 **test.py / test6.py** | Scripts Python d’essai |
 | 📘 **README.md** | Ce fichier de présentation |
+
+---
+
+## 🏢 Projet entreprise – Mise en place de GLPI
+
+Cette partie correspond à un **projet réalisé en entreprise** visant à préparer la **mise en production ultérieure de GLPI**, outil de **gestion de parc informatique et de helpdesk**.
+
+Le projet couvre :
+- l’**analyse des besoins**
+- les **prérequis techniques**
+- les **aspects sécurité**
+- la **procédure d’installation et de déploiement**
+
+📄 Documents associés :
+- 📌 [Besoins pour l’installation de GLPI](./apprentissage/Projet_entreprise/Besoins_pour_installation_GLPI.md)
+- 🛠️ [Procédure d’installation et de déploiement GLPI](./apprentissage/Projet_entreprise/Procédure_pour_installation_GLPI.md)
 
 ---
 
