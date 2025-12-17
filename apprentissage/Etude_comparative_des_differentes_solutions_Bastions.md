@@ -54,10 +54,6 @@ Connection RDP
 
 ![alt text](Images/Connection_RDP_de_Guacamole.png)
 
+### Auteur : ESCRIVA Yann
 
-
-
-
-**Auteur : ESCRIVA Yann**
-
-**Projet : Octobre 2025**
+### Projet : Octobre 2025

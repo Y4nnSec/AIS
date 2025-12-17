@@ -143,10 +143,6 @@ L’ensemble des services a été vérifié : connexions SSH et WinRM réussies,
 
  En conclusion, ce laboratoire constitue une base solide pour les futurs audits de sécurité, tests d’exploitation et exercices de pentest.
 
+### Auteur : ESCRIVA Yann
 
-
-
-
-**Auteur : ESCRIVA Yann**
-
-**Projet : Octobre 2025**
+### Projet : Octobre 2025

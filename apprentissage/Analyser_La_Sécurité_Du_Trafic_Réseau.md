@@ -189,6 +189,6 @@ Pour protéger la confidentialité d'un partage SMB, il faut :
 
 
 
-**Auteur : ESCRIVA Yann**
+### Auteur : ESCRIVA Yann
 
-**Projet : Novembre 2025**
+### Projet : Novembre 2025
