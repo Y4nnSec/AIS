@@ -42,12 +42,50 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
 * Présence d'un active directory
 * Infrastructure virtualisée sous proxmox
 * Serveur de messagerie existant
+* Outil de supervision existant :
+  * Présence d’un outil de supervision (Zabbix, Centreon, Nagios) : à valider
+  * Méthode de supervision attendue (SNMP, agent, HTTP(S)) : à valider
 
 ### 2. Analyse des Risques
 
 *(Voir la matrice des risques détaillée ci-dessous)*
 
-![alt text](../Images/Matrice_des_risques.png)
+<table>
+  <thead>
+    <tr>
+      <th>Risque</th>
+      <th>Impact</th>
+      <th>Probabilité</th>
+      <th>Mesures de réduction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Indisponibilité du service GLPI</td>
+      <td style="background-color:#f4a261; text-align:center;">Moyen</td>
+      <td style="background-color:#2a9d8f; text-align:center;">Faible</td>
+      <td>Sauvegardes régulières, snapshot VM</td>
+    </tr>
+    <tr>
+      <td>Mauvaise configuration LDAP</td>
+      <td style="background-color:#f4a261; text-align:center;">Moyen</td>
+      <td style="background-color:#f4a261; text-align:center;">Moyen</td>
+      <td>Tests en environnement de test</td>
+    </tr>
+    <tr>
+      <td>Saturation du stockage</td>
+      <td style="background-color:#f4a261; text-align:center;">Moyen</td>
+      <td style="background-color:#2a9d8f; text-align:center;">Faible</td>
+      <td>Supervision et alertes</td>
+    </tr>
+    <tr>
+      <td>Faille de sécurité applicative</td>
+      <td style="background-color:#e63946; color:white; text-align:center;">Élevé</td>
+      <td style="background-color:#2a9d8f; text-align:center;">Faible</td>
+      <td>Mises à jour régulières, HTTPS</td>
+    </tr>
+  </tbody>
+</table>
 
 ### 3. Prérequis Infrastructure (Hardware)
 
@@ -55,13 +93,17 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 
 **OS Cible :** Debian 13 .
 
-
 | Ressource           | Recommandation   | Justification                                                                    |
-| :-------------------- | :----------------- | :--------------------------------------------------------------------------------- |
+| :------------------ | :--------------- | :------------------------------------------------------------------------------- |
 | **vCPU**            | **2 vCPU**       | Suffisant pour le traitement PHP/Web standard.                                   |
-| **RAM**             | **4 Go**         | Minimum recommandé (Passer à 8 Go si >500 utilisateurs).                       |
-| **Stockage**        | **50 Go (SSD)**  | OS + Base de données + Stockage des pièces jointes/Documents.                  |
-| **Partitionnement** | **LVM Standard** | Séparer`/var` et `/home` si possible pour la sécurité et la gestion des logs. |
+| **RAM**             | **4 Go**         | Minimum recommandé (Passer à 8 Go si >500 utilisateurs).                        |
+| **Stockage**        | **50 Go (SSD)**  | OS + Base de données MariaDB + Stockage des pièces jointes/Documents.            |
+| **Partitionnement**  | **LVM Standard** | Découpage recommandé pour isoler les composants critiques :                     |
+|                     | `/`              | 15 Go – Système Debian 13 + LAMP + GLPI                                          |
+|                     | `/var`           | 10 Go – Données applicatives légères et cache GLPI                                |
+|                     | `/var/log`       | 5 Go – Journaux système et applicatifs                                           |
+|                     | `/var/lib/mysql` | 15 Go – Base de données MariaDB pour GLPI                                         |
+|                     | `/home`          | 5 Go – Comptes administrateurs                                                   |
 
 ### 4. Prérequis Logiciels
 
@@ -95,14 +137,49 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 
 **Matrice de Flux (Firewall)**
 
+| Sens | Protocole | Port | Service | Description |
+|------|----------|------|---------|-------------|
+| **IN**  | TCP | 443 | HTTPS | Accès sécurisé utilisateurs et agents |
+| **IN**  | TCP | 22  | SSH   | Administration (restreint IP admins) |
+| **OUT** | TCP | 443 | HTTPS | Accès Internet sécurisé (mises à jour, plugins) |
+| **OUT** | TCP | 636 | LDAPS | Liaison sécurisée Active Directory |
+| **OUT** | TCP | 587 | SMTP  | Relais messagerie |
+| **OUT** | UDP | 161 | SNMP  | Supervision |
 
-|  Sens  | Protocole |  Port  | Service | Description                                         |
-| :-------: | :---------: | :-------: | :-------- | :---------------------------------------------------- |
-| **IN** |    TCP    | **80** | HTTP    | Redirection automatique vers HTTPS.                 |
-| **IN** |    TCP    | **443** | HTTPS   | Accès sécurisé pour les utilisateurs et agents.  |
-| **IN** |    TCP    | **22** | SSH     | Administration système (Restreint aux IPs Admins). |
-| **OUT** |    TCP    | **636** | LDAPS   | Liaison sécurisée vers l'Active Directory.        |
-| **OUT** |    TCP    | **587** | SMTP    | Relais vers serveur de messagerie.                  |
+### 🔹 Schéma réseau – Déploiement GLPI
+
+```plaintext
++----------------+
+                  |    Internet    |
+                  +----------------+
+                          │
+                          ▼
+                  +----------------+
+                  |    Firewall    |
+                  +----------------+
+           IN/OUT │ TCP 443, TCP 22, UDP 161
+                  │
+       ┌──────────┴───────────┐
+       ▼                      ▼
++---------------------+  +---------------------+
+| Réseau interne GLPI |  | Réseau AD / Mail    |
++---------------------+  +---------------------+
+           │                    │
+           │ OUT TCP 443        │ OUT TCP 636, 587
+           ▼                    ▼
+    +----------------+     +-----------------+
+    | VM Debian GLPI |     | Active Directory|
+    | Apache2        |     | / SMTP          |
+    | MariaDB        |     +-----------------+
+    | PHP 8.2        |
+    +----------------+
+           │
+           ▼
++---------------------+
+| Supervision / SNMP  |
+| OUT UDP 161         |
++---------------------+
+```
 
 ### 6. Stratégie de Sécurité
 
@@ -119,17 +196,34 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * Mises à jour de sécurité régulièrement
 
 **6.3 Sauvegardes et PRA**
-  * Base de données : dump mySQL compressé quotidien
-  * Fichiers : sauvegarde de /var/www/glpi
-  * Stockage externe : NAS ou Cloud
+**Base de données :**
+  * Dump MySQL compressé quotidien (`mysqldump` + gzip)
+  * Rétention : conserver les 30 derniers dumps
+  * Stockage : stockage externe (NAS ou Cloud)
   * Restauration testée périodiquement
+
+**Fichiers GLPI (/var/www/glpi) :**
+  * Sauvegarde quotidienne des fichiers et documents
+  * Compression : `tar -czf glpi_backup_YYYYMMDD.tar.gz /var/www/glpi`
+  * Stockage externe : NAS ou Cloud
+  * Rétention : conserver les 30 derniers fichiers compressés
+  * Restauration testée tous les mois dans un environnement de test afin de vérifier que tous fonctionne correctement.
+    * Les fichiers / la base sont intacts
+    * GLPI fonctionne correctement avec cette sauvegarde
+    * Aucun fichier ou donnée n’est corrompu
+
+**Sauvegarde de la VM :**
+* Clone / export complet de la VM sur Proxmox
+  * Rétention : conserver 2-3 clones récents sur le NAS
+  * Permet un PRA rapide en cas de panne critique
+* 
 
 ### 7. Supervision et exploitation
 
   * Surveillance des ressources : CPU, RAM, disque
   * Supervision de la disponibilité HTTP(S)
   * Centralisation et consultation des logs
-  * Outils possibles : Zabbix, Centreon
+  * Outils possibles : Zabbix, Centreon, Nagios
 
 ### 8. Planning prévisionnel
 
