@@ -4,6 +4,24 @@
 
 # Procédure pour installation de GLPI 11 sur Débian 13
 
+### Sommaire
+
+1. Présentation
+2. Les Prérequis d'installation
+3. Préparation du serveur
+  * Installation du socle LAMP (Linux, Apache, MariaDB, PHP)
+  * Préparation de la base de donnée MariaDB
+  * Télécharger GLPI 11.04
+  * Préparation de GLPI
+  * Configurer Apache 2 pour GLPI
+  * Utiliser PHP8.4-FPM qui est la dernière version recommandé pour Apache2
+4. Installation de GLPI 
+5. Conclusion
+
+### 1. Présentation
+
+Afin de faire cette procédure d'installation de GLPI 11.04 qui est la dernière version en date, je vais l'installer sur une machine Debian 13
+
 III. Préparation du serveur pour installer GLPI
 
 * A. Installer le socle LAMP
