@@ -39,12 +39,20 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
 
 **1.3 Environnement existant**
 
-* Présence d'un active directory
-* Infrastructure virtualisée sous proxmox
+* Présence d'un Active Directory
+* Infrastructure virtualisée sous Proxmox
 * Serveur de messagerie existant
 * Outil de supervision existant :
   * Présence d’un outil de supervision (Zabbix, Centreon, Nagios) : à valider
   * Méthode de supervision attendue (SNMP, agent, HTTP(S)) : à valider
+* Solution de sauvegarde existante :
+  * Présence d’un outil de sauvegarde (Veeam, Proxmox Backup, Cobian Backup, etc.) : à valider
+  * Version de la solution de sauvegarde : à valider
+  * Périmètre couvert par la sauvegarde (VM, fichiers, bases de données) : à valider
+  * Politique de rétention existante : à valider
+* Stockage externe / Cloud pour la sauvegarde :
+  * Existe-t-il un stockage distant / cloud disponible pour externaliser les sauvegardes ? : à valider
+  * Fournisseur / modalités d’accès : à valider
 
 ### 2. Analyse des Risques
 
@@ -196,27 +204,38 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * Mises à jour de sécurité régulièrement
 
 **6.3 Sauvegardes et PRA**
-**Base de données :**
-  * Dump MySQL compressé quotidien (`mysqldump` + gzip)
-  * Rétention : conserver les 30 derniers dumps
-  * Stockage : stockage externe (NAS ou Cloud)
-  * Restauration testée périodiquement
 
-**Fichiers GLPI (/var/www/glpi) :**
-  * Sauvegarde quotidienne des fichiers et documents
-  * Compression : `tar -czf glpi_backup_YYYYMMDD.tar.gz /var/www/glpi`
-  * Stockage externe : NAS ou Cloud
-  * Rétention : conserver les 30 derniers fichiers compressés
-  * Restauration testée tous les mois dans un environnement de test afin de vérifier que tous fonctionne correctement.
-    * Les fichiers / la base sont intacts
-    * GLPI fonctionne correctement avec cette sauvegarde
-    * Aucun fichier ou donnée n’est corrompu
+**Stratégie de sauvegarde**
+* Mise en œuvre d’une stratégie de sauvegarde de type **3-2-1**
+* En l’absence de site secondaire, l’externalisation des sauvegardes est assurée via un stockage distant accessible par Internet (Cloud)
+* Objectif : garantir la disponibilité et l’intégrité des données GLPI en cas d’incident majeur
 
-**Sauvegarde de la VM :**
-* Clone / export complet de la VM sur Proxmox
-  * Rétention : conserver 2-3 clones récents sur le NAS
-  * Permet un PRA rapide en cas de panne critique
-* 
+**Périmètre de sauvegarde**
+* Sauvegarde complète de la machine virtuelle GLPI incluant :
+  * Système d’exploitation Debian 13
+  * Application GLPI
+  * **Base de données MariaDB** (dump quotidien et compressé)
+  * Fichiers applicatifs (/var/www/glpi)
+
+**Plan de sauvegarde**
+* Fréquence : quotidienne
+* Sauvegardes automatisées
+* Sauvegardes compressées pour réduire l’espace de stockage
+* Stockage sur plusieurs supports distincts conformément à la stratégie 3-2-1 :
+  * Stockage local sur l’infrastructure Proxmox
+  * Stockage externe sur NAS
+  * Stockage distant externalisé (Cloud)
+
+**Politique de rétention**
+* Rétention : **30 jours**
+* Conservation des sauvegardes sur les 30 derniers jours
+* Suppression automatique des sauvegardes expirées
+
+**PRA (Plan de Reprise d’Activité)**
+* Restauration complète de la VM GLPI possible depuis les sauvegardes
+* Restauration des données applicatives et de la base de données
+* Tests de restauration réalisés périodiquement sur un environnement de test
+* Objectif : remise en service rapide du service GLPI en cas de sinistre
 
 ### 7. Supervision et exploitation
 
