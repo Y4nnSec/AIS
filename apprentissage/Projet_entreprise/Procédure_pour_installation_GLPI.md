@@ -94,6 +94,38 @@ L’installation de Apache2, MariaDB, PHP et de toutes les extensions nécessair
 
 ### Préparation de la base do donnée
 
+Nous allons préparer MariaDB pour héberger la base de données de GLPI.
+La première étape consiste à exécuter la commande suivante afin de réaliser les réglages de sécurité de base de MariaDB.
+
+```bash
+sudo mariadb-secure-installation
+```
+
+Ensuite, nous allons créer une base de données dédiée pour GLPI, accessible via un utilisateur spécifique.
+Il est important de ne pas utiliser le compte root de MariaDB et d’appliquer le principe du moindre privilège : une base = un utilisateur.
+
+Connectez-vous à votre instance MariaDB avec la commande suivante :
+
+```bash
+sudo mysql -u root -p
+```
+
+Saisissez le mot de passe root de MariaDB défini précédemment.
+
+Ensuite, exécutez les requêtes SQL suivantes pour créer la base de données dbyann_glpi et l’utilisateur glpi_admin avec son mot de passe (à personnaliser).
+Cet utilisateur disposera de tous les droits sur cette base, et uniquement sur celle-ci.
+
+```bash
+CREATE DATABASE dbyann_glpi;
+GRANT ALL PRIVILEGES ON dbyann_glpi.* TO glpi_admin@localhost IDENTIFIED BY "*Militaire26100@";
+FLUSH PRIVILEGES;
+EXIT
+```
+
+
+
+
+
 
 
 
