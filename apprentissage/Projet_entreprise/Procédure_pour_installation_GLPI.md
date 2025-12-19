@@ -20,16 +20,71 @@
 
 ### 1. Présentation
 
-Afin de faire cette procédure d'installation de GLPI 11.04 qui est la dernière version en date, je vais l'installer sur une machine Debian 13
+Afin de faire cette procédure d'installation de GLPI 11.04 qui est la dernière version en date, je vais l'installer sur une machine Debian 13. GLPI est un logiciel libre de gestion de parc informatique. Il permet la gestion du support informatique grace à un système de tickets, ainsi que l'inventaire des équipements informatiques (postes de travail, téléphones, imprimantes, licences etc). Créé en 2003 et maintenu par l'éditeur français Teclib, GLPI est une solution open source gratuite pouvant ètre installée sur un serveur interne ou utilisée pour la gestion du support de clients.
 
-III. Préparation du serveur pour installer GLPI
+Une offre optionnelle, **GLPI Network**, est également proposé par l'éditeur. Elle peut ètre déployée sur site ou en mode cloud et permet de bénéficier de fonctionnalités supplémentaires et d'un support avancé.
 
-* A. Installer le socle LAMP
+### 2. Les prérequis d'installation
+
+Avant de passer à l’installation, il est nécessaire de vérifier les prérequis. GLPI fonctionne avec un serveur web, PHP et une base de données. Même s’il peut être installé sur Windows Server avec IIS, une installation sous Linux est recommandée. GLPI est compatible avec plusieurs serveurs web comme Apache2, Nginx ou IIS.
+
+Pour GLPI 11, la version minimale requise est PHP 8.2, ainsi qu’une base de données MySQL (8.0 minimum) ou MariaDB (10.6 minimum). Certaines extensions PHP sont également nécessaires au bon fonctionnement de l’application.
+
+Dans cette procédure, l’installation sera réalisée sur une machine Debian 13 avec Apache2, PHP 8.4 et MariaDB, versions disponibles dans les dépôts Debian.
+
+Pour plus d’informations, la documentation officielle de GLPI peut être consultée. https://github.com/glpi-project/glpi
+
+### 3. Préparation du serveur
+
+L’installation débute par la mise à jour des paquets du système sur la machine Debian 13. Il est également nécessaire de configurer l’adresse IP, le nom d’hôte et, si besoin, l’enregistrement DNS associé à l’application.
+
+Etape suivante en pratique: 
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+* A. Installer le socle LAMP (Linux, Apache, MariaDB, PHP)
 * B. Préparer une base de donnée pour GLPI
 * C. Télécharger GLPI
 * D. Préparer l'installation
 * E. Configurer Apache2 pour GLPI
-* F. Utiliser PHP8.4-FPM avec Apache 2
+* F. Utiliser PHP8.4-FPM avec Apache 2 (dernière version en date compatible Apache 2)
 * IV. Installation de GLPI
 * V. Conclusion
 

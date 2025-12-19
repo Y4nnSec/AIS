@@ -51,7 +51,7 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
   * Périmètre couvert par la sauvegarde (VM, fichiers, bases de données) : à valider
   * Politique de rétention existante : à valider
 * Stockage externe / Cloud pour la sauvegarde :
-  * Existe-t-il un stockage distant / cloud disponible pour externaliser les sauvegardes ? : à valider
+  * Existe-t-il un stockage distant / cloud disponible pour externaliser les sauvegardes: à valider
   * Fournisseur / modalités d’accès : à valider
 
 ### 2. Analyse des Risques
