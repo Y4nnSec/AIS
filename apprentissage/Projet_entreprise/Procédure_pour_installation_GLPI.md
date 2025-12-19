@@ -44,6 +44,123 @@ Etape suivante en pratique:
 sudo apt update && sudo apt upgrade -y
 ```
 
+### Installation du socle LAMP
+
+La première étape consiste à installer les composants du socle LAMP nécessaires au fonctionnement de GLPI : Linux, Apache2, MariaDB et PHP.
+
+Sous Debian 13, PHP 8.4 est disponible par défaut dans les dépôts officiels. Dans cette procédure, PHP sera utilisé via PHP-FPM, afin d’améliorer les performances par rapport au module PHP intégré à Apache.
+
+L’installation débute par la mise en place des paquets principaux :
+
+```bash
+sudo apt install apache2 php8.4-fpm mariadb-server
+```
+
+Ensuite, les extensions PHP nécessaires au bon fonctionnement de GLPI seront installées, celles-ci n’étant pas incluses dans le paquet php8.4-common.
+
+```bash
+sudo apt install php8.4-{curl,gd,intl,mysql,zip,bcmath,mbstring,xml,bz2}
+```
+
+   * **curl** : permet à GLPI de communiquer avec des services externes, comme le téléchargement de plugins depuis la marketplace ou la récupération de flux distants.
+
+   * **gd** : sert au traitement des images, notamment pour l’affichage ou la génération d’éléments graphiques dans l’interface.
+
+   * **intl** : gère les paramètres régionaux, tels que les formats de date, de nombre et les langues, afin d’assurer une bonne internationalisation de l’application.
+
+   * **mysql** : assure la connexion entre GLPI et la base de données MySQL ou MariaDB pour le stockage et l’accès aux données.
+
+   * **zlib** : utilisée pour la compression et la décompression des fichiers, notamment lors de l’utilisation de la marketplace et pour la génération de documents.
+
+   * **bcmath** : fournit des fonctions de calcul précis, nécessaires entre autres à la génération des QR codes.
+
+   * **mbstring** : permet la gestion correcte des caractères multioctets, indispensable pour le support de l’UTF-8 et la compatibilité avec plusieurs langues.
+
+   * **xml** (dom, simplexml, xmlreader, xmlwriter) : fournit les outils nécessaires à la lecture et au traitement des fichiers XML utilisés par certaines fonctionnalités de GLPI.
+
+   * **openssl** : permet l’utilisation de connexions sécurisées, comme le HTTPS ou l’authentification via des services externes.
+
+   * **bz2** : utilisée pour la gestion des fichiers compressés nécessaires au bon fonctionnement de la marketplace GLPI.
+
+Ces commandes permettent d’installer les extensions PHP requises pour PHP 8.4.
+
+L’extension LDAP est uniquement nécessaire si GLPI doit être connecté à un annuaire, comme Active Directory. Dans le cas contraire, son installation peut être réalisée ultérieurement si le besoin se présente.
+
+```bash
+sudo apt install php8.4-ldap
+```
+
+L’installation de Apache2, MariaDB, PHP et de toutes les extensions nécessaires est maintenant terminée.
+
+### Préparation de la base do donnée
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
