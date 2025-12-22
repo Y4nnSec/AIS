@@ -92,7 +92,7 @@ sudo apt install php8.4-ldap
 
 L’installation de Apache2, MariaDB, PHP et de toutes les extensions nécessaires est maintenant terminée.
 
-### Préparation de la base do donnée
+### Préparation de la base de donnée
 
 Nous allons préparer MariaDB pour héberger la base de données de GLPI.
 La première étape consiste à exécuter la commande suivante afin de réaliser les réglages de sécurité de base de MariaDB.
@@ -121,6 +121,174 @@ GRANT ALL PRIVILEGES ON dbyann_glpi.* TO glpi_admin@localhost IDENTIFIED BY "*Mi
 FLUSH PRIVILEGES;
 EXIT
 ```
+
+### Télécharger GLPI 11.04
+
+L’étape suivante consiste à télécharger l’archive .tgz contenant les fichiers d’installation de GLPI.
+Depuis le dépôt GitHub officiel de, récupérez le lien correspondant à la dernière version disponible.
+
+* https://github.com/glpi-project/glpi/releases/
+
+```bash
+cd /tmp
+wget https://github.com/glpi-project/glpi/releases/download/11.0.4/glpi-11.0.4.tgz
+```
+
+Si le wget n'est pas installé, faire un : 
+
+```bash
+sudo apt install wget
+```
+Ensuite, exécutez la commande suivante afin de décompresser l’archive .tgz dans le répertoire /var/www/.
+Les fichiers de GLPI seront alors accessibles via le chemin /var/www/glpi.
+
+```bash
+sudo tar -xzvf glpi-11.0.4.tgz -C /var/www/
+```
+
+### Préparation de GLPI
+
+Nous allons maintenant préparer l’installation de GLPI 11 en créant les répertoires nécessaires et en configurant les permissions.
+
+Dans un premier temps, l’utilisateur www-data (utilisé par Apache2 sous Debian/Ubuntu) sera défini comme propriétaire des fichiers GLPI.
+
+```bash
+sudo chown www-data /var/www/glpi/ -R
+```
+
+Ensuite, plusieurs répertoires doivent être créés afin de déplacer certaines données en dehors de la racine web /var/www/glpi. Cette organisation permet de renforcer la sécurité de l’installation, conformément aux recommandations de l’éditeur.
+
+Répertoire /etc/glpi
+Ce répertoire est destiné à accueillir les fichiers de configuration de GLPI. Des droits d’accès sont accordés à l’utilisateur www-data afin de permettre à l’application d’y accéder correctement.
+
+```bash
+sudo mkdir /etc/glpi
+sudo chown www-data /etc/glpi/
+```
+
+Ensuite, le répertoire sensible config de GLPI est déplacé vers /etc/glpi afin de le sortir de la racine web :
+
+```bash
+sudo mv /var/www/glpi/config /etc/glpi
+```
+
+* Le répertoire /var/lib/glpi
+
+Répétons la même opération avec la création du répertoire /var/lib/glpi :
+
+```bash
+sudo mkdir /var/lib/glpi
+sudo chown www-data /var/lib/glpi/
+```
+
+Dans lequel nous déplaçons également le dossier files qui contient la majorité des fichiers de GLPI : CSS, plugins, etc.
+
+```bash
+sudo mv /var/www/glpi/files /var/lib/glpi
+```
+
+* Répertoire /var/log/glpi
+
+Cette dernière étape consiste à créer le répertoire /var/log/glpi, destiné au stockage des journaux (logs) de GLPI.
+Comme précédemment, les droits nécessaires sont attribués à l’utilisateur www-data afin de permettre le bon fonctionnement de l’application.
+
+```bash
+sudo mkdir /var/log/glpi
+sudo chown www-data /var/log/glpi
+```
+
+Aucun déplacement de fichiers n’est nécessaire dans ce répertoire.
+
+* Création des fichiers de configuration
+
+Il faut maintenant configurer GLPI pour lui indiquer l’emplacement des nouveaux répertoires créés.
+Le premier fichier de configuration sera créé à cette étape.
+
+```bash
+sudo nano /var/www/glpi/inc/downstream.php
+```
+
+Nous allons maintenant renseigner le fichier de configuration afin d’indiquer à GLPI l’emplacement du répertoire /etc/glpi.
+Insérez le contenu suivant dans le fichier :
+
+```bash
+<?php
+define('GLPI_CONFIG_DIR', '/etc/glpi/');
+if (file_exists(GLPI_CONFIG_DIR . '/local_define.php')) {
+    require_once GLPI_CONFIG_DIR . '/local_define.php';
+}
+```
+
+Une fois ce fichier configuré, créez un second fichier de configuration avec la commande suivante :
+
+```bash
+sudo nano /etc/glpi/local_define.php
+```
+
+```bash
+<?php
+define('GLPI_VAR_DIR', '/var/lib/glpi/files');
+define('GLPI_LOG_DIR', '/var/log/glpi');
+```
+
+GLPI permet de définir d’autres variables pour personnaliser l’emplacement de différents répertoires. À titre d’exemple, la variable **GLPI_CACHE_DIR** peut être utilisée pour spécifier un répertoire dédié au cache.
+
+Cette étape de configuration est maintenant terminée.
+
+### Configurer Apache 2 pour GLPI
+
+La configuration du serveur web Apache2 passe par la création d’un VirtualHost spécifique à GLPI.
+
+Pour cet environnement de test, le fichier de configuration utilisé est glpi.test.archeagglo.fr.conf, correspondant au nom de domaine glpi.test.archeagglo.fr, choisi pour accéder à l’application.
+
+L’utilisation d’un nom de domaine dédié, même en interne, permet de structurer les environnements et facilite par la suite la mise en place d’une connexion sécurisée via HTTPS.
+
+```bash
+sudo nano /etc/apache2/sites-available/support.it-connectlab.fr.conf
+```
+
+```bash
+<VirtualHost *:80>
+    ServerName glpi.test.archeagglo.fr
+
+    DocumentRoot /var/www/glpi/public
+
+    # If you want to place GLPI in a subfolder of your site (e.g. your virtual host is serving multiple applications),
+    # you can use an Alias directive. If you do this, the DocumentRoot directive MUST NOT target the GLPI directory itself.
+    # Alias "/glpi" "/var/www/glpi/public"
+
+    <Directory /var/www/glpi/public
+        Require all granted
+
+        RewriteEngine On
+
+        # Ensure authorization headers are passed to PHP.
+        # Some Apache configurations may filter them and break usage of API, CalDAV, ...
+        RewriteCond %{HTTP:Authorization} ^(.+)$
+        RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+        # Redirect all requests to GLPI router, unless file exists.
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteRule ^(.*)$ index.php [QSA,L]
+
+    </Directory>
+</VirtualHost>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
