@@ -301,6 +301,72 @@ Il ne reste plus qu'à redémarrer le service Apache2
 sudo systemctl restart apache2
 ```
 
+### Utiliser PHP8.4-FPM qui est la dernière version recommandé pour Apache2
+
+Pour permettre l’exécution des scripts PHP avec Apache2, deux modes sont possibles : l’utilisation du module PHP intégré à Apache ou le recours à PHP-FPM.
+
+Dans cette procédure, PHP-FPM a été retenu car il offre de meilleures performances et fonctionne comme un service séparé d’Apache, contrairement au module PHP intégré où chaque processus Apache charge son propre moteur PHP.
+
+Le paquet php8.4-fpm ayant déjà été installé précédemment, il reste à finaliser son intégration avec Apache2.
+Cette étape consiste à activer les modules nécessaires ainsi que la configuration associée à PHP-FPM, puis à recharger le service Apache2 afin d’appliquer les changements.
+
+```bash
+sudo a2enmod proxy_fcgi setenvif
+sudo a2enconf php8.4-fpm
+sudo systemctl reload apache2
+```
+
+```bash
+sudo nano /etc/php/8.4/fpm/php.ini
+```
+
+Dans ce fichier, repérez le paramètre **session.cookie_httponly** (via CTRL + W avec nano) et définissez sa valeur sur **ON**, afin de renforcer la sécurité des cookies utilisés par GLPI
+
+```bash
+; Whether or not to add the httpOnly flag to the cookie, which makes it
+; inaccessible to browser scripting languages such as JavaScript.
+; https://php.net/session.cookie-httponly
+session.cookie_httponly = on
+```
+
+Afin d’améliorer la sécurité, configurez également la directive session.cookie_samesite avec la valeur Lax, conformément aux recommandations de la documentation GLPI.
+Cette option permet de contrôler l’envoi du cookie de session par le navigateur et contribue à limiter certaines attaques de type CSRF (Cross-Site Request Forgery)
+
+```bash
+; Add SameSite attribute to cookie to help mitigate Cross-Site Request Forgery (CSRF/XSRF)
+; Current valid values are "Strict", "Lax" or "None". When using "None",
+; make sure to include the quotes, as `none` is interpreted like `false` in ini files.
+; https://tools.ietf.org/html/draft-west-first-party-cookies-07
+session.cookie_samesite = Lax
+```
+
+Une fois les modifications effectuées, enregistrez le fichier.
+D’autres ajustements pourront être réalisés par la suite, notamment pour augmenter la taille maximale des fichiers envoyés dans GLPI (upload_max_filesize, fixée à 2 Mo par défaut) ou pour activer la directive session.cookie_secure lorsque l’application sera accessible en HTTPS.
+
+Afin de prendre en compte ces changements, il est nécessaire de redémarrer le service PHP-FPM
+
+```bash
+sudo systemctl restart php8.4-fpm.service
+```
+
+Pour terminer, il est nécessaire d’adapter le VirtualHost Apache afin d’indiquer que le traitement des fichiers PHP doit être assuré par PHP-FPM.
+
+Cette configuration permet à Apache2 de transmettre l’exécution des fichiers .php au socket PHP-FPM dédié.
+
+Éditez le fichier glpi.test.archeagglo.fr.conf et ajoutez la configuration suivante
+
+```bash
+<FilesMatch \.php$>
+    SetHandler "proxy:unix:/run/php/php8.4-fpm.sock|fcgi://localhost/"
+</FilesMatch>
+```
+
+
+
+
+
+
+
 
 
 
