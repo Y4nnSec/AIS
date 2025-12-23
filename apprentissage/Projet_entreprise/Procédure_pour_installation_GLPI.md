@@ -361,6 +361,30 @@ Cette configuration permet à Apache2 de transmettre l’exécution des fichiers
 </FilesMatch>
 ```
 
+Voici un exemple: 
+
+
+
+Quand c'est fait, relancer Apache2
+
+```bash
+sudo systemctl restart apache2
+```
+
+La configuration est maintenant terminée. Il ne reste plus qu’à lancer l’installation de GLPI via l’interface web
+
+### 4. Installation de GLPI
+
+La configuration est maintenant terminée. Il ne reste plus qu’à lancer l’installation de GLPI via l’interface web.
+
+
+
+
+
+
+
+
+
 
 
 
