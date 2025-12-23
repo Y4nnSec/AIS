@@ -244,7 +244,7 @@ Pour cet environnement de test, le fichier de configuration utilisé est glpi.te
 L’utilisation d’un nom de domaine dédié, même en interne, permet de structurer les environnements et facilite par la suite la mise en place d’une connexion sécurisée via HTTPS.
 
 ```bash
-sudo nano /etc/apache2/sites-available/support.it-connectlab.fr.conf
+sudo nano /etc/apache2/sites-available/glpi.test.archeagglo.conf
 ```
 
 ```bash
@@ -274,6 +274,41 @@ sudo nano /etc/apache2/sites-available/support.it-connectlab.fr.conf
     </Directory>
 </VirtualHost>
 ```
+
+Une fois la configuration terminée, enregistrez le fichier.
+
+Il est ensuite nécessaire d’activer ce nouveau VirtualHost au sein d’Apache2 à l’aide de la commande suivante :
+
+```bash
+sudo a2ensite glpi.test.archeagglo.fr.conf
+```
+
+Par la même occasion, le site configuré par défaut dans Apache2 est désactivé, celui-ci n’étant pas nécessaire.
+
+```bash
+sudo a2dissite 000-default.conf
+```
+
+Le module rewrite d’Apache doit également être activé. Il est indispensable au fonctionnement des règles de réécriture définies dans le fichier de configuration du VirtualHost, notamment via les directives RewriteCond et RewriteRule.
+
+```bash
+sudo a2enmod rewrite
+```
+
+Il ne reste plus qu'à redémarrer le service Apache2
+
+```bash
+sudo systemctl restart apache2
+```
+
+
+
+
+
+
+
+
+
 
 
 
