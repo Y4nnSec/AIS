@@ -377,6 +377,47 @@ La configuration est maintenant terminée. Il ne reste plus qu’à lancer l’i
 
 La configuration est maintenant terminée. Il ne reste plus qu’à lancer l’installation de GLPI via l’interface web.
 
+* Vérification des prérequis
+GLPI analyse la configuration du serveur pour vérifier que tous les prérequis sont remplis.
+
+Si toutes les vérifications sont vertes dans la colonne des résultats, vous pouvez continuer.
+
+* Configuration de la base de données
+
+  * Serveur SQL : localhost (MariaDB est installé sur le même       serveur).
+  
+  * Utilisateur : glpi_admin et le mot de passe correspondant.
+  
+  * Base de données : sélectionnez dbyann_glpi (créée précédemment).
+  Cliquez ensuite sur Continuer et patientez pendant l’initialisation.
+
+* Résultat attendu
+Si tout s’est bien passé, l’initialisation se termine correctement et vous obtenez l’écran indiquant que la base est prête.
+
+* Création du compte administrateur
+  * Le compte administrateur par défaut est glpi / glpi.
+  * Connectez-vous avec ces identifiants pour accéder à votre interface GLPI.
+
+* Désactivation des données de démonstration
+Dans l’interface, cliquez sur Désactiver les données de démonstration pour obtenir un environnement vierge
+
+
+
+* Actions de sécurité finales
+  * Changez le mot de passe de tous les comptes par défaut (liens dans l’encadré orange).
+  * Supprimez le fichier install.php pour éviter tout risque de réinstallation
+
+```bash
+sudo rm /var/www/glpi/install/install.php
+```
+
+L’installation est désormais terminée. GLPI est prêt à être utilisé et configuré selon les besoins (création des utilisateurs, gestion des catégories, mise en place des tickets, etc.).
+
+### 5. Conclusion
+
+Ce tutoriel a permis de détailler, étape par étape, l’installation de GLPI sur un serveur Debian 13.
+À quelques ajustements près, cette procédure peut également être adaptée à d’autres distributions Linux ou versions du système.
+
 
 
 
