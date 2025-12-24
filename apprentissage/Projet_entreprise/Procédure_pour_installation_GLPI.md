@@ -420,12 +420,7 @@ Ce tutoriel a permis de détailler, étape par étape, l’installation de GLPI 
 
 
 
-
-
-
-
-
-# Procédure d’installation et de préparation de GLPI 11*
+# Procédure d’installation et de préparation de GLPI 11
 
 ![alt text](<../Images/Tableau de bord glpi.png>)
 
@@ -444,49 +439,9 @@ Ce tutoriel a permis de détailler, étape par étape, l’installation de GLPI 
     - [Utiliser PHP8.4-FPM qui est la dernière version recommandé pour Apache2](#utiliser-php84-fpm-qui-est-la-dernière-version-recommandé-pour-apache2)
     - [4. Installation de GLPI](#4-installation-de-glpi)
     - [5. Conclusion](#5-conclusion)
-- [Procédure d’installation et de préparation de GLPI 11\*](#procédure-dinstallation-et-de-préparation-de-glpi-11)
+- [Procédure d’installation et de préparation de GLPI 11](#procédure-dinstallation-et-de-préparation-de-glpi-11)
   - [Sommaire](#sommaire-1)
   - [1. Présentation](#1-présentation-1)
-    - [1.1 Objectifs de la procédure](#11-objectifs-de-la-procédure)
-  - [2. Prérequis et dimensionnement](#2-prérequis-et-dimensionnement)
-    - [2.1 Environnement d’hébergement](#21-environnement-dhébergement)
-    - [2.2 Dimensionnement de la VM](#22-dimensionnement-de-la-vm)
-    - [2.3 Partitionnement recommandé (LVM)](#23-partitionnement-recommandé-lvm)
-  - [3. Préparation réseau et sécurité](#3-préparation-réseau-et-sécurité)
-    - [3.1 Configuration réseau](#31-configuration-réseau)
-    - [3.2 Matrice de flux (conforme DAT)](#32-matrice-de-flux-conforme-dat)
-  - [4. Préparation du système Debian](#4-préparation-du-système-debian)
-  - [5. Installation de la stack applicative](#5-installation-de-la-stack-applicative)
-    - [5.1 Installation Apache, PHP-FPM et MariaDB](#51-installation-apache-php-fpm-et-mariadb)
-    - [5.2 Extensions PHP requises](#52-extensions-php-requises)
-  - [6. Préparation de MariaDB](#6-préparation-de-mariadb)
-    - [6.1 Sécurisation](#61-sécurisation)
-    - [6.2 Création de la base GLPI](#62-création-de-la-base-glpi)
-  - [7. Installation et préparation de GLPI](#7-installation-et-préparation-de-glpi)
-    - [7.1 Téléchargement](#71-téléchargement)
-    - [7.2 Sécurisation des répertoires (recommandations éditeur)](#72-sécurisation-des-répertoires-recommandations-éditeur)
-  - [8. Configuration Apache et PHP-FPM](#8-configuration-apache-et-php-fpm)
-    - [8.1 VirtualHost pour GLPI](#81-virtualhost-pour-glpi)
-    - [8.2 Sécurisation PHP](#82-sécurisation-php)
-  - [9. Installation via l’interface Web](#9-installation-via-linterface-web)
-  - [10. Sécurité post-installation](#10-sécurité-post-installation)
-  - [11. Sauvegarde et PRA](#11-sauvegarde-et-pra)
-    - [11.1 Stratégie de sauvegarde](#111-stratégie-de-sauvegarde)
-    - [11.2 Périmètre sauvegardé](#112-périmètre-sauvegardé)
-  - [12. Supervision et exploitation](#12-supervision-et-exploitation)
-  - [13. Mise en production – Configuration avancée](#13-mise-en-production--configuration-avancée)
-    - [13.1 Activation HTTPS (Let’s Encrypt)](#131-activation-https-lets-encrypt)
-    - [13.2 Intégration Active Directory (LDAPS)](#132-intégration-active-directory-ldaps)
-    - [13.3 Configuration SMTP](#133-configuration-smtp)
-  - [14. Tests et validation](#14-tests-et-validation)
-    - [14.1 Tests techniques](#141-tests-techniques)
-    - [14.2 Tests fonctionnels](#142-tests-fonctionnels)
-    - [14.3 Validation avant mise en production](#143-validation-avant-mise-en-production)
-  - [15. Table de correspondance DAT ↔ Procédure](#15-table-de-correspondance-dat--procédure)
-  - [16. Conclusion](#16-conclusion)
-- [Procédure d’installation et de préparation de GLPI 11](#procédure-dinstallation-et-de-préparation-de-glpi-11-1)
-  - [Sommaire](#sommaire-2)
-  - [1. Présentation](#1-présentation-2)
     - [1.1 Objectifs](#11-objectifs)
   - [2. Prérequis](#2-prérequis)
     - [2.1 Matériel](#21-matériel)
@@ -508,399 +463,12 @@ Ce tutoriel a permis de détailler, étape par étape, l’installation de GLPI 
     - [7.1 VirtualHost complet](#71-virtualhost-complet)
     - [7.2 Activation et redémarrage](#72-activation-et-redémarrage)
   - [8. Configuration PHP-FPM](#8-configuration-php-fpm)
-  - [9. Installation via l’interface web](#9-installation-via-linterface-web-1)
+  - [9. Installation via l’interface web](#9-installation-via-linterface-web)
   - [10. Sécurisation post-installation](#10-sécurisation-post-installation)
   - [11. Sauvegardes et PRA](#11-sauvegardes-et-pra)
   - [12. Tests et validation](#12-tests-et-validation)
   - [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure)
   - [14. Conclusion](#14-conclusion)
-
-## 1. Présentation
-
-### 1.1 Objectifs de la procédure
-
-Cette procédure décrit l’installation et la préparation d’une solution **GLPI 11** sur une **machine virtuelle Debian 13**, en cohérence avec le **Document d’Architecture Technique (DAT)**.
-
-Les objectifs sont :
-
-* Déployer un **environnement de test fonctionnel**
-* Anticiper une **mise en production future**
-* Intégrer dès l’installation les exigences de :
-
-  * sécurité
-  * exploitation
-  * sauvegarde
-  * supervision
-  * intégration Active Directory
-
-GLPI est une solution open source de gestion de parc informatique et de helpdesk, maintenue par l’éditeur français **Teclib**.
-
-## 2. Prérequis et dimensionnement
-
-### 2.1 Environnement d’hébergement
-
-L’application est installée sur une **machine virtuelle hébergée sur Proxmox**, conformément au DAT.
-
-### 2.2 Dimensionnement de la VM
-
-| Ressource | Valeur      |
-| --------- | ----------- |
-| vCPU      | 2           |
-| RAM       | 4 Go        |
-| Stockage  | 50 Go (SSD) |
-| OS        | Debian 13   |
-
-### 2.3 Partitionnement recommandé (LVM)
-
-* `/` : 15 Go – système et applications
-* `/var` : 10 Go – données applicatives
-* `/var/log` : 5 Go – journaux
-* `/var/lib/mysql` : 15 Go – base MariaDB
-* `/home` : 5 Go – comptes administrateurs
-
-## 3. Préparation réseau et sécurité
-
-### 3.1 Configuration réseau
-
-* Adresse IPv4 fixe
-* Enregistrement DNS de type A
-* Nom de domaine dédié à GLPI
-
-### 3.2 Matrice de flux (conforme DAT)
-
-| Sens | Port | Usage                           |
-| ---- | ---- | ------------------------------- |
-| IN   | 443  | Accès utilisateurs (HTTPS)      |
-| IN   | 22   | Administration SSH (restreinte) |
-| OUT  | 443  | Mises à jour / plugins          |
-| OUT  | 636  | LDAPS Active Directory          |
-| OUT  | 587  | SMTP                            |
-| OUT  | 161  | SNMP supervision                |
-
-## 4. Préparation du système Debian
-
-```bash
-sudo apt update && sudo apt upgrade -y
-```
-
-![alt text](../Images/Mise_à_jour_debian13.png)
-
-Durcissement de base :
-
-* Désactivation SSH root
-* Authentification par clé
-* Pare-feu UFW
-
-## 5. Installation de la stack applicative
-
-### 5.1 Installation Apache, PHP-FPM et MariaDB
-
-```bash
-sudo apt install apache2 php8.4-fpm mariadb-server
-```
-
-### 5.2 Extensions PHP requises
-
-```bash
-sudo apt install php8.4-{curl,gd,intl,mysql,zip,bcmath,mbstring,xml,bz2,ldap}
-```
-
-## 6. Préparation de MariaDB
-
-### 6.1 Sécurisation
-
-```bash
-sudo mariadb-secure-installation
-```
-
-![alt text](../Images/Securisation_MariaDB.png)
-
-### 6.2 Création de la base GLPI
-
-```sql
-CREATE DATABASE glpi_db;
-GRANT ALL PRIVILEGES ON glpi_db.* TO glpi_user@localhost IDENTIFIED BY 'MotDePasseFort';
-FLUSH PRIVILEGES;
-```
-
-![alt text](../Images/Création_de_la_base_de_donnée.png)
-
-## 7. Installation et préparation de GLPI
-
-### 7.1 Téléchargement
-
-```bash
-cd /tmp
-wget https://github.com/glpi-project/glpi/releases/download/11.0.4/glpi-11.0.4.tgz
-sudo tar -xzvf glpi-11.0.4.tgz -C /var/www/
-```
-
-### 7.2 Sécurisation des répertoires (recommandations éditeur)
-
-* `/etc/glpi`
-* `/var/lib/glpi`
-* `/var/log/glpi`
-
-Les fichiers sensibles sont déplacés hors de la racine web afin de réduire la surface d’attaque.
-
-## 8. Configuration Apache et PHP-FPM
-
-* VirtualHost dédié
-* `DocumentRoot` : `/var/www/glpi/public`
-* Activation des modules `rewrite`, `proxy_fcgi`
-
-### 8.1 VirtualHost pour GLPI
-
-Création du fichier de configuration Apache pour GLPI
-
-```bash
-<VirtualHost *:80>
-ServerName glpi_test.archeagglo.fr
-
-
-DocumentRoot /var/www/glpi/public
-
-
-# If you want to place GLPI in a subfolder of your site (e.g. your virtual host is serving multiple applications),
-# you can use an Alias directive. If you do this, the DocumentRoot directive MUST NOT target the GLPI directory itself.
-# Alias "/glpi" "/var/www/glpi/public"
-
-
-<Directory /var/www/glpi/public>
-Require all granted
-
-
-RewriteEngine On
-
-
-# Ensure authorization headers are passed to PHP.
-# Some Apache configurations may filter them and break usage of API, CalDAV, ...
-RewriteCond %{HTTP:Authorization} ^(.+)$
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-
-# Redirect all requests to GLPI router, unless file exists.
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ index.php [QSA,L]
-
-
-</Directory>
-</VirtualHost>
-```
-
-### 8.2 Sécurisation PHP
-
-* `session.cookie_httponly = on`
-* `session.cookie_samesite = Lax`
-
-## 9. Installation via l’interface Web
-
-* Vérification des prérequis
-* Connexion à la base MariaDB
-* Initialisation de GLPI
-* Suppression du dossier `/install`
-* Changement des mots de passe par défaut
-
-## 10. Sécurité post-installation
-
-* Préparation HTTPS (Let’s Encrypt en production)
-* Restriction des accès SSH
-* Mise en place de Fail2ban (SSH / Apache)
-* Politique de mises à jour régulières
-
-## 11. Sauvegarde et PRA
-
-### 11.1 Stratégie de sauvegarde
-
-* Méthode **3-2-1**
-* Sauvegarde quotidienne
-* Rétention : **30 jours**
-
-### 11.2 Périmètre sauvegardé
-
-* Machine virtuelle complète
-* Base de données MariaDB (dump)
-* Répertoires :
-
-  * `/etc/glpi`
-  * `/var/lib/glpi`
-
-## 12. Supervision et exploitation
-
-* Supervision de la disponibilité HTTP(S)
-* Surveillance CPU, RAM, disque
-* Alertes de saturation
-* Outils compatibles : Zabbix, Centreon
-
-## 13. Mise en production – Configuration avancée
-
-### 13.1 Activation HTTPS (Let’s Encrypt)
-
-En environnement de production, l’accès à GLPI doit être sécurisé via **HTTPS**, conformément aux exigences de sécurité.
-
-Prérequis :
-
-* Nom de domaine public ou interne résolu
-* Port 80 et 443 ouverts
-
-Installation de Certbot :
-
-```bash
-sudo apt install certbot python3-certbot-apache
-```
-
-Génération du certificat :
-
-```bash
-sudo certbot --apache -d glpi.exemple.fr
-```
-
-Activation du renouvellement automatique :
-
-```bash
-sudo systemctl enable certbot.timer
-```
-
-### 13.2 Intégration Active Directory (LDAPS)
-
-L’authentification centralisée permet la gestion des utilisateurs via l’Active Directory.
-
-Prérequis :
-
-* Port 636 ouvert
-* Certificat CA de l’AD importé sur le serveur GLPI
-
-Chemin du certificat :
-
-```bash
-/usr/local/share/ca-certificates/ad-ca.crt
-sudo update-ca-certificates
-```
-
-Configuration dans GLPI :
-
-* Méthode : LDAP
-* Serveur : contrôleur de domaine
-* Port : 636
-* Chiffrement : LDAPS
-* DN racine : adapté à l’AD
-
-### 13.3 Configuration SMTP
-
-La messagerie permet l’envoi automatique des notifications.
-
-Paramètres généraux :
-
-* Serveur SMTP : serveur de messagerie interne
-* Port : 587
-* Sécurité : STARTTLS
-* Authentification activée
-
-Tests à réaliser depuis l’interface GLPI.
-
-## 14. Tests et validation
-
-### 14.1 Tests techniques
-
-| Test                  | Résultat attendu           |
-| --------------------- | -------------------------- |
-| Accès HTTPS           | Certificat valide          |
-| Connexion LDAP        | Utilisateur AD authentifié |
-| Envoi SMTP            | Mail reçu                  |
-| Accès base de données | OK                         |
-| Sauvegarde            | Dump exploitable           |
-
-### 14.2 Tests fonctionnels
-
-* Création d’un ticket
-* Attribution à un technicien
-* Changement de statut
-* Notification par mail
-* Ajout d’un équipement à l’inventaire
-
-### 14.3 Validation avant mise en production
-
-* Tous les tests validés
-* Sauvegarde fonctionnelle
-* Supervision active
-* Accès sécurisés
-
-## 15. Table de correspondance DAT ↔ Procédure
-
-| Exigence DAT        | Section de la procédure |
-| ------------------- | ----------------------- |
-| Gestion de parc     | Sections 7, 14          |
-| Helpdesk            | Sections 9, 14          |
-| Authentification AD | Section 13.2            |
-| Sécurité HTTPS      | Section 13.1            |
-| Sauvegardes         | Section 11              |
-| PRA                 | Section 11              |
-| Supervision         | Section 12              |
-| Sécurité système    | Sections 4, 10          |
-
-## 16. Conclusion
-
-Cette procédure couvre l’ensemble du cycle de vie du déploiement GLPI :
-
-* installation
-* sécurisation
-* intégration au SI
-* exploitation
-* validation
-
-Elle est **conforme au Document d’Architecture Technique** et prête pour une **mise en production en environnement professionnel**.
-
-**Auteur :** ESCRIVA Yann
-
-**Projet :** Décembre 2025
-
-
-
-
-
-
-
-# Procédure d’installation et de préparation de GLPI 11
-
-![alt text](<../Images/Tableau de bord glpi.png>)
-
-## Sommaire
-
-* [1. Présentation](#1-présentation)
-
-  * [1.1 Objectifs](#11-objectifs)
-* [2. Prérequis](#2-prérequis)
-
-  * [2.1 Matériel](#21-matériel)
-  * [2.2 Logiciel](#22-logiciel)
-  * [2.3 Réseau et flux](#23-réseau-et-flux)
-* [3. Préparation du serveur Debian 13](#3-préparation-du-serveur-debian-13)
-
-  * [3.1 Mise à jour](#31-mise-à-jour)
-  * [3.2 Durcissement de base](#32-durcissement-de-base)
-* [4. Installation de la stack LAMP](#4-installation-de-la-stack-lamp)
-
-  * [4.1 Installation Apache, PHP-FPM et MariaDB](#41-installation-apache-php-fpm-et-mariadb)
-  * [4.2 Installation des extensions PHP](#42-installation-des-extensions-php)
-* [5. Préparation de MariaDB](#5-préparation-de-mariadb)
-
-  * [5.1 Sécurisation](#51-sécurisation)
-  * [5.2 Création de la base GLPI](#52-création-de-la-base-glpi)
-* [6. Téléchargement et préparation de GLPI](#6-téléchargement-et-préparation-de-glpi)
-
-  * [6.1 Téléchargement](#61-téléchargement)
-  * [6.2 Préparation des répertoires et permissions](#62-préparation-des-répertoires-et-permissions)
-* [7. Configuration Apache pour GLPI](#7-configuration-apache-pour-glpi)
-
-  * [7.1 VirtualHost complet](#71-virtualhost-complet)
-  * [7.2 Activation et redémarrage](#72-activation-et-redémarrage)
-* [8. Configuration PHP-FPM](#8-configuration-php-fpm)
-* [9. Installation via l’interface web](#9-installation-via-linterface-web)
-* [10. Sécurisation post-installation](#10-sécurisation-post-installation)
-* [11. Sauvegardes et PRA](#11-sauvegardes-et-pra)
-* [12. Tests et validation](#12-tests-et-validation)
-* [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure)
-* [14. Conclusion](#14-conclusion)
 
 
 
@@ -1078,11 +646,35 @@ session.cookie_httponly = on
 session.cookie_samesite = Lax
 ```
 
+![alt text](../Images/Config_php.ini.png)
+
 Redémarrage PHP-FPM :
 
 ```bash
 sudo systemctl restart php8.4-fpm
 ```
+
+Pour terminer, il est nécessaire d’adapter le VirtualHost Apache afin d’indiquer que le traitement des fichiers PHP doit être assuré par PHP-FPM.
+
+Cette configuration permet à Apache2 de transmettre l’exécution des fichiers .php au socket PHP-FPM dédié.
+
+Éditez le fichier glpi_test.archeagglo.fr.conf et ajoutez la configuration suivante
+
+```bash
+<FilesMatch \.php$>
+    SetHandler "proxy:unix:/run/php/php8.4-fpm.sock|fcgi://localhost/"
+</FilesMatch>
+```
+
+![alt text](../Images/Config_php-fpm_pour_apache2.png)
+
+Quand c'est fait, relancer Apache2
+
+```bash
+sudo systemctl restart apache2
+```
+
+La configuration est maintenant terminée. Il ne reste plus qu’à lancer l’installation de GLPI via l’interface web.
 
 ## 9. Installation via l’interface web
 
@@ -1090,6 +682,24 @@ sudo systemctl restart php8.4-fpm
 * Configurer BDD `dbyann_glpi` / utilisateur `glpi_admin`
 * Créer compte administrateur
 * Supprimer `/install`
+
+```bash
+sudo rm /var/www/glpi/install/install.php
+```
+
+![alt text](../Images/Conf_glpi_test.png)
+![alt text](../Images/conf_glpi_test2.png)
+![alt text](../Images/conf_glpi_test3.png)
+![alt text](../Images/conf_glpi_test4.png)
+![alt text](../Images/conf_glpi_test5.png)
+![alt text](../Images/conf_glpi_test6.p,g.png)
+![alt text](../Images/conf_glpi_test7.png)
+![alt text](../Images/conf_glpi_test8.png)
+![alt text](../Images/conf_glpi_test9.png)
+![alt text](../Images/conf_glpi_test10.png)
+![alt text](../Images/conf_glpi_test11.png)
+![alt text](../Images/conf_glpi_test12.png)
+![alt text](../Images/conf_glpi_test13.png)
 
 ## 10. Sécurisation post-installation
 
@@ -1132,3 +742,6 @@ sudo systemctl restart php8.4-fpm
 
 Procédure complète, conforme aux besoins du DAT, sécurisée et prête pour mise en production.
 
+**Auteur :** ESCRIVA Yann
+
+**Projet :** Décembre 2025
