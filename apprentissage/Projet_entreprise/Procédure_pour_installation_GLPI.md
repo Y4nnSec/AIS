@@ -269,6 +269,7 @@ sudo rm /var/www/glpi/install/install.php
 ![alt text](../Images/conf_glpi_test11.png)
 ![alt text](../Images/conf_glpi_test12.png)
 ![alt text](../Images/conf_glpi_test13.png)
+![alt text](../Images/Tableau_de_bord_GLPI_2.png)
 
 ## 10. Sécurisation post-installation
 
