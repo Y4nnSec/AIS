@@ -45,7 +45,7 @@
 
 ### 1.1 Objectifs
 
-Installer GLPI 11.04 sur Debian 13 en environnement de test, en respectant les besoins du DAT : gestion de parc, helpdesk, intégration LDAP, sécurité, supervision et stratégie de sauvegarde.
+Installer GLPI 11.04 sur Debian 13 sur un environnement de test, en respectant les besoins du DAT : gestion de parc, helpdesk, intégration LDAP, sécurité, supervision et stratégie de sauvegarde.
 
 ## 2. Prérequis
 
@@ -59,7 +59,7 @@ Installer GLPI 11.04 sur Debian 13 en environnement de test, en respectant les b
 
 * Debian 13
 * Apache2
-* MariaDB 10.11+
+* MariaDB 10.11 et plus
 * PHP 8.4
 * Extensions : php-mysqli, php-curl, php-gd, php-intl, php-ldap, php-zip, php-mbstring, php-xml
 
@@ -198,7 +198,7 @@ sudo nano /etc/apache2/sites-available/glpi_test.archeagglo.fr.conf
 ### 7.2 Activation et redémarrage
 
 ```bash
-sudo a2ensite glpi.test.archeagglo.fr.conf
+sudo a2ensite glpi_test.archeagglo.fr.conf
 sudo a2dissite 000-default.conf
 sudo a2enmod rewrite proxy_fcgi setenvif
 sudo systemctl restart apache2
@@ -283,7 +283,7 @@ sudo rm /var/www/glpi/install/install.php
 * Backup répertoires `/etc/glpi` et `/var/lib/glpi`
 * Snapshots VM Proxmox
 * Rétention 30 jours
-* Stratégie 3-2-1
+* Stratégie 3-2-1 (3 Sauvegardes, 2 supports différents dont 1 hors site)
 
 ## 12. Tests et validation
 
