@@ -309,7 +309,13 @@ Pour un usage en production, il est recommandé d’utiliser un certificat sign�
 ![alt text](../Images/Test_réception_SMTP.png)
 
 * Création et gestion tickets
+
+![alt text](../Images/Test_ticket.png)
+![alt text](../Images/Test_ticket2.png)
+
 * Ajout équipements
+
+
 * Sauvegardes restaurables
 
 ## 13. Table de correspondance DAT ↔ Procédure
