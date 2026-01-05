@@ -274,6 +274,13 @@ sudo rm /var/www/glpi/install/install.php
 ## 10. Sécurisation post-installation
 
 * HTTPS (Let's Encrypt en production)
+Pour ce test, un certificat SSL auto-signé a été utilisé afin de sécuriser l’accès en HTTPS à GLPI.
+Ce type de certificat n’est pas reconnu par défaut par les navigateurs. Il est donc adapté pour un environnement de test.
+
+Pour un usage en production, il est recommandé d’utiliser un certificat signé par une autorité de certification reconnue afin d’éviter les alertes de sécurité dans les navigateurs
+
+![alt text](../Images/Redirection_HTTPS.png)
+
 * SSH restreint / clé
 * Fail2ban
 * Mises à jour régulières
@@ -289,8 +296,18 @@ sudo rm /var/www/glpi/install/install.php
 ## 12. Tests et validation
 
 * Vérifier accès HTTPS
+
+![alt text](../Images/Connexion_en_HTTPS.png)
+
 * Authentification LDAP
+
+![alt text](../Images/Test_LDAP.png)
+
 * Envoi notifications SMTP
+
+![alt text](../Images/Test_SMTP.png)
+![alt text](../Images/Test_réception_SMTP.png)
+
 * Création et gestion tickets
 * Ajout équipements
 * Sauvegardes restaurables
