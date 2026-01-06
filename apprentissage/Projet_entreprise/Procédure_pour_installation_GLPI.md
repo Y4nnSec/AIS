@@ -37,6 +37,7 @@
   - [11. Sauvegardes et PRA](#11-sauvegardes-et-pra)
   - [12. Tests et validation](#12-tests-et-validation)
   - [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure)
+  - [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure-1)
   - [14. Conclusion](#14-conclusion)
 
 
@@ -315,21 +316,25 @@ Pour un usage en production, il est recommandé d’utiliser un certificat sign�
 
 * Ajout équipements
 
-
 * Sauvegardes restaurables
+
+* SSO : non implémenté (évolution prévue)
 
 ## 13. Table de correspondance DAT ↔ Procédure
 
-| Exigence DAT        | Section Procédure |
-| ------------------- | ----------------- |
-| Gestion de parc     | Sections 6, 12    |
-| Helpdesk            | Sections 9, 12    |
-| Authentification AD | Section 13.2      |
-| Sécurité HTTPS      | Section 10        |
-| Sauvegardes         | Section 11        |
-| PRA                 | Section 11        |
-| Supervision         | Section 12        |
-| Sécurité système    | Sections 3.2, 8   |
+## 13. Table de correspondance DAT ↔ Procédure
+
+| Exigence DAT               | Description DAT                                              | Section(s) Procédure & Détails                                                                 |
+|-----------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------------------|
+| Gestion de parc             | Inventaire du matériel et du logiciel                      | Sections 6, 12 – Téléchargement et configuration de GLPI, création et suivi des équipements, tests de gestion de parc |
+| Helpdesk                    | Gestion des tickets et notifications                        | Sections 9, 12 – Installation via l’interface web, création et suivi des tickets, tests de notifications SMTP/IMAP |
+| Authentification LDAP/AD    | Centralisation des comptes utilisateurs et authentification | Sections 6, 12 – Connexion GLPI à l’annuaire LDAP/AD, tests de login utilisateur et groupes |
+| Sécurité HTTPS              | Accès sécurisé à l’application                              | Section 10 – Configuration SSL/TLS, accès HTTPS, certificats auto-signés pour test ou Let's Encrypt en prod |
+| Sécurité système            | Durcissement OS et PHP                                      | Sections 3.2, 8 – Désactivation SSH root, pare-feu, fail2ban, configuration PHP-FPM sécurisée |
+| Sauvegardes                 | Sauvegarde de la base de données et fichiers applicatifs   | Section 11 – Dump MariaDB, sauvegarde répertoires `/etc/glpi` et `/var/lib/glpi`, snapshots VM |
+| PRA                         | Plan de reprise d’activité après incident                   | Section 11 – Tests de restauration depuis sauvegardes, remise en service rapide de GLPI |
+| Supervision                 | Disponibilité et surveillance du service                    | Sections 12, 7 – Vérification de l’accès HTTPS, tests fonctionnels, supervision SNMP/HTTP de la VM et services GLPI |
+
 
 ## 14. Conclusion
 

@@ -237,6 +237,23 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 * Tests de restauration réalisés périodiquement sur un environnement de test
 * Objectif : remise en service rapide du service GLPI en cas de sinistre
 
+## 6.4 Évolution : intégration SSO (Single Sign-On)
+
+L’authentification actuelle repose sur LDAP, solution fiable et adaptée
+à un environnement de test.
+
+À terme, une intégration **SSO** pourra être mise en œuvre via :
+- SAML 2.0
+
+Bénéfices :
+- Authentification unique
+- Meilleure expérience utilisateur
+- Centralisation IAM
+- Traçabilité renforcée
+
+Cette évolution n’a pas été implémentée volontairement afin de garantir
+la stabilité et la lisibilité de l’architecture actuelle.
+
 ### 7. Supervision et exploitation
 
   * Surveillance des ressources : CPU, RAM, disque
