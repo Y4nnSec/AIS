@@ -2,6 +2,7 @@
   <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
 </p>
 
+
 # Projet : Document d'Architecture Technique de déploiement de GLPI
 
 
@@ -10,6 +11,7 @@
 Mise en place d’une solution GLPI destinée à la gestion de parc informatique et au support utilisateurs, dans un premier temps en environnement de test, avec une mise en production ultérieure.
 
 L’infrastructure repose sur une Machine Virtuelle hébergée sur un hyperviseur Proxmox et un système d’exploitation Debian 13.
+
 
 ### 1. Analyse des Besoins Clients
 
@@ -54,6 +56,7 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
   * Existe-t-il un stockage distant / cloud disponible pour externaliser les sauvegardes: à valider
   * Fournisseur / modalités d’accès : à valider
 
+
 ### 2. Analyse des Risques
 
 *(Voir la matrice des risques détaillée ci-dessous)*
@@ -95,6 +98,7 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
   </tbody>
 </table>
 
+
 ### 3. Prérequis Infrastructure (Hardware)
 
 Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur un hyperviseur **Proxmox**.
@@ -112,6 +116,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 |                     | `/var/log`       | 5 Go – Journaux système et applicatifs                                           |
 |                     | `/var/lib/mysql` | 15 Go – Base de données MariaDB pour GLPI                                         |
 |                     | `/home`          | 5 Go – Comptes administrateurs                                                   |
+
 
 ### 4. Prérequis Logiciels
 
@@ -136,6 +141,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * php-mbstring
   * php-xml
 
+
 ### 5. Prérequis Réseau et Flux
 
 **5.1 Configuration IP**
@@ -143,7 +149,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * Adresse IPv4 fixe
   * Enregistrement DNS de type A pointant vers la VM GLPI
 
-**Matrice de Flux (Firewall)**
+**5.2 Matrice de Flux (Firewall)**
 
 | Sens | Protocole | Port | Service | Description |
 |------|----------|------|---------|-------------|
@@ -154,7 +160,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 | **OUT** | TCP | 587 | SMTP  | Relais messagerie |
 | **OUT** | UDP | 161 | SNMP  | Supervision |
 
-### 🔹 Schéma réseau – Déploiement GLPI
+### 5.3 Schéma réseau – Déploiement GLPI
 
 ```plaintext
 +----------------+
@@ -188,6 +194,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 | OUT UDP 161         |
 +---------------------+
 ```
+
 
 ### 6. Stratégie de Sécurité
 
@@ -254,12 +261,14 @@ Bénéfices :
 Cette évolution n’a pas été implémentée volontairement afin de garantir
 la stabilité et la lisibilité de l’architecture actuelle.
 
+
 ### 7. Supervision et exploitation
 
   * Surveillance des ressources : CPU, RAM, disque
   * Supervision de la disponibilité HTTP(S)
   * Centralisation et consultation des logs
   * Outils possibles : Zabbix, Centreon, Nagios
+
 
 ### 8. Planning prévisionnel
 
@@ -271,6 +280,7 @@ la stabilité et la lisibilité de l’architecture actuelle.
   * Tests fonctionnels
   * durcissement système
   * Validation avant mise en production
+
 
 ### Auteur : ESCRIVA Yann
 

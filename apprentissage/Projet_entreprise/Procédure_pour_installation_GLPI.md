@@ -2,9 +2,11 @@
   <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
 </p>
 
+
 # Procédure d’installation et de préparation de GLPI 11
 
 ![alt text](<../Images/Tableau de bord glpi.png>)
+
 
 ## Sommaire
 
@@ -37,9 +39,7 @@
   - [11. Sauvegardes et PRA](#11-sauvegardes-et-pra)
   - [12. Tests et validation](#12-tests-et-validation)
   - [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure)
-  - [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure-1)
   - [14. Conclusion](#14-conclusion)
-
 
 
 ## 1. Présentation
@@ -47,6 +47,7 @@
 ### 1.1 Objectifs
 
 Installer GLPI 11.04 sur Debian 13 sur un environnement de test, en respectant les besoins du DAT : gestion de parc, helpdesk, intégration LDAP, sécurité, supervision et stratégie de sauvegarde.
+
 
 ## 2. Prérequis
 
@@ -69,6 +70,7 @@ Installer GLPI 11.04 sur Debian 13 sur un environnement de test, en respectant l
 * IP fixe, DNS configuré
 * Ports : 22 (SSH), 443 (HTTPS), 636 (LDAPS), 587 (SMTP), 161 (SNMP)
 
+
 ## 3. Préparation du serveur Debian 13
 
 ### 3.1 Mise à jour
@@ -85,6 +87,7 @@ sudo apt update && sudo apt upgrade -y
 * Authentification par clé
 * Pare-feu UFW activé
 
+
 ## 4. Installation de la stack LAMP
 
 ### 4.1 Installation Apache, PHP-FPM et MariaDB
@@ -98,6 +101,7 @@ sudo apt install apache2 php8.4-fpm mariadb-server
 ```bash
 sudo apt install php8.4-{curl,gd,intl,mysql,zip,bcmath,mbstring,xml,bz2,ldap}
 ```
+
 
 ## 5. Préparation de MariaDB
 
@@ -119,6 +123,7 @@ EXIT;
 ```
 
 ![alt text](../Images/Création_de_la_base_de_donnée.png)
+
 
 ## 6. Téléchargement et préparation de GLPI
 
@@ -164,6 +169,7 @@ define('GLPI_VAR_DIR', '/var/lib/glpi/files');
 define('GLPI_LOG_DIR', '/var/log/glpi');
 ```
 
+
 ## 7. Configuration Apache pour GLPI
 
 ### 7.1 VirtualHost complet
@@ -204,6 +210,7 @@ sudo a2dissite 000-default.conf
 sudo a2enmod rewrite proxy_fcgi setenvif
 sudo systemctl restart apache2
 ```
+
 
 ## 8. Configuration PHP-FPM
 
@@ -246,6 +253,7 @@ sudo systemctl restart apache2
 
 La configuration est maintenant terminée. Il ne reste plus qu’à lancer l’installation de GLPI via l’interface web.
 
+
 ## 9. Installation via l’interface web
 
 * Vérifier prérequis
@@ -272,6 +280,7 @@ sudo rm /var/www/glpi/install/install.php
 ![alt text](../Images/conf_glpi_test13.png)
 ![alt text](../Images/Tableau_de_bord_GLPI_2.png)
 
+
 ## 10. Sécurisation post-installation
 
 * HTTPS (Let's Encrypt en production)
@@ -286,6 +295,7 @@ Pour un usage en production, il est recommandé d’utiliser un certificat sign�
 * Fail2ban
 * Mises à jour régulières
 
+
 ## 11. Sauvegardes et PRA
 
 * Dump quotidien MariaDB
@@ -293,6 +303,7 @@ Pour un usage en production, il est recommandé d’utiliser un certificat sign�
 * Snapshots VM Proxmox
 * Rétention 30 jours
 * Stratégie 3-2-1 (3 Sauvegardes, 2 supports différents dont 1 hors site)
+
 
 ## 12. Tests et validation
 
@@ -316,11 +327,14 @@ Pour un usage en production, il est recommandé d’utiliser un certificat sign�
 
 * Ajout équipements
 
+![alt text](../Images/Ajout_de_matériel_manuel.png)
+
 * Sauvegardes restaurables
+
+
 
 * SSO : non implémenté (évolution prévue)
 
-## 13. Table de correspondance DAT ↔ Procédure
 
 ## 13. Table de correspondance DAT ↔ Procédure
 
@@ -339,6 +353,7 @@ Pour un usage en production, il est recommandé d’utiliser un certificat sign�
 ## 14. Conclusion
 
 Procédure complète, conforme aux besoins du DAT, sécurisée et prête pour mise en production.
+
 
 **Auteur :** ESCRIVA Yann
 
