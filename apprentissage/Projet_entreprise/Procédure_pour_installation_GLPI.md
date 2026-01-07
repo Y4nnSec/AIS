@@ -42,9 +42,11 @@
     - [12.2 Authentification LDAP](#122-authentification-ldap)
     - [12.3 Envoi notifications SMTP](#123-envoi-notifications-smtp)
     - [12.4 Création et gestion tickets](#124-création-et-gestion-tickets)
-    - [12.5 Ajout équipements](#125-ajout-équipements)
+    - [12.5 Ajout d'équipements ou utilisateurs](#125-ajout-déquipements-ou-utilisateurs)
+  - [12.5 Ajout d’équipements et gestion des utilisateurs](#125-ajout-déquipements-et-gestion-des-utilisateurs)
     - [12.6 Sauvegardes restaurables](#126-sauvegardes-restaurables)
     - [12.7 SSO : non implémenté (évolution prévue)](#127-sso--non-implémenté-évolution-prévue)
+    - [12.8 Conclusion des tests](#128-conclusion-des-tests)
   - [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure)
   - [14. Conclusion](#14-conclusion)
 
@@ -397,10 +399,45 @@ Valider le fonctionnement du module helpdesk
 
 **Statut :** validé
 
-### 12.5 Ajout équipements
+### 12.5 Ajout d'équipements ou utilisateurs
 
+## 12.5 Ajout d’équipements et gestion des utilisateurs
+
+La fonctionnalité de gestion du parc a été testée par l’ajout manuel
+d’un équipement depuis l’interface GLPI. L’équipement créé est correctement enregistré et visible dans l’inventaire, confirmant le bon fonctionnement du module de gestion des matériels.
+
+La gestion des utilisateurs a également été validée par un import au
+format CSV. Cet import permet la création en masse de comptes utilisateurs.
+Le test s’est déroulé avec succès et les utilisateurs importés sont
+correctement accessibles et exploitables dans l’application.
+
+Ces tests confirment la capacité de la solution à gérer un parc informatique et des comptes utilisateurs, aussi bien en création unitaire qu’en import groupé.
 
 ![alt text](../Images/Ajout_de_matériel_manuel.png)
+
+![alt text](<../Images/Téléchargement de data_injection.png>)
+
+![alt text](../Images/Outil_data_injection.png)
+
+![alt text](../Images/Creation_modele_d'import.png)
+
+![alt text](../Images/Creation_modele_d'import2.png)
+
+![alt text](../Images/Creation_modele_d'import3.png)
+
+![alt text](../Images/Creation_modele_d'import4.png)
+
+![alt text](../Images/Users_a_importer.png)
+
+![alt text](../Images/Importation_des_utilisateurs.png)
+
+![alt text](../Images/Importation_des_utilisateurs2.png)
+
+
+
+![alt text](<../Images/Users_importés_csv .png>)
+
+
 
 ### 12.6 Sauvegardes restaurables
 
@@ -417,7 +454,10 @@ J'ai vérifié si la sauvegarde est bien présente avec une taille cohérente
 
 En dernier j'ai fais un test de restauration de ce backup dans un dossier temporaire
 ![alt text](../Images/Restauration_backup.png)
+
 ![alt text](../Images/Verification_de_la_restauration.png)
+
+
 
 **Statut :** validé
 
@@ -433,6 +473,19 @@ Non implémenté
 **Justification :**
 Cette évolution n’a pas été intégrée afin de garantir la stabilité
 et la simplicité de l’architecture dans le cadre de l’environnement de test.
+
+### 12.8 Conclusion des tests
+
+L’ensemble des fonctionnalités essentielles de GLPI ont été testées
+et validées avec succès dans l’environnement de test.
+
+**La plateforme est :**
+
+* Fonctionnelle
+
+* Sécurisée
+
+* Conforme aux objectifs définis dans le DAT
 
 
 ## 13. Table de correspondance DAT ↔ Procédure
