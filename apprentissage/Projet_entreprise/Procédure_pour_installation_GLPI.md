@@ -250,7 +250,7 @@ session.cookie_samesite = Lax
 
 * de limiter les attaques de type CSRF,
 
-* de masquer la version de PHP exposée aux clients.
+* de renforcer la sécurité des sessions utilisateurs.
 
 Redémarrer le service PHP-FPM afin d’appliquer les modifications :
 
@@ -294,6 +294,8 @@ Activer les modules nécessaires si ce n’est pas déjà fait :
 ```bash
 sudo a2enmod proxy_fcgi setenvif
 ```
+
+Le module setenvif est requis pour la gestion correcte des variables d’environnement HTTP, notamment pour l’authentification et certaines fonctionnalités applicatives de GLPI
 
 Redémarrer Apache pour appliquer la configuration :
 
