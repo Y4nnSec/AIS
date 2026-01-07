@@ -38,6 +38,13 @@
   - [10. Sécurisation post-installation](#10-sécurisation-post-installation)
   - [11. Sauvegardes et PRA](#11-sauvegardes-et-pra)
   - [12. Tests et validation](#12-tests-et-validation)
+    - [12.1 Vérifier accès HTTPS](#121-vérifier-accès-https)
+    - [12.2 Authentification LDAP](#122-authentification-ldap)
+    - [12.3 Envoi notifications SMTP](#123-envoi-notifications-smtp)
+    - [12.4 Création et gestion tickets](#124-création-et-gestion-tickets)
+    - [12.5 Ajout équipements](#125-ajout-équipements)
+    - [12.6 Sauvegardes restaurables](#126-sauvegardes-restaurables)
+    - [12.7 SSO : non implémenté (évolution prévue)](#127-sso--non-implémenté-évolution-prévue)
   - [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure)
   - [14. Conclusion](#14-conclusion)
 
@@ -307,33 +314,125 @@ Pour un usage en production, il est recommandé d’utiliser un certificat sign�
 
 ## 12. Tests et validation
 
-* Vérifier accès HTTPS
+Cette section décrit les tests réalisés afin de valider le bon fonctionnement
+de la plateforme GLPI déployée dans l’environnement de test
+
+### 12.1 Vérifier accès HTTPS
+
+**Objectif :**
+
+S’assurer que l’application GLPI est accessible de manière sécurisée via HTTPS.
+
+**Actions réalisées :**
+- Mise en place d’un certificat SSL auto-signé
+- Configuration Apache avec redirection HTTPS
+- Test d’accès via navigateur et commande `curl`
+
+**Résultat :**
+- Accès HTTPS fonctionnel
+- Certificat valide (auto-signé, accepté dans le cadre du test)
+- Communication chiffrée confirmée
 
 ![alt text](../Images/Connexion_en_HTTPS.png)
 
-* Authentification LDAP
+**Statut :** validé
+
+### 12.2 Authentification LDAP
+
+**Objectif :**  
+Valider l’authentification des utilisateurs via un annuaire LDAP.
+
+**Actions réalisées :**
+- Configuration du serveur LDAP dans GLPI
+- Création d’un utilisateur LDAP de test
+- Test d’authentification depuis l’interface GLPI
+
+**Résultat :**
+- Connexion LDAP réussie
+- Synchronisation correcte des comptes utilisateurs
 
 ![alt text](../Images/Test_LDAP.png)
 
-* Envoi notifications SMTP
+**Statut :** validé
+
+### 12.3 Envoi notifications SMTP
+
+**Objectif :**  
+Vérifier l’envoi et la réception des notifications par e-mail depuis GLPI.
+
+**Actions réalisées :**
+- Configuration du service de messagerie local
+- Paramétrage des notifications GLPI
+- Test d’envoi depuis l’interface GLPI
+- Test de réception via la commande `mail`
+
+**Résultat :**
+- Envoi d’e-mails fonctionnel
+- Réception des messages confirmée
 
 ![alt text](../Images/Test_SMTP.png)
 ![alt text](../Images/Test_réception_SMTP.png)
 
-* Création et gestion tickets
+**Statut :** validé
+
+### 12.4 Création et gestion tickets
+
+**Objectif :**  
+Valider le fonctionnement du module helpdesk
+
+**Actions réalisées :**
+- Création de tickets depuis un compte utilisateur
+- Attribution à un technicien
+- Changement de statut
+- Ajout de commentaires
+
+**Résultat :**
+- Cycle de vie des tickets fonctionnel
+- Notifications associées envoyées correctement
 
 ![alt text](../Images/Test_ticket.png)
 ![alt text](../Images/Test_ticket2.png)
+![alt text](../Images/Fermeture_du_ticket.png)
+![alt text](../Images/Commentaire_du_ticket.png)
 
-* Ajout équipements
+**Statut :** validé
+
+### 12.5 Ajout équipements
+
 
 ![alt text](../Images/Ajout_de_matériel_manuel.png)
 
-* Sauvegardes restaurables
+### 12.6 Sauvegardes restaurables
 
+**Objectif :**  
+S’assurer que les données GLPI peuvent être sauvegardées et restaurées.
 
+**Actions réalisées :**
 
-* SSO : non implémenté (évolution prévue)
+J'ai fais une sauvegarde test:
+![alt text](../Images/Création_d'une_sauvegarde_test.png)
+
+J'ai vérifié si la sauvegarde est bien présente avec une taille cohérente
+![alt text](../Images/vérification_du_backup.png)
+
+En dernier j'ai fais un test de restauration de ce backup dans un dossier temporaire
+![alt text](../Images/Restauration_backup.png)
+![alt text](../Images/Verification_de_la_restauration.png)
+
+**Statut :** validé
+
+### 12.7 SSO : non implémenté (évolution prévue)
+
+**Objectif :**
+Étudier la faisabilité d’une authentification centralisée.
+
+**État actuel :**
+
+Non implémenté
+
+**Justification :**
+Cette évolution n’a pas été intégrée afin de garantir la stabilité
+et la simplicité de l’architecture dans le cadre de l’environnement de test.
 
 
 ## 13. Table de correspondance DAT ↔ Procédure
