@@ -34,6 +34,9 @@
     - [7.1 VirtualHost complet](#71-virtualhost-complet)
     - [7.2 Activation et redémarrage](#72-activation-et-redémarrage)
   - [8. Configuration PHP-FPM](#8-configuration-php-fpm)
+    - [8.1 Configuration PHP-FPM](#81-configuration-php-fpm)
+    - [8.2 Liaison Apache ↔ PHP-FPM](#82-liaison-apache--php-fpm)
+    - [8.3 Validation du fonctionnement PHP-FPM](#83-validation-du-fonctionnement-php-fpm)
   - [9. Installation via l’interface web](#9-installation-via-linterface-web)
   - [10. Sécurisation post-installation](#10-sécurisation-post-installation)
   - [11. Sauvegardes et PRA](#11-sauvegardes-et-pra)
@@ -42,7 +45,6 @@
     - [12.2 Authentification LDAP](#122-authentification-ldap)
     - [12.3 Envoi notifications SMTP](#123-envoi-notifications-smtp)
     - [12.4 Création et gestion tickets](#124-création-et-gestion-tickets)
-    - [12.5 Ajout d'équipements ou utilisateurs](#125-ajout-déquipements-ou-utilisateurs)
   - [12.5 Ajout d’équipements et gestion des utilisateurs](#125-ajout-déquipements-et-gestion-des-utilisateurs)
     - [12.6 Sauvegardes restaurables](#126-sauvegardes-restaurables)
     - [12.7 SSO : non implémenté (évolution prévue)](#127-sso--non-implémenté-évolution-prévue)
@@ -223,14 +225,34 @@ sudo systemctl restart apache2
 
 ## 8. Configuration PHP-FPM
 
+L’utilisation de PHP-FPM permet une meilleure
+gestion des processus PHP, améliore les performances et renforce la sécurité
+en séparant l’exécution PHP du serveur Apache
+
+### 8.1 Configuration PHP-FPM
+
+Éditer le fichier de configuration PHP :
+
 ```bash
 sudo nano /etc/php/8.4/fpm/php.ini
 ```
+
+Paramètres de sécurité recommandés :
 
 ```ini
 session.cookie_httponly = on
 session.cookie_samesite = Lax
 ```
+
+**Ces paramètres permettent :**
+
+* de protéger les cookies de session contre les accès JavaScript,
+
+* de limiter les attaques de type CSRF,
+
+* de masquer la version de PHP exposée aux clients.
+
+Redémarrer le service PHP-FPM afin d’appliquer les modifications :
 
 ![alt text](../Images/Config_php.ini.png)
 
@@ -240,11 +262,18 @@ Redémarrage PHP-FPM :
 sudo systemctl restart php8.4-fpm
 ```
 
-Pour terminer, il est nécessaire d’adapter le VirtualHost Apache afin d’indiquer que le traitement des fichiers PHP doit être assuré par PHP-FPM.
+### 8.2 Liaison Apache ↔ PHP-FPM
 
-Cette configuration permet à Apache2 de transmettre l’exécution des fichiers .php au socket PHP-FPM dédié.
+Afin qu’Apache transmette l’exécution des fichiers PHP à PHP-FPM, il est
+nécessaire de configurer le VirtualHost GLPI.
 
-Éditez le fichier glpi_test.archeagglo.fr.conf et ajoutez la configuration suivante
+Éditer le fichier du VirtualHost :
+
+```bash
+sudo nano /etc/apache2/sites-available/glpi_test.archeagglo.fr.conf
+```
+
+Ajouter la directive suivante à l’intérieur du VirtualHost :
 
 ```bash
 <FilesMatch \.php$>
@@ -252,16 +281,38 @@ Cette configuration permet à Apache2 de transmettre l’exécution des fichiers
 </FilesMatch>
 ```
 
+Cette configuration indique à Apache :
+
+* d’utiliser le socket PHP-FPM dédié,
+
+* de déléguer l’exécution des scripts PHP à PHP-FPM
+
 ![alt text](../Images/Config_php-fpm_pour_apache2.png)
 
-Quand c'est fait, relancer Apache2
+Activer les modules nécessaires si ce n’est pas déjà fait :
+
+```bash
+sudo a2enmod proxy_fcgi setenvif
+```
+
+Redémarrer Apache pour appliquer la configuration :
 
 ```bash
 sudo systemctl restart apache2
 ```
 
-La configuration est maintenant terminée. Il ne reste plus qu’à lancer l’installation de GLPI via l’interface web.
+### 8.3 Validation du fonctionnement PHP-FPM
 
+Le bon fonctionnement de PHP-FPM est validé par :
+
+* l’accès fonctionnel à l’interface GLPI,
+
+* l’absence d’erreurs PHP dans les journaux Apache et PHP-FPM,
+
+* l’exécution correcte des pages dynamiques.
+
+Cette configuration garantit une exécution PHP performante, sécurisée
+et conforme aux bonnes pratiques pour un environnement GLPI.
 
 ## 9. Installation via l’interface web
 
@@ -279,7 +330,7 @@ sudo rm /var/www/glpi/install/install.php
 ![alt text](../Images/conf_glpi_test3.png)
 ![alt text](../Images/conf_glpi_test4.png)
 ![alt text](../Images/conf_glpi_test5.png)
-![alt text](../Images/conf_glpi_test6.p,g.png)
+![alt text](../Images/conf_glpi_test6.png)
 ![alt text](../Images/conf_glpi_test7.png)
 ![alt text](../Images/conf_glpi_test8.png)
 ![alt text](../Images/conf_glpi_test9.png)
@@ -399,8 +450,6 @@ Valider le fonctionnement du module helpdesk
 
 **Statut :** validé
 
-### 12.5 Ajout d'équipements ou utilisateurs
-
 ## 12.5 Ajout d’équipements et gestion des utilisateurs
 
 La fonctionnalité de gestion du parc a été testée par l’ajout manuel
@@ -414,30 +463,18 @@ correctement accessibles et exploitables dans l’application.
 Ces tests confirment la capacité de la solution à gérer un parc informatique et des comptes utilisateurs, aussi bien en création unitaire qu’en import groupé.
 
 ![alt text](../Images/Ajout_de_matériel_manuel.png)
-
 ![alt text](<../Images/Téléchargement de data_injection.png>)
-
 ![alt text](../Images/Outil_data_injection.png)
-
 ![alt text](../Images/Creation_modele_d'import.png)
-
 ![alt text](../Images/Creation_modele_d'import2.png)
-
 ![alt text](../Images/Creation_modele_d'import3.png)
-
 ![alt text](../Images/Creation_modele_d'import4.png)
-
 ![alt text](../Images/Users_a_importer.png)
-
 ![alt text](../Images/Importation_des_utilisateurs.png)
-
 ![alt text](../Images/Importation_des_utilisateurs2.png)
-
-
-
 ![alt text](<../Images/Users_importés_csv .png>)
 
-
+**Statut :** validé
 
 ### 12.6 Sauvegardes restaurables
 
@@ -457,9 +494,10 @@ En dernier j'ai fais un test de restauration de ce backup dans un dossier tempor
 
 ![alt text](../Images/Verification_de_la_restauration.png)
 
-
-
 **Statut :** validé
+
+Ces tests valident la capacité de restauration des données GLPI en cas
+d’incident, conformément aux exigences du PRA
 
 ### 12.7 SSO : non implémenté (évolution prévue)
 
@@ -482,9 +520,7 @@ et validées avec succès dans l’environnement de test.
 **La plateforme est :**
 
 * Fonctionnelle
-
 * Sécurisée
-
 * Conforme aux objectifs définis dans le DAT
 
 
