@@ -52,8 +52,12 @@
     - [13.2 Durcissement du serveur Apache](#132-durcissement-du-serveur-apache)
     - [13.3 Durcissement PHP / PHP-FPM](#133-durcissement-php--php-fpm)
     - [13.4 Sécurisation spécifique à GLPI](#134-sécurisation-spécifique-à-glpi)
-  - [14. Table de correspondance DAT ↔ Procédure](#14-table-de-correspondance-dat--procédure)
-  - [14. Conclusion](#14-conclusion)
+    - [13.5 Sécurisation de la base de données](#135-sécurisation-de-la-base-de-données)
+    - [13.6 Journalisation et supervision](#136-journalisation-et-supervision)
+    - [13.7 Politique de mises à jour](#137-politique-de-mises-à-jour)
+    - [13.8 Conclusion du durcissement](#138-conclusion-du-durcissement)
+    - [14. Table de correspondance DAT ↔ Procédure](#14-table-de-correspondance-dat--procédure)
+  - [15. Conclusion](#15-conclusion)
 
 
 ## 1. Présentation
@@ -311,6 +315,8 @@ Activer les modules nécessaires si ce n’est pas déjà fait :
 ```bash
 sudo a2enmod proxy_fcgi setenvif
 ```
+(Si ce n’est pas déjà fait à l’étape précédente)
+
 
 Le module setenvif est requis pour la gestion correcte des variables d’environnement HTTP, notamment pour l’authentification et certaines fonctionnalités applicatives de GLPI
 
@@ -402,7 +408,7 @@ S’assurer que l’application GLPI est accessible de manière sécurisée via 
 
 **Résultat :**
 - Accès HTTPS fonctionnel
-- Certificat valide (auto-signé, accepté dans le cadre du test)
+- Certificat fonctionnel (auto-signé, accepté dans le cadre de l’environnement de test)
 - Communication chiffrée confirmée
 
 ![alt text](../Images/Connexion_en_HTTPS.png)
@@ -482,7 +488,7 @@ correctement accessibles et exploitables dans l’application.
 Ces tests confirment la capacité de la solution à gérer un parc informatique et des comptes utilisateurs, aussi bien en création unitaire qu’en import groupé.
 
 ![alt text](../Images/Ajout_de_matériel_manuel.png)
-![alt text](<../Images/Téléchargement de data_injection.png>)
+![alt text](../Images/Téléchargement_data_injection.png)
 ![alt text](../Images/Outil_data_injection.png)
 ![alt text](../Images/Creation_modele_d'import.png)
 ![alt text](../Images/Creation_modele_d'import2.png)
@@ -491,7 +497,7 @@ Ces tests confirment la capacité de la solution à gérer un parc informatique 
 ![alt text](../Images/Users_a_importer.png)
 ![alt text](../Images/Importation_des_utilisateurs.png)
 ![alt text](../Images/Importation_des_utilisateurs2.png)
-![alt text](<../Images/Users_importés_csv .png>)
+![alt text](../Images/Users_importés_csv.png)
 
 **Statut :** validé
 
@@ -502,15 +508,14 @@ S’assurer que les données GLPI peuvent être sauvegardées et restaurées.
 
 **Actions réalisées :**
 
-J'ai fais une sauvegarde test:
+J'ai effectué une sauvegarde de test :
 ![alt text](../Images/Création_d'une_sauvegarde_test.png)
 
-J'ai vérifié si la sauvegarde est bien présente avec une taille cohérente
+J’ai vérifié la présence de la sauvegarde ainsi que la cohérence de sa taille :
 ![alt text](../Images/vérification_du_backup.png)
 
-En dernier j'ai fais un test de restauration de ce backup dans un dossier temporaire
+Enfin, j’ai effectué un test de restauration de cette sauvegarde dans un dossier temporaire.
 ![alt text](../Images/Restauration_backup.png)
-
 ![alt text](../Images/Verification_de_la_restauration.png)
 
 **Statut :** validé
@@ -528,8 +533,8 @@ d’incident, conformément aux exigences du PRA
 Non implémenté
 
 **Justification :**
-Cette évolution n’a pas été intégrée afin de garantir la stabilité
-et la simplicité de l’architecture dans le cadre de l’environnement de test.
+Cette évolution n’a pas été intégrée afin de préserver la stabilité
+et la simplicité de l’architecture
 
 ### 12.8 Conclusion des tests
 
@@ -560,7 +565,7 @@ d’installation et de tests.
 sudo nano /etc/ssh/sshd_config
 ```
 
-```bash
+```ini
 PermitRootLogin no
 PasswordAuthentication no
 ```
@@ -621,7 +626,7 @@ sudo systemctl start fail2ban
 sudo nano /etc/apache2/conf-available/security.conf
 ```
 
-```bash
+```ini
 ServerTokens Prod
 ServerSignature Off
 ```
@@ -630,7 +635,7 @@ ServerSignature Off
 sudo systemctl restart apache2
 ```
 
-**objectifs :**
+**Objectifs :**
 
 * ne pas exposer la version d’Apache
 * limiter les informations fournies aux clients et attaquants potentiels
@@ -643,7 +648,7 @@ sudo systemctl restart apache2
 sudo nano /etc/php/8.4/fpm/php.ini
 ```
 
-```bash
+```ini
 expose_php = Off
 ```
 
@@ -661,6 +666,7 @@ sudo systemctl restart apache2
 session.cookie_httponly = On
 session.cookie_samesite = Lax
 ```
+(rappel et durcissement final des paramètres PHP-FPM validés précédemment)
 
 **Objectifs :**
 
@@ -674,144 +680,92 @@ session.cookie_samesite = Lax
 ```bash
 sudo rm -f /var/www/glpi/install/install.php
 ```
+(rappel de sécurité post-validation)
 
 **Objectif :**
 
-empêcher toute réinstallation ou détournement de l’application
+* empêcher toute réinstallation ou détournement de l’application
+* Renforcement des permissions sur les fichiers GLPI
 
-Renforcement des permissions sur les fichiers GLPI
-bash
-Copier le code
+```bash
 sudo chown -R www-data:www-data /var/www/glpi /etc/glpi /var/lib/glpi /var/log/glpi
 sudo chmod -R 750 /var/www/glpi /etc/glpi /var/lib/glpi /var/log/glpi
-Objectifs :
+```
 
-limiter l’accès aux fichiers sensibles
+**Objectifs :**
 
-empêcher toute modification non autorisée
+* limiter l’accès aux fichiers sensibles
+* empêcher toute modification non autorisée
 
-Forcer l’utilisation du HTTPS
+**Forcer l’utilisation du HTTPS**
+
 Dans l’interface GLPI :
 
-Configuration > Générale > Sécurité
+* Configuration > Générale > Sécurité
+* Activation de l’obligation HTTPS
+* Activation des cookies sécurisés
 
-Activation de l’obligation HTTPS
+**Objectif :**
 
-Activation des cookies sécurisés
+* garantir le chiffrement des sessions utilisateurs
 
-Objectif :
+### 13.5 Sécurisation de la base de données
 
-garantir le chiffrement des sessions utilisateurs
+* Utilisation d’un compte MariaDB dédié à GLPI
+* Mot de passe fort
+* Accès limité à localhost
+* Aucun accès distant au compte root
+* Sauvegardes régulières de la base de données
 
-13.5 Sécurisation de la base de données
-Utilisation d’un compte MariaDB dédié à GLPI
+### 13.6 Journalisation et supervision
 
-Mot de passe fort
-
-Accès limité à localhost
-
-Aucun accès distant au compte root
-
-Sauvegardes régulières de la base de données
-
-13.6 Journalisation et supervision
 Les journaux suivants sont surveillés :
 
-Apache : /var/log/apache2/
+* Apache : /var/log/apache2/
+* PHP-FPM : /var/log/php8.4-fpm.log
+* GLPI : /var/log/glpi/
 
-PHP-FPM : /var/log/php8.4-fpm.log
+**Objectifs :**
 
-GLPI : /var/log/glpi/
+* détection rapide des erreurs
+* analyse des incidents et tentatives d’attaque
 
-Objectifs :
+### 13.7 Politique de mises à jour
 
-détection rapide des erreurs
-
-analyse des incidents et tentatives d’attaque
-
-13.7 Politique de mises à jour
-bash
-Copier le code
+```bash
 sudo apt install unattended-upgrades -y
 sudo dpkg-reconfigure unattended-upgrades
-Objectif :
+```
 
-appliquer automatiquement les correctifs de sécurité du système
+**Objectif :**
 
-13.8 Conclusion du durcissement
+* Appliquer automatiquement les correctifs de sécurité du système
+
+### 13.8 Conclusion du durcissement
+
 Le durcissement mis en place :
 
-renforce significativement la sécurité du serveur et de GLPI
+* Renforce significativement la sécurité du serveur et de GLPI
+* Respecte les bonnes pratiques système et applicatives
+* N’altère pas le fonctionnement validé de la plateforme
+* Prépare l’environnement à une mise en production future
 
-respecte les bonnes pratiques système et applicatives
+### 14. Table de correspondance DAT ↔ Procédure
 
-n’altère pas le fonctionnement validé de la plateforme
-
-prépare l’environnement à une mise en production future
-
-yaml
-Copier le code
-
-
-
-
-
-
-
-
-
-
+| Exigence DAT              | Description DAT                                      | Section(s) Procédure |
+|---------------------------|------------------------------------------------------|----------------------|
+| Gestion de parc           | Inventaire matériel et logiciel                     | Sections 6, 12       |
+| Helpdesk                  | Gestion des tickets et notifications                | Sections 9, 12       |
+| Authentification LDAP/AD  | Centralisation des comptes utilisateurs              | Sections 12          |
+| Sécurité HTTPS            | Accès sécurisé à l’application                      | Sections 10, 13      |
+| Sécurité système          | Sécurisation du système et des services              | Sections 13     |
+| Durcissement              | Renforcement post-validation de la sécurité          | Section 13           |
+| Sauvegardes               | Sauvegarde BDD et fichiers applicatifs               | Sections 11, 12      |
+| PRA                       | Reprise d’activité après incident                    | Section 11           |
+| Supervision               | Disponibilité et surveillance du service             | Sections 7, 12       |
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 14. Table de correspondance DAT ↔ Procédure
-
-| Exigence DAT               | Description DAT                                              | Section(s) Procédure & Détails                                                                 |
-|-----------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------------------|
-| Gestion de parc             | Inventaire du matériel et du logiciel                      | Sections 6, 12 – Téléchargement et configuration de GLPI, création et suivi des équipements, tests de gestion de parc |
-| Helpdesk                    | Gestion des tickets et notifications                        | Sections 9, 12 – Installation via l’interface web, création et suivi des tickets, tests de notifications SMTP/IMAP |
-| Authentification LDAP/AD    | Centralisation des comptes utilisateurs et authentification | Sections 6, 12 – Connexion GLPI à l’annuaire LDAP/AD, tests de login utilisateur et groupes |
-| Sécurité HTTPS              | Accès sécurisé à l’application                              | Section 10 – Configuration SSL/TLS, accès HTTPS, certificats auto-signés pour test ou Let's Encrypt en prod |
-| Sécurité système            | Durcissement OS et PHP                                      | Sections 3.2, 8 – Désactivation SSH root, pare-feu, fail2ban, configuration PHP-FPM sécurisée |
-| Sauvegardes                 | Sauvegarde de la base de données et fichiers applicatifs   | Section 11 – Dump MariaDB, sauvegarde répertoires `/etc/glpi` et `/var/lib/glpi`, snapshots VM |
-| PRA                         | Plan de reprise d’activité après incident                   | Section 11 – Tests de restauration depuis sauvegardes, remise en service rapide de GLPI |
-| Supervision                 | Disponibilité et surveillance du service                    | Sections 12, 7 – Vérification de l’accès HTTPS, tests fonctionnels, supervision SNMP/HTTP de la VM et services GLPI |
-
-
-## 14. Conclusion
+## 15. Conclusion
 
 Procédure complète, conforme aux besoins du DAT, sécurisée et prête pour mise en production.
 
