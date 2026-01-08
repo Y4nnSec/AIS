@@ -18,7 +18,6 @@
     - [2.3 Réseau et flux](#23-réseau-et-flux)
   - [3. Préparation du serveur Debian 13](#3-préparation-du-serveur-debian-13)
     - [3.1 Mise à jour](#31-mise-à-jour)
-    - [3.2 Durcissement de base](#32-durcissement-de-base)
   - [4. Installation de la stack LAMP](#4-installation-de-la-stack-lamp)
     - [4.1 Installation Apache, PHP-FPM et MariaDB](#41-installation-apache-php-fpm-et-mariadb)
     - [4.2 Installation des extensions PHP](#42-installation-des-extensions-php)
@@ -43,44 +42,67 @@
     - [12.2 Authentification LDAP](#122-authentification-ldap)
     - [12.3 Envoi notifications SMTP](#123-envoi-notifications-smtp)
     - [12.4 Création et gestion tickets](#124-création-et-gestion-tickets)
-  - [12.5 Ajout d’équipements et gestion des utilisateurs](#125-ajout-déquipements-et-gestion-des-utilisateurs)
+    - [12.5 Ajout d’équipements et gestion des utilisateurs](#125-ajout-déquipements-et-gestion-des-utilisateurs)
     - [12.6 Sauvegardes restaurables](#126-sauvegardes-restaurables)
     - [12.7 SSO : non implémenté (évolution prévue)](#127-sso--non-implémenté-évolution-prévue)
     - [12.8 Conclusion des tests](#128-conclusion-des-tests)
-  - [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure)
+  - [13. Durcissement post-validation (FINAL)](#13-durcissement-post-validation-final)
+    - [13.1 Durcissement du système Debian](#131-durcissement-du-système-debian)
+      - [Désactivation de la connexion SSH root](#désactivation-de-la-connexion-ssh-root)
+    - [13.2 Durcissement du serveur Apache](#132-durcissement-du-serveur-apache)
+    - [13.3 Durcissement PHP / PHP-FPM](#133-durcissement-php--php-fpm)
+    - [13.4 Sécurisation spécifique à GLPI](#134-sécurisation-spécifique-à-glpi)
+  - [14. Table de correspondance DAT ↔ Procédure](#14-table-de-correspondance-dat--procédure)
   - [14. Conclusion](#14-conclusion)
-
-
-![alt text](<../Images/Tableau de bord glpi.png>)
 
 
 ## 1. Présentation
 
 ### 1.1 Objectifs
 
-Installer GLPI 11.04 sur Debian 13 sur un environnement de test, en respectant les besoins du DAT : gestion de parc, helpdesk, intégration LDAP, sécurité, supervision et stratégie de sauvegarde.
+Installer GLPI 11 sur Debian 13 dans un environnement de test conforme aux exigences du DAT :
+- gestion de parc
+- helpdesk
+- intégration LDAP
+- sécurité
+- sauvegardes et PRA
 
 
 ## 2. Prérequis
 
 ### 2.1 Matériel
 
-* VM Proxmox
-* 2 vCPU, 4 Go RAM, 50 Go SSD
-* Partitionnement recommandé : `/` 15 Go, `/var` 10 Go, `/var/log` 5 Go, `/var/lib/mysql` 15 Go, `/home` 5 Go
+- VM Proxmox  
+- 2 vCPU  
+- 4 Go RAM  
+- 50 Go SSD  
+
+Partitionnement recommandé :
+- `/` : 15 Go  
+- `/var` : 10 Go  
+- `/var/log` : 5 Go  
+- `/var/lib/mysql` : 15 Go  
+- `/home` : 5 Go  
 
 ### 2.2 Logiciel
 
-* Debian 13
-* Apache2
-* MariaDB 10.11 et plus
-* PHP 8.4
-* Extensions : php-mysqli, php-curl, php-gd, php-intl, php-ldap, php-zip, php-mbstring, php-xml
+- Debian 13
+- Apache2
+- MariaDB ≥ 10.11
+- PHP 8.4
+- Extensions PHP requises :
+  - mysqli, curl, gd, intl, ldap, zip, mbstring, xml, bz2
 
 ### 2.3 Réseau et flux
 
-* IP fixe, DNS configuré
-* Ports : 22 (SSH), 443 (HTTPS), 636 (LDAPS), 587 (SMTP), 161 (SNMP)
+- IP fixe
+- DNS fonctionnel
+- Ports :
+  - 22 (SSH)
+  - 443 (HTTPS)
+  - 636 (LDAPS)
+  - 587 (SMTP)
+  - 161 (SNMP)
 
 
 ## 3. Préparation du serveur Debian 13
@@ -92,12 +114,6 @@ sudo apt update && sudo apt upgrade -y
 ```
 
 ![alt text](../Images/Mise_à_jour_debian13.png)
-
-### 3.2 Durcissement de base
-
-* Désactiver SSH root
-* Authentification par clé
-* Pare-feu UFW activé
 
 
 ## 4. Installation de la stack LAMP
@@ -453,7 +469,7 @@ Valider le fonctionnement du module helpdesk
 
 **Statut :** validé
 
-## 12.5 Ajout d’équipements et gestion des utilisateurs
+### 12.5 Ajout d’équipements et gestion des utilisateurs
 
 La fonctionnalité de gestion du parc a été testée par l’ajout manuel
 d’un équipement depuis l’interface GLPI. L’équipement créé est correctement enregistré et visible dans l’inventaire, confirmant le bon fonctionnement du module de gestion des matériels.
@@ -527,7 +543,261 @@ et validées avec succès dans l’environnement de test.
 * Conforme aux objectifs définis dans le DAT
 
 
-## 13. Table de correspondance DAT ↔ Procédure
+## 13. Durcissement post-validation (FINAL)
+
+Le durcissement de la plateforme est appliqué **après validation complète
+du bon fonctionnement de GLPI** (tests fonctionnels, accès HTTPS,
+LDAP, SMTP, sauvegardes).
+
+Cette approche permet d’éviter tout blocage pendant les phases
+d’installation et de tests.
+
+### 13.1 Durcissement du système Debian
+
+#### Désactivation de la connexion SSH root
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+```bash
+PermitRootLogin no
+PasswordAuthentication no
+```
+
+```bash
+sudo systemctl restart ssh
+```
+
+**Objectifs :**
+
+* empêcher les connexions directes avec le compte root
+* réduire les risques de compromission par force brute
+* imposer l’utilisation de comptes nominaux
+
+**Mise en place du pare-feu UFW**
+
+```bash
+sudo apt install ufw -y
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+```
+
+```bash
+sudo ufw allow 22/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 636/tcp
+sudo ufw allow 587/tcp
+sudo ufw allow 161/udp
+```
+
+```bash
+sudo ufw enable
+```
+
+**Objectifs :**
+
+* limiter les flux réseau aux seuls services nécessaires 
+* réduire la surface d’attaque du serveur
+
+**Protection contre les attaques par force brute (Fail2ban)**
+
+```bash
+sudo apt install fail2ban -y
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+```
+
+**Objectifs :**
+
+* bloquer automatiquement les tentatives de connexion abusives
+* protéger les services SSH et Apache
+
+### 13.2 Durcissement du serveur Apache
+
+**Masquage des informations serveur**
+
+```bash
+sudo nano /etc/apache2/conf-available/security.conf
+```
+
+```bash
+ServerTokens Prod
+ServerSignature Off
+```
+
+```bash
+sudo systemctl restart apache2
+```
+
+**objectifs :**
+
+* ne pas exposer la version d’Apache
+* limiter les informations fournies aux clients et attaquants potentiels
+
+### 13.3 Durcissement PHP / PHP-FPM
+
+**Masquage de la version PHP exposée aux clients**
+
+```bash
+sudo nano /etc/php/8.4/fpm/php.ini
+```
+
+```bash
+expose_php = Off
+```
+
+```bash
+sudo systemctl restart php8.4-fpm
+sudo systemctl restart apache2
+```
+
+**Objectif :**
+
+* Empêcher l’exposition de la version PHP dans les en-têtes HTTP
+* Sécurisation des cookies de session
+
+```bash
+session.cookie_httponly = On
+session.cookie_samesite = Lax
+```
+
+**Objectifs :**
+
+* Empêcher l’accès aux cookies via JavaScript
+* Limiter les attaques XSS et CSRF
+
+### 13.4 Sécurisation spécifique à GLPI
+
+**Suppression du script d’installation**
+
+```bash
+sudo rm -f /var/www/glpi/install/install.php
+```
+
+**Objectif :**
+
+empêcher toute réinstallation ou détournement de l’application
+
+Renforcement des permissions sur les fichiers GLPI
+bash
+Copier le code
+sudo chown -R www-data:www-data /var/www/glpi /etc/glpi /var/lib/glpi /var/log/glpi
+sudo chmod -R 750 /var/www/glpi /etc/glpi /var/lib/glpi /var/log/glpi
+Objectifs :
+
+limiter l’accès aux fichiers sensibles
+
+empêcher toute modification non autorisée
+
+Forcer l’utilisation du HTTPS
+Dans l’interface GLPI :
+
+Configuration > Générale > Sécurité
+
+Activation de l’obligation HTTPS
+
+Activation des cookies sécurisés
+
+Objectif :
+
+garantir le chiffrement des sessions utilisateurs
+
+13.5 Sécurisation de la base de données
+Utilisation d’un compte MariaDB dédié à GLPI
+
+Mot de passe fort
+
+Accès limité à localhost
+
+Aucun accès distant au compte root
+
+Sauvegardes régulières de la base de données
+
+13.6 Journalisation et supervision
+Les journaux suivants sont surveillés :
+
+Apache : /var/log/apache2/
+
+PHP-FPM : /var/log/php8.4-fpm.log
+
+GLPI : /var/log/glpi/
+
+Objectifs :
+
+détection rapide des erreurs
+
+analyse des incidents et tentatives d’attaque
+
+13.7 Politique de mises à jour
+bash
+Copier le code
+sudo apt install unattended-upgrades -y
+sudo dpkg-reconfigure unattended-upgrades
+Objectif :
+
+appliquer automatiquement les correctifs de sécurité du système
+
+13.8 Conclusion du durcissement
+Le durcissement mis en place :
+
+renforce significativement la sécurité du serveur et de GLPI
+
+respecte les bonnes pratiques système et applicatives
+
+n’altère pas le fonctionnement validé de la plateforme
+
+prépare l’environnement à une mise en production future
+
+yaml
+Copier le code
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 14. Table de correspondance DAT ↔ Procédure
 
 | Exigence DAT               | Description DAT                                              | Section(s) Procédure & Détails                                                                 |
 |-----------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------------------|
