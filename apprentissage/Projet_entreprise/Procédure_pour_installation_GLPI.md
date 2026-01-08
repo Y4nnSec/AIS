@@ -5,8 +5,6 @@
 
 # Procédure d’installation et de préparation de GLPI 11
 
-![alt text](<../Images/Tableau de bord glpi.png>)
-
 
 ## Sommaire
 
@@ -51,6 +49,9 @@
     - [12.8 Conclusion des tests](#128-conclusion-des-tests)
   - [13. Table de correspondance DAT ↔ Procédure](#13-table-de-correspondance-dat--procédure)
   - [14. Conclusion](#14-conclusion)
+
+
+![alt text](<../Images/Tableau de bord glpi.png>)
 
 
 ## 1. Présentation
