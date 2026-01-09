@@ -170,16 +170,14 @@ sudo tar -xzvf glpi-11.0.4.tgz -C /var/www/
 ### 6.2 Préparation des répertoires et permissions
 
 ```bash
-sudo chown www-data:www-data /var/www/glpi -R
-sudo mkdir /etc/glpi /var/lib/glpi /var/log/glpi
-sudo chown www-data:www-data /etc/glpi /var/lib/glpi /var/log/glpi
-sudo mv /var/www/glpi/config /etc/glpi
-sudo mv /var/www/glpi/files /var/lib/glpi
-```
+# 1. Création des répertoires
+sudo mkdir -p /etc/glpi /var/lib/glpi /var/log/glpi
 
-Créer fichiers de configuration :
+# 2. Déplacement AVANT permissions
+sudo mv /var/www/glpi/config /etc/glpi/
+sudo mv /var/www/glpi/files /var/lib/glpi/
 
-```bash
+# 3. Créer fichiers de configuration :
 sudo nano /var/www/glpi/inc/downstream.php
 ```
 
@@ -199,6 +197,21 @@ sudo nano /etc/glpi/local_define.php
 <?php
 define('GLPI_VAR_DIR', '/var/lib/glpi/files');
 define('GLPI_LOG_DIR', '/var/log/glpi');
+```
+
+```bash
+# 4. Permissions finales (récursives)
+sudo chown -R www-data:www-data \
+  /var/www/glpi \
+  /etc/glpi \
+  /var/lib/glpi \
+  /var/log/glpi
+
+sudo chmod -R 750 \
+  /var/www/glpi \
+  /etc/glpi \
+  /var/lib/glpi \
+  /var/log/glpi
 ```
 
 
