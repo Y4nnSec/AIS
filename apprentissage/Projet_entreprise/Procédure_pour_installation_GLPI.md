@@ -44,7 +44,7 @@
     - [12.4 Création et gestion tickets](#124-création-et-gestion-tickets)
     - [12.5 Ajout d’équipements et gestion des utilisateurs](#125-ajout-déquipements-et-gestion-des-utilisateurs)
     - [12.6 Sauvegardes restaurables](#126-sauvegardes-restaurables)
-    - [12.7 SSO : non implémenté (évolution prévue)](#127-sso--non-implémenté-évolution-prévue)
+    - [12.7 SSO : non implémenté (évolution prévue)](#127-sso-non-implémenté-évolution-prévue)
     - [12.8 Conclusion des tests](#128-conclusion-des-tests)
   - [13. Durcissement post-validation (FINAL)](#13-durcissement-post-validation-final)
     - [13.1 Durcissement du système Debian](#131-durcissement-du-système-debian)
@@ -81,7 +81,7 @@ Installer GLPI 11 sur Debian 13 dans un environnement de test conforme aux exige
 - 4 Go RAM  
 - 50 Go SSD  
 
-Partitionnement recommandé :
+Partitionnement recommandé :
 - `/` : 15 Go  
 - `/var` : 10 Go  
 - `/var/log` : 5 Go  
@@ -94,7 +94,7 @@ Partitionnement recommandé :
 - Apache2
 - MariaDB ≥ 10.11
 - PHP 8.4
-- Extensions PHP requises :
+- Extensions PHP requises :
   - mysqli, curl, gd, intl, ldap, zip, mbstring, xml, bz2
 
 ### 2.3 Réseau et flux
@@ -177,7 +177,7 @@ sudo mv /var/www/glpi/config /etc/glpi
 sudo mv /var/www/glpi/files /var/lib/glpi
 ```
 
-Créer fichiers de configuration :
+Créer fichiers de configuration :
 
 ```bash
 sudo nano /var/www/glpi/inc/downstream.php
@@ -252,13 +252,13 @@ en séparant l’exécution PHP du serveur Apache
 
 ### 8.1 Configuration PHP-FPM
 
-Éditer le fichier de configuration PHP :
+Éditer le fichier de configuration PHP :
 
 ```bash
 sudo nano /etc/php/8.4/fpm/php.ini
 ```
 
-Paramètres de sécurité recommandés :
+Paramètres de sécurité recommandés :
 
 ```ini
 session.cookie_httponly = on
@@ -268,16 +268,14 @@ session.cookie_samesite = Lax
 **Ces paramètres permettent :**
 
 * de protéger les cookies de session contre les accès JavaScript,
-
 * de limiter les attaques de type CSRF,
-
 * de renforcer la sécurité des sessions utilisateurs.
 
-Redémarrer le service PHP-FPM afin d’appliquer les modifications :
+Redémarrer le service PHP-FPM afin d’appliquer les modifications :
 
 ![alt text](../Images/Config_php.ini.png)
 
-Redémarrage PHP-FPM :
+Redémarrage PHP-FPM :
 
 ```bash
 sudo systemctl restart php8.4-fpm
@@ -288,13 +286,13 @@ sudo systemctl restart php8.4-fpm
 Afin qu’Apache transmette l’exécution des fichiers PHP à PHP-FPM, il est
 nécessaire de configurer le VirtualHost GLPI.
 
-Éditer le fichier du VirtualHost :
+Éditer le fichier du VirtualHost :
 
 ```bash
 sudo nano /etc/apache2/sites-available/glpi_test.archeagglo.fr.conf
 ```
 
-Ajouter la directive suivante à l’intérieur du VirtualHost :
+Ajouter la directive suivante à l’intérieur du VirtualHost :
 
 ```bash
 <FilesMatch \.php$>
@@ -302,15 +300,14 @@ Ajouter la directive suivante à l’intérieur du VirtualHost :
 </FilesMatch>
 ```
 
-Cette configuration indique à Apache :
+Cette configuration indique à Apache :
 
 * d’utiliser le socket PHP-FPM dédié,
-
 * de déléguer l’exécution des scripts PHP à PHP-FPM
 
 ![alt text](../Images/Config_php-fpm_pour_apache2.png)
 
-Activer les modules nécessaires si ce n’est pas déjà fait :
+Activer les modules nécessaires si ce n’est pas déjà fait :
 
 ```bash
 sudo a2enmod proxy_fcgi setenvif
@@ -320,7 +317,7 @@ sudo a2enmod proxy_fcgi setenvif
 
 Le module setenvif est requis pour la gestion correcte des variables d’environnement HTTP, notamment pour l’authentification et certaines fonctionnalités applicatives de GLPI
 
-Redémarrer Apache pour appliquer la configuration :
+Redémarrer Apache pour appliquer la configuration :
 
 ```bash
 sudo systemctl restart apache2
@@ -328,16 +325,15 @@ sudo systemctl restart apache2
 
 ### 8.3 Validation du fonctionnement PHP-FPM
 
-Le bon fonctionnement de PHP-FPM est validé par :
+Le bon fonctionnement de PHP-FPM est validé par :
 
 * l’accès fonctionnel à l’interface GLPI,
-
 * l’absence d’erreurs PHP dans les journaux Apache et PHP-FPM,
-
 * l’exécution correcte des pages dynamiques.
 
 Cette configuration garantit une exécution PHP performante, sécurisée
 et conforme aux bonnes pratiques pour un environnement GLPI.
+
 
 ## 9. Installation via l’interface web
 
@@ -397,74 +393,74 @@ de la plateforme GLPI déployée dans l’environnement de test
 
 ### 12.1 Vérifier accès HTTPS
 
-**Objectif :**
+**Objectif :**
 
 S’assurer que l’application GLPI est accessible de manière sécurisée via HTTPS.
 
-**Actions réalisées :**
+**Actions réalisées :**
 - Mise en place d’un certificat SSL auto-signé
 - Configuration Apache avec redirection HTTPS
 - Test d’accès via navigateur et commande `curl`
 
-**Résultat :**
+**Résultat :**
 - Accès HTTPS fonctionnel
 - Certificat fonctionnel (auto-signé, accepté dans le cadre de l’environnement de test)
 - Communication chiffrée confirmée
 
 ![alt text](../Images/Connexion_en_HTTPS.png)
 
-**Statut :** validé
+**Statut :** validé
 
 ### 12.2 Authentification LDAP
 
-**Objectif :**  
+**Objectif :**  
 Valider l’authentification des utilisateurs via un annuaire LDAP.
 
-**Actions réalisées :**
+**Actions réalisées :**
 - Configuration du serveur LDAP dans GLPI
 - Création d’un utilisateur LDAP de test
 - Test d’authentification depuis l’interface GLPI
 
-**Résultat :**
+**Résultat :**
 - Connexion LDAP réussie
 - Synchronisation correcte des comptes utilisateurs
 
 ![alt text](../Images/Test_LDAP.png)
 
-**Statut :** validé
+**Statut :** validé
 
 ### 12.3 Envoi notifications SMTP
 
-**Objectif :**  
+**Objectif :**  
 Vérifier l’envoi et la réception des notifications par e-mail depuis GLPI.
 
-**Actions réalisées :**
+**Actions réalisées :**
 - Configuration du service de messagerie local
 - Paramétrage des notifications GLPI
 - Test d’envoi depuis l’interface GLPI
 - Test de réception via la commande `mail`
 
-**Résultat :**
+**Résultat :**
 - Envoi d’e-mails fonctionnel
 - Réception des messages confirmée
 
 ![alt text](../Images/Test_SMTP.png)
 ![alt text](../Images/Test_réception_SMTP.png)
 
-**Statut :** validé
+**Statut :** validé
 
 ### 12.4 Création et gestion tickets
 
-**Objectif :**  
+**Objectif :**  
 Valider le fonctionnement du module helpdesk
 
-**Actions réalisées :**
+**Actions réalisées :**
 - Création de tickets depuis un compte utilisateur
 - Attribution à un technicien
 - Changement de statut
 - Ajout de commentaires
 
-**Résultat :**
+**Résultat :**
 - Cycle de vie des tickets fonctionnel
 - Notifications associées envoyées correctement
 
@@ -473,7 +469,7 @@ Valider le fonctionnement du module helpdesk
 ![alt text](../Images/Fermeture_du_ticket.png)
 ![alt text](../Images/Commentaire_du_ticket.png)
 
-**Statut :** validé
+**Statut :** validé
 
 ### 12.5 Ajout d’équipements et gestion des utilisateurs
 
@@ -499,14 +495,14 @@ Ces tests confirment la capacité de la solution à gérer un parc informatique 
 ![alt text](../Images/Importation_des_utilisateurs2.png)
 ![alt text](../Images/Users_importés_csv.png)
 
-**Statut :** validé
+**Statut :** validé
 
 ### 12.6 Sauvegardes restaurables
 
-**Objectif :**  
+**Objectif :**  
 S’assurer que les données GLPI peuvent être sauvegardées et restaurées.
 
-**Actions réalisées :**
+**Actions réalisées :**
 
 J'ai effectué une sauvegarde de test :
 ![alt text](../Images/Création_d'une_sauvegarde_test.png)
@@ -515,24 +511,25 @@ J’ai vérifié la présence de la sauvegarde ainsi que la cohérence de sa tai
 ![alt text](../Images/vérification_du_backup.png)
 
 Enfin, j’ai effectué un test de restauration de cette sauvegarde dans un dossier temporaire.
+
 ![alt text](../Images/Restauration_backup.png)
 ![alt text](../Images/Verification_de_la_restauration.png)
 
-**Statut :** validé
+**Statut :** validé
 
 Ces tests valident la capacité de restauration des données GLPI en cas
 d’incident, conformément aux exigences du PRA
 
-### 12.7 SSO : non implémenté (évolution prévue)
+### 12.7 SSO : non implémenté (évolution prévue)
 
 **Objectif :**
 Étudier la faisabilité d’une authentification centralisée.
 
-**État actuel :**
+**État actuel :**
 
 Non implémenté
 
-**Justification :**
+**Justification :**
 Cette évolution n’a pas été intégrée afin de préserver la stabilité
 et la simplicité de l’architecture
 
@@ -541,7 +538,7 @@ et la simplicité de l’architecture
 L’ensemble des fonctionnalités essentielles de GLPI ont été testées
 et validées avec succès dans l’environnement de test.
 
-**La plateforme est :**
+**La plateforme est :**
 
 * Fonctionnelle
 * Sécurisée
@@ -574,7 +571,7 @@ PasswordAuthentication no
 sudo systemctl restart ssh
 ```
 
-**Objectifs :**
+**Objectifs :**
 
 * empêcher les connexions directes avec le compte root
 * réduire les risques de compromission par force brute
@@ -600,7 +597,7 @@ sudo ufw allow 161/udp
 sudo ufw enable
 ```
 
-**Objectifs :**
+**Objectifs :**
 
 * limiter les flux réseau aux seuls services nécessaires 
 * réduire la surface d’attaque du serveur
@@ -613,7 +610,7 @@ sudo systemctl enable fail2ban
 sudo systemctl start fail2ban
 ```
 
-**Objectifs :**
+**Objectifs :**
 
 * bloquer automatiquement les tentatives de connexion abusives
 * protéger les services SSH et Apache
@@ -635,7 +632,7 @@ ServerSignature Off
 sudo systemctl restart apache2
 ```
 
-**Objectifs :**
+**Objectifs :**
 
 * ne pas exposer la version d’Apache
 * limiter les informations fournies aux clients et attaquants potentiels
@@ -657,18 +654,18 @@ sudo systemctl restart php8.4-fpm
 sudo systemctl restart apache2
 ```
 
-**Objectif :**
+**Objectif :**
 
 * Empêcher l’exposition de la version PHP dans les en-têtes HTTP
 * Sécurisation des cookies de session
 
 ```bash
-session.cookie_httponly = On
-session.cookie_samesite = Lax
+session.cookie_httponly = On
+session.cookie_samesite = Lax
 ```
 (rappel et durcissement final des paramètres PHP-FPM validés précédemment)
 
-**Objectifs :**
+**Objectifs :**
 
 * Empêcher l’accès aux cookies via JavaScript
 * Limiter les attaques XSS et CSRF
@@ -682,7 +679,7 @@ sudo rm -f /var/www/glpi/install/install.php
 ```
 (rappel de sécurité post-validation)
 
-**Objectif :**
+**Objectif :**
 
 * empêcher toute réinstallation ou détournement de l’application
 * Renforcement des permissions sur les fichiers GLPI
@@ -692,20 +689,20 @@ sudo chown -R www-data:www-data /var/www/glpi /etc/glpi /var/lib/glpi /var/log/g
 sudo chmod -R 750 /var/www/glpi /etc/glpi /var/lib/glpi /var/log/glpi
 ```
 
-**Objectifs :**
+**Objectifs :**
 
 * limiter l’accès aux fichiers sensibles
 * empêcher toute modification non autorisée
 
 **Forcer l’utilisation du HTTPS**
 
-Dans l’interface GLPI :
+Dans l’interface GLPI :
 
 * Configuration > Générale > Sécurité
 * Activation de l’obligation HTTPS
 * Activation des cookies sécurisés
 
-**Objectif :**
+**Objectif :**
 
 * garantir le chiffrement des sessions utilisateurs
 
@@ -719,13 +716,13 @@ Dans l’interface GLPI :
 
 ### 13.6 Journalisation et supervision
 
-Les journaux suivants sont surveillés :
+Les journaux suivants sont surveillés :
 
 * Apache : /var/log/apache2/
 * PHP-FPM : /var/log/php8.4-fpm.log
 * GLPI : /var/log/glpi/
 
-**Objectifs :**
+**Objectifs :**
 
 * détection rapide des erreurs
 * analyse des incidents et tentatives d’attaque
@@ -737,18 +734,19 @@ sudo apt install unattended-upgrades -y
 sudo dpkg-reconfigure unattended-upgrades
 ```
 
-**Objectif :**
+**Objectif :**
 
 * Appliquer automatiquement les correctifs de sécurité du système
 
 ### 13.8 Conclusion du durcissement
 
-Le durcissement mis en place :
+Le durcissement mis en place :
 
 * Renforce significativement la sécurité du serveur et de GLPI
 * Respecte les bonnes pratiques système et applicatives
 * N’altère pas le fonctionnement validé de la plateforme
 * Prépare l’environnement à une mise en production future
+
 
 ### 14. Table de correspondance DAT ↔ Procédure
 
