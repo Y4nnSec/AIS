@@ -164,31 +164,32 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 
 ```plaintext
 +----------------+
-                  |    Internet    |
-                  +----------------+
-                          │
-                          ▼
-                  +----------------+
-                  |    Firewall    |
-                  +----------------+
-           IN/OUT │ TCP 443, TCP 22, UDP 161
-                  │
-       ┌──────────┴───────────┐
-       ▼                      ▼
+|    Internet    |
++----------------+
+        │
+        ▼
++----------------+
+|    Firewall    |
++----------------+
+     IN │ TCP 443, TCP 22
+    OUT │ TCP 443, TCP 636, TCP 587, UDP 161
+        │
+┌-------┴--------┐
+▼                ▼
 +---------------------+  +---------------------+
 | Réseau interne GLPI |  | Réseau AD / Mail    |
 +---------------------+  +---------------------+
-           │                    │
-           │ OUT TCP 443        │ OUT TCP 636, 587
-           ▼                    ▼
-    +----------------+     +-----------------+
-    | VM Debian GLPI |     | Active Directory|
-    | Apache2        |     | / SMTP          |
-    | MariaDB        |     +-----------------+
-    | PHP 8.2        |
-    +----------------+
-           │
-           ▼
+         │                     │
+         │ OUT TCP 443         │ OUT TCP 636, 587
+         ▼                     ▼
+  +----------------+       +-----------------+
+  | VM Debian GLPI |       | Active Directory|
+  | Apache2        |       | / SMTP          |
+  | MariaDB        |       +-----------------+
+  | PHP 8.2        |
+  +----------------+
+         │
+         ▼
 +---------------------+
 | Supervision / SNMP  |
 | OUT UDP 161         |
@@ -210,35 +211,51 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
   * Fail2ban (SSH / Apache)
   * Mises à jour de sécurité régulièrement
 
-**6.3 Sauvegardes et PRA**
+## 6.3 Sauvegardes et PRA
 
-**Stratégie de sauvegarde**
-* Mise en œuvre d’une stratégie de sauvegarde de type **3-2-1**
-* En l’absence de site secondaire, l’externalisation des sauvegardes est assurée via un stockage distant accessible par Internet (Cloud)
-* Objectif : garantir la disponibilité et l’intégrité des données GLPI en cas d’incident majeur
+### Stratégie de sauvegarde
 
-**Périmètre de sauvegarde**
-* Sauvegarde complète de la machine virtuelle GLPI incluant :
-  * Système d’exploitation Debian 13
-  * Application GLPI
-  * **Base de données MariaDB** (dump quotidien et compressé)
-  * Fichiers applicatifs (/var/www/glpi)
+La plateforme GLPI est protégée par une stratégie de sauvegarde professionnelle respectant la règle **3-2-1** :
 
-**Plan de sauvegarde**
-* Fréquence : quotidienne
-* Sauvegardes automatisées
-* Sauvegardes compressées pour réduire l’espace de stockage
-* Stockage sur plusieurs supports distincts conformément à la stratégie 3-2-1 :
-  * Stockage local sur l’infrastructure Proxmox
-  * Stockage externe sur NAS
-  * Stockage distant externalisé (Cloud)
+* **3 copies** des données  
+* **2 supports différents** (local + NAS)  
+* **1 copie hors site** (Cloud)
 
-**Politique de rétention**
+En l’absence de site secondaire, l’externalisation des sauvegardes est assurée via un stockage distant accessible par Internet (Cloud).  
+L’objectif est de garantir la **disponibilité et l’intégrité** des données GLPI en cas d’incident majeur.
+
+### Périmètre de sauvegarde
+
+La sauvegarde couvre l’ensemble de la machine virtuelle GLPI :
+
+* Système d’exploitation Debian 13  
+* Application GLPI  
+* **Base de données MariaDB** (dump quotidien et compressé)  
+* Fichiers applicatifs (`/var/www/glpi`)  
+
+### Plan de sauvegarde
+
+* **Fréquence :** quotidienne  
+* **Automatisation :** via Veeam Backup pour éviter toute erreur humaine  
+* **Compression :** réduite pour optimiser l’espace de stockage  
+* **Stockage sur plusieurs supports :**  
+  * Local : infrastructure Proxmox  
+  * Externe : NAS interne  
+  * Distant : Cloud sécurisé  
+
+**Notes :**  
+
+* Les dumps de la base MariaDB permettent une restauration rapide en cas de corruption ou suppression accidentelle des données.  
+* Les sauvegardes complètes de la VM assurent une restauration rapide de l’ensemble de la plateforme si nécessaire.
+
+### Politique de rétention
+
 * Rétention : **30 jours**
 * Conservation des sauvegardes sur les 30 derniers jours
 * Suppression automatique des sauvegardes expirées
 
-**PRA (Plan de Reprise d’Activité)**
+### PRA (Plan de Reprise d’Activité)
+
 * Restauration complète de la VM GLPI possible depuis les sauvegardes
 * Restauration des données applicatives et de la base de données
 * Tests de restauration réalisés périodiquement sur un environnement de test
@@ -246,13 +263,22 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 
 ## 6.4 Évolution : intégration SSO (Single Sign-On)
 
-L’authentification actuelle repose sur LDAP, solution fiable et adaptée
-à un environnement de test.
+L’authentification actuelle repose sur LDAP, solution fiable pour l’environnement de test.
 
-À terme, une intégration **SSO** pourra être mise en œuvre via :
-- SAML 2.0
+Pour un futur SSO, deux options existent : 
 
-Bénéfices :
+* SAML 2.0 
+* OpenID Connect.
+
+### Recommandation :
+
+**OpenID Connect :** plus simple à intégrer, compatible web et mobile, basé sur des standards modernes (JSON/REST), idéal pour les applications actuelles.
+
+**SAML 2.0 :** robuste pour les applications web traditionnelles, mais plus complexe à mettre en place et moins moins adapté aux apps modernes et mobiles.
+
+**Conclusion :** OpenID Connect est privilégié pour un SSO moderne, sécurisé et évolutif.
+
+Bénéfices du SSO :
 - Authentification unique
 - Meilleure expérience utilisateur
 - Centralisation IAM
