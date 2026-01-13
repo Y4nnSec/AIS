@@ -37,16 +37,19 @@ infrastructure fonctionnelle, sur le thème de HSRP.
 * Analyser l'infrastructure et la configuration des équipements
 
 * Qu’est-ce que HSRP ? Proposer une définition simple.
+
 HSRP (Hot Standby Router Protcol) C'est un protocol cisco de redondance qui permet d'assurer la continuité d'accès au réseau au cas ou un routeur tombe en panne.
 
 * Pourquoi utilise-t-on HSRP et quel problème résout-il ? Expliquer l'intérêt de HSRP dans ce
-réseau
+réseau.
+
 On utilise HSRP pour assurer la haute disponibilité de la passerelle réseau.
 Il résout le risque de coupure réseau, de se fait il ya un 2 ième routeur qui est en standby pour assurer la continuité du réseau et récupérer l'adresse IP virtuelle.
 
 **Analyse de la configuration existante**
 * Identifier les routeurs primaires et les routeurs de secours HSRP, quels sont leurs rôles
 respectifs ?
+
 Le router R1 est actif sur le réseau 172.30.128.0/24 et le R3 est en secours sur le même réseau.
 
 Le router R2 est actif sur le réseau 92.60.150.0/24 et le R3 est en secours sur le même réseau.
@@ -62,14 +65,15 @@ Le router R2 est actif sur le réseau 92.60.150.0/24 et le R3 est en secours sur
 
 **R3** :Ip virtuelles :172.30.128.254 et 92.60.150.1
         Ip physiques :172.30.128.253 et 92.60.150.4
-        
+
 Les IP physiques permettent aux routeurs de fonctionner et de communiquer entre eux,
 tandis que l’IP virtuelle garantit une passerelle unique et hautement disponible pour les clients, évitant toute coupure réseau en cas de défaillance d’un routeur.
 
 * Identifier les interfaces réseau participant à HSRP sur chaque routeur, leurs priorités, les délais
 et les autres paramètres HSRP configurés sur les routeurs. Que comprenez-vous ?
+
 Configuration HSRP
-nterfaces concernées : interfaces LAN de R1, R2, R3
+Interfaces concernées : interfaces LAN de R1, R2, R3
 
 IP physiques : 172.30.128.251 / .252 / .253 et 92.60.150.2 / .3 / .4
 IP virtuelle : 172.30.128.254 et 92.60.150.1
@@ -82,7 +86,7 @@ HSRP garantit une passerelle toujours disponible en cas de panne d’un routeur
 * À l'aide des informations que vous avez collectées, proposer un guide de commandes de
 configuration HSRP. Expliquer brièvement le rôle de chaque commande utilisée. Identifier les
 éléments clés tels que le numéro de groupe HSRP, les adresses IP virtuelles, les priorités, les
-délais, ainsi que les commandes permettant d'activer HSRP sur l'interface
+délais, ainsi que les commandes permettant d'activer HSRP sur l'interface.
 
 `enable` : Mode root
 
