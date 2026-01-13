@@ -82,16 +82,23 @@ configuration HSRP. Expliquer brièvement le rôle de chaque commande utilisée.
 délais, ainsi que les commandes permettant d'activer HSRP sur l'interface
 
 `enable` : Mode root
+
 `conf t` : Mode configuration
+
 `interface GigabitEthernet0/0` : Séléction interface
+
 `ip address 172.30.128.251 255.255.255.0` : address ip de l'interface
+
 `standby 1 ip 172.30.128.254` : 
 * 1 → numéro du groupe HSRP
 * 172.30.128.254 = IP virtuelle, utilisée comme passerelle par défaut par les clients
+
 `standby 1 priority 120`
 * plus la valeur est élevée = le routeur devient actif
+
 `standby 1 preempt` : 
 * Permet au routeur de reprendre son rôle actif s’il a la priorité la plus haute après redémarrage
+
 `standby 1 timers 3 10` : 
 * 3 = intervalle d’envoi des messages hello
 * 10 = hold time (temps avant de déclarer un routeur actif en panne)
