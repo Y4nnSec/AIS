@@ -76,9 +76,11 @@ Configuration HSRP
 Interfaces concernées : interfaces LAN de R1, R2, R3
 
 IP physiques : 172.30.128.251 / .252 / .253 et 92.60.150.2 / .3 / .4
+
 IP virtuelle : 172.30.128.254 et 92.60.150.1
 Priorité la plus haute = routeur actif
 Les autres = secours
+
 Ce sont les priorités qui décide quel routeur va prendre le relai en cas de panne, si priorité équivalente c'est l'IP la plus haute qui va prendre le relai.
 
 HSRP garantit une passerelle toujours disponible en cas de panne d’un routeur
