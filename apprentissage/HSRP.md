@@ -53,6 +53,7 @@ Le router R2 est actif sur le réseau 92.60.150.0/24 et le R3 est en secours sur
 
 * Noter les adresses IP virtuelles (VIP) et physiques (R1, R2, R3) utilisées dans les groupes HSRP,
 à quoi servent ces différentes adresses ?
+
 **R1** :Ip virtuelles :172.30.128.254 et 92.60.150.1
         Ip physiques :172.30.128.251 et 92.60.150.2
 
@@ -61,6 +62,7 @@ Le router R2 est actif sur le réseau 92.60.150.0/24 et le R3 est en secours sur
 
 **R3** :Ip virtuelles :172.30.128.254 et 92.60.150.1
         Ip physiques :172.30.128.253 et 92.60.150.4
+        
 Les IP physiques permettent aux routeurs de fonctionner et de communiquer entre eux,
 tandis que l’IP virtuelle garantit une passerelle unique et hautement disponible pour les clients, évitant toute coupure réseau en cas de défaillance d’un routeur.
 
@@ -68,6 +70,7 @@ tandis que l’IP virtuelle garantit une passerelle unique et hautement disponib
 et les autres paramètres HSRP configurés sur les routeurs. Que comprenez-vous ?
 Configuration HSRP
 nterfaces concernées : interfaces LAN de R1, R2, R3
+
 IP physiques : 172.30.128.251 / .252 / .253 et 92.60.150.2 / .3 / .4
 IP virtuelle : 172.30.128.254 et 92.60.150.1
 Priorité la plus haute = routeur actif
