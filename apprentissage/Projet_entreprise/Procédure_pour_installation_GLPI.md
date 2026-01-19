@@ -93,7 +93,7 @@ Partitionnement recommandé :
 - Debian 13
 - Apache2
 - MariaDB ≥ 10.11
-- PHP 8.4
+- PHP 8.4 (version plus récente et compatible GLPI 11)
 - Extensions PHP requises :
   - mysqli, curl, gd, intl, ldap, zip, mbstring, xml, bz2
 
@@ -763,17 +763,17 @@ Le durcissement mis en place :
 
 ### 14. Table de correspondance DAT ↔ Procédure
 
-| Exigence DAT              | Description DAT                                      | Section(s) Procédure |
-|---------------------------|------------------------------------------------------|----------------------|
-| Gestion de parc           | Inventaire matériel et logiciel                     | Sections 6, 12       |
-| Helpdesk                  | Gestion des tickets et notifications                | Sections 9, 12       |
-| Authentification LDAP/AD  | Centralisation des comptes utilisateurs              | Sections 12          |
-| Sécurité HTTPS            | Accès sécurisé à l’application                      | Sections 10, 13      |
-| Sécurité système          | Sécurisation du système et des services              | Sections 13     |
-| Durcissement              | Renforcement post-validation de la sécurité          | Section 13           |
-| Sauvegardes               | Sauvegarde BDD et fichiers applicatifs               | Sections 11, 12      |
-| PRA                       | Reprise d’activité après incident                    | Section 11           |
-| Supervision               | Disponibilité et surveillance du service             | Sections 7, 12       |
+| Exigence DAT | Description DAT | Section(s) Procédure |
+|-------------|------------------|----------------------|
+| Gestion de parc | Inventaire matériel et logiciel | Sections 6, 12 |
+| Helpdesk | Gestion des tickets et notifications | Sections 9, 12 |
+| Authentification LDAP/AD | Centralisation des comptes utilisateurs | Section 12 |
+| Sécurité HTTPS | Accès sécurisé à l’application | Section 10 |
+| Sécurité système | Sécurisation du système et des services | Section 13 |
+| Durcissement | Renforcement post-validation de la sécurité | Section 13 |
+| Sauvegardes | Sauvegarde de la base de données et des fichiers applicatifs | Sections 11, 12 |
+| PRA | Reprise d’activité après incident | Section 11 |
+| Supervision | Disponibilité et surveillance du service | Sections 7, 12 |
 
 
 ## 15. Conclusion

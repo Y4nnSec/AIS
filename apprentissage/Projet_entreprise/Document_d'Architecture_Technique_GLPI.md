@@ -30,7 +30,7 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
   * Notification par mail
 
 * Gestion des utilisateurs :
-  * Authentification centralisés via Active Directory (LDAPS)
+  * Authentification centralisée via Active Directory (LDAPS)
   * Gestion des rôles et profils utilisateurs 
 
 **1.2 Volumétrie**
@@ -274,7 +274,7 @@ Pour un futur SSO, deux options existent :
 
 **OpenID Connect :** plus simple à intégrer, compatible web et mobile, basé sur des standards modernes (JSON/REST), idéal pour les applications actuelles.
 
-**SAML 2.0 :** robuste pour les applications web traditionnelles, mais plus complexe à mettre en place et moins moins adapté aux apps modernes et mobiles.
+**SAML 2.0 :** robuste pour les applications web traditionnelles, mais plus complexe à mettre en place et moins adapté aux apps modernes et mobiles.
 
 **Conclusion :** OpenID Connect est privilégié pour un SSO moderne, sécurisé et évolutif.
 
@@ -298,7 +298,7 @@ la stabilité et la lisibilité de l’architecture actuelle.
 
 ### 8. Planning prévisionnel
 
-  * Installation de Debian 13 et durcissement système
+  * Installation de Debian 13
   * Installation et configuration de la stack LAMP
   * Déploiement de GLPI
   * Suppression du dossier /install
