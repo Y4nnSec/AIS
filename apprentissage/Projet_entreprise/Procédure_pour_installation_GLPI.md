@@ -56,6 +56,7 @@
     - [13.6 Journalisation et supervision](#136-journalisation-et-supervision)
     - [13.7 Politique de mises à jour](#137-politique-de-mises-à-jour)
     - [13.8 Conclusion du durcissement](#138-conclusion-du-durcissement)
+    - [13.9 Installation et configuration du service SNMP](#139-installation-et-configuration-du-service-snmp)
     - [14. Table de correspondance DAT ↔ Procédure](#14-table-de-correspondance-dat--procédure)
   - [15. Conclusion](#15-conclusion)
 
@@ -759,6 +760,27 @@ Le durcissement mis en place :
 * Respecte les bonnes pratiques système et applicatives
 * N’altère pas le fonctionnement validé de la plateforme
 * Prépare l’environnement à une mise en production future
+
+### 13.9 Installation et configuration du service SNMP
+
+Objectif :
+Permettre la supervision du serveur GLPI par un outil externe via le protocole SNMP.
+
+**Installation du service SNMP**
+
+```bash
+sudo apt update
+sudo apt install snmp snmpd -y
+````
+
+**Vérification de l’installation :**
+
+``bash
+snmpd --version
+``
+
+**Configuration du service SNMP**
+
 
 
 ### 14. Table de correspondance DAT ↔ Procédure
