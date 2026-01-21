@@ -46,7 +46,7 @@
     - [12.6 Sauvegardes restaurables](#126-sauvegardes-restaurables)
     - [12.7 SSO : non implémenté (évolution prévue)](#127-sso-non-implémenté-évolution-prévue)
     - [12.8 Conclusion des tests](#128-conclusion-des-tests)
-  - [13. Durcissement post-validation (FINAL)](#13-durcissement-post-validation-final)
+  - [13. Durcissement post-validation](#13-durcissement-post-validation)
     - [13.1 Durcissement du système Debian](#131-durcissement-du-système-debian)
       - [Désactivation de la connexion SSH root](#désactivation-de-la-connexion-ssh-root)
     - [13.2 Durcissement du serveur Apache](#132-durcissement-du-serveur-apache)
@@ -558,9 +558,9 @@ et validées avec succès dans l’environnement de test.
 * Conforme aux objectifs définis dans le DAT
 
 
-## 13. Durcissement post-validation (FINAL)
+## 13. Durcissement post-validation
 
-Le durcissement de la plateforme est appliqué **après validation complète
+Le durcissement de la plateforme est appliqué après validation complète
 du bon fonctionnement de GLPI** (tests fonctionnels, accès HTTPS,
 LDAP, SMTP, sauvegardes).
 
