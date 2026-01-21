@@ -563,7 +563,7 @@ et validées avec succès dans l’environnement de test.
 ## 13. Durcissement post-validation
 
 Le durcissement de la plateforme est appliqué après validation complète
-du bon fonctionnement de GLPI** (tests fonctionnels, accès HTTPS,
+du bon fonctionnement de GLPI (tests fonctionnels, accès HTTPS,
 LDAP, SMTP, sauvegardes).
 
 Cette approche permet d’éviter tout blocage pendant les phases
@@ -777,7 +777,7 @@ sudo apt install snmp snmpd -y
 **Vérification de l'installation :**
 
 ```bash
-snmpd --version
+snmpd -v
 ```
 
 **Configuration du service SNMP**
@@ -836,7 +836,7 @@ snmpwalk -v2c -c public localhost 1.3.6.1.2.1.1
 | Durcissement | Renforcement post-validation de la sécurité | Section 13 |
 | Sauvegardes | Sauvegarde de la base de données et des fichiers applicatifs | Sections 11, 12 |
 | PRA | Reprise d’activité après incident | Section 11 |
-| Supervision | Disponibilité et surveillance du service | Sections 7, 12 |
+| Supervision | Disponibilité et surveillance du service | Sections 13.9, 13.10 |
 
 
 ## 15. Conclusion
