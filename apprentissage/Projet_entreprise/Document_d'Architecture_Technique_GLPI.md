@@ -46,7 +46,9 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
 * Serveur de messagerie existant
 * Outil de supervision existant :
   * Présence d’un outil de supervision (Zabbix, Centreon, Nagios) : à valider
-  * Méthode de supervision attendue (SNMP, agent, HTTP(S)) : à valider
+* Méthode de supervision attendue :
+  * SNMP (supervision réseau et système)
+  * HTTP(S) : vérification que l’application GLPI est accessible et fonctionne correctement via un navigateur web. 
 * Solution de sauvegarde existante :
   * Présence d’un outil de sauvegarde (Veeam, Proxmox Backup, Cobian Backup, etc.) : à valider
   * Version de la solution de sauvegarde : à valider
@@ -290,10 +292,27 @@ la stabilité et la lisibilité de l’architecture actuelle.
 
 ### 7. Supervision et exploitation
 
-  * Surveillance des ressources : CPU, RAM, disque
-  * Supervision de la disponibilité HTTP(S)
-  * Centralisation et consultation des logs
-  * Outils possibles : Zabbix, Centreon, Nagios
+La plateforme GLPI est intégrée dans une démarche de supervision afin de garantir
+la disponibilité et la performance du service.
+
+Éléments supervisés :
+- Disponibilité du service HTTP(S)
+- Charge CPU
+- Utilisation mémoire
+- Espace disque
+- État du service Apache et MariaDB
+
+Méthodes de supervision possibles :
+- SNMP pour la supervision système et réseau
+- HTTP(S) pour la supervision applicative
+
+Outils compatibles :
+- Zabbix
+- Centreon
+- Nagios
+
+La configuration détaillée de la supervision est décrite dans la procédure
+d’installation et d’exploitation.
 
 
 ### 8. Planning prévisionnel
