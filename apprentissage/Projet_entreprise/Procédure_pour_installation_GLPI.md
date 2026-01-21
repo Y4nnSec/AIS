@@ -57,6 +57,7 @@
     - [13.7 Politique de mises à jour](#137-politique-de-mises-à-jour)
     - [13.8 Conclusion du durcissement](#138-conclusion-du-durcissement)
     - [13.9 Installation et configuration du service SNMP](#139-installation-et-configuration-du-service-snmp)
+    - [13.10 Tests de supervision SNMP](#1310-tests-de-supervision-snmp)
     - [14. Table de correspondance DAT ↔ Procédure](#14-table-de-correspondance-dat--procédure)
   - [15. Conclusion](#15-conclusion)
 
@@ -771,16 +772,56 @@ Permettre la supervision du serveur GLPI par un outil externe via le protocole S
 ```bash
 sudo apt update
 sudo apt install snmp snmpd -y
-````
+```
 
-**Vérification de l’installation :**
+**Vérification de l'installation :**
 
-``bash
+```bash
 snmpd --version
-``
+```
 
 **Configuration du service SNMP**
 
+```bash
+sudo nano /etc/snmp/snmpd.conf
+```
+
+Configuration minimale sécurisée (SNMP v2c – environnement de test) :
+
+```bash
+agentAddress udp:161
+rocommunity public 127.0.0.1
+rocommunity public <IP_SUPERVISION>
+
+sysLocation Salle serveur - Environnement de test
+sysContact admin@domaine.local
+```
+
+**Redémarrage, activation et vértification du statut du service :**
+
+```bash
+sudo systemctl restart snmpd
+sudo systemctl enable snmpd
+sudo systemctl status snmpd
+```
+
+**Ouverture du port SNMP (si pare-feu actif)**
+
+```bash
+sudo ufw allow 161/udp
+sudo ufw reload
+```
+
+### 13.10 Tests de supervision SNMP
+
+Objectif :
+Valider le bon fonctionnement du service SNMP sur le serveur GLPI.
+
+**Test local**
+
+```bash
+snmpwalk -v2c -c public localhost 1.3.6.1.2.1.1
+```
 
 
 ### 14. Table de correspondance DAT ↔ Procédure
