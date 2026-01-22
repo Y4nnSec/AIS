@@ -774,11 +774,15 @@ sudo apt update
 sudo apt install snmp snmpd -y
 ```
 
+![alt text](../Images/Installation_des_services_SNMP_SNMPD.png)
+
 **Vérification de l'installation :**
 
 ```bash
 snmpd -v
 ```
+
+![alt text](../Images/Vérification_version_snmp.png)
 
 **Configuration du service SNMP**
 
@@ -797,6 +801,8 @@ sysLocation Salle serveur - Environnement de test
 sysContact admin@domaine.local
 ```
 
+![alt text](../Images/Configuration_snmp_pour_test.png)
+
 **Redémarrage, activation et vértification du statut du service :**
 
 ```bash
@@ -805,12 +811,18 @@ sudo systemctl enable snmpd
 sudo systemctl status snmpd
 ```
 
+![alt text](../Images/redémarrage_et_activation_snmp.png)
+
+![alt text](../Images/Vérification_status_snmp.png)
+
 **Ouverture du port SNMP (si pare-feu actif)**
 
 ```bash
 sudo ufw allow 161/udp
 sudo ufw reload
 ```
+
+
 
 ### 13.10 Tests de supervision SNMP
 
