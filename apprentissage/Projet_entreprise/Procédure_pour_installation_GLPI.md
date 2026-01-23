@@ -60,6 +60,8 @@
     - [13.10 Tests de supervision SNMP](#1310-tests-de-supervision-snmp)
     - [14. Table de correspondance DAT ↔ Procédure](#14-table-de-correspondance-dat--procédure)
   - [15. Conclusion](#15-conclusion)
+  - [Auteur : ESCRIVA Yann](#auteur--escriva-yann)
+  - [Projet : Décembre 2025](#projet--décembre-2025)
 
 
 ## 1. Présentation
@@ -856,6 +858,6 @@ snmpwalk -v2c -c public localhost 1.3.6.1.2.1.1
 Procédure complète, conforme aux besoins du DAT, sécurisée et prête pour mise en production.
 
 
-**Auteur :** ESCRIVA Yann
+## Auteur : ESCRIVA Yann
 
-**Projet :** Décembre 2025
+## Projet : Décembre 2025

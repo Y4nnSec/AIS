@@ -327,6 +327,6 @@ d’installation et d’exploitation.
   * Validation avant mise en production
 
 
-### Auteur : ESCRIVA Yann
+## Auteur : ESCRIVA Yann
 
-### Projet : Décembre 2025
+## Projet : Décembre 2025
