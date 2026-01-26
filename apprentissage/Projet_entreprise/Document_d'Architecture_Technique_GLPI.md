@@ -6,6 +6,11 @@
 # Projet : Document d'Architecture Technique de déploiement de GLPI
 
 
+**Auteur :** Yann (Administrateur Infrastructure Sécurisée)
+
+**Projet :** Décembre 2025
+
+
 ### Contexte :
 
 Mise en place d’une solution GLPI destinée à la gestion de parc informatique et au support utilisateurs, dans un premier temps en environnement de test, avec une mise en production ultérieure.
@@ -325,8 +330,3 @@ d’installation et d’exploitation.
   * Tests fonctionnels
   * durcissement système
   * Validation avant mise en production
-
-
-## Auteur : ESCRIVA Yann
-
-## Projet : Décembre 2025

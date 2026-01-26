@@ -7,7 +7,10 @@
 
 **Auteur :** Yann (Administrateur Infrastructure Sécurisée) 
 
+**Projet :** Janvier 2026
+
 **Contexte :** Mise en place d'une remontée automatique d'inventaire réseau (Switchs) vers GLPI.
+
 
 **Objectif :**
 
@@ -78,6 +81,7 @@ La liste doit contenir les lignes suivantes :
 
 Si ces lignes sont absentes, le paquet glpi-agent-task-network est manquant.
 
+
 ### Partie 2 : Configuration de l'Agent
 
 **Configuration du serveur et du SSL**
@@ -109,7 +113,6 @@ sudo systemctl edit --full glpi-agent.service
 ```
 
 **Vérifier la ligne ExecStart. Elle doit correspondre exactement à ceci :**
-
 
 ```Ini, TOML
 ExecStart=/usr/bin/glpi-agent --daemon --no-fork $OPTIONS
