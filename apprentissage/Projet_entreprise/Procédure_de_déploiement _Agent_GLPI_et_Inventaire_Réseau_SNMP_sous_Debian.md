@@ -38,6 +38,8 @@ sudo rm -rf /usr/local/bin/glpi-agent
 sudo rm -rf /etc/glpi-agent
 ```
 
+![alt text](../Images/Purge_agent_GLPI.png)
+
 **Téléchargement des paquets**
 
 Il est nécessaire de télécharger le cœur de l'agent et le module réseau (indispensable pour le support SNMP).
@@ -48,11 +50,17 @@ Il est nécessaire de télécharger le cœur de l'agent et le module réseau (in
 wget https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent_1.15-1_all.deb
 ```
 
+![alt text](../Images/Téléchargement_agent_GLPI.png)
+
 **Télécharger le module Network (Obligatoire pour scanner les switchs)**
 
 ```bash
 wget https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent-task-network_1.15-1_all.deb
 ```
+
+![alt text](../Images/Téléchargement_module_Network.png)
+
+
 
 **Installation**
 
@@ -64,12 +72,14 @@ Nous utilisons **apt** pour gérer automatiquement les dépendances (Perl, libra
 sudo apt install ./glpi-agent_1.15-1_all.deb ./glpi-agent-task-network_1.15-1_all.deb -y
 ```
 
+![alt text](../Images/Installation_agent_et_modules.png)
+
 **Vérification de l'installation des modules**
 
 Une fois installé, nous vérifions que l'agent a bien chargé les tâches réseaux.
 
 ```Bash
-glpi-agent --list-tasks
+sudo glpi-agent --list-tasks
 ```
 
 **Résultat attendu :**
@@ -81,26 +91,32 @@ La liste doit contenir les lignes suivantes :
 
 Si ces lignes sont absentes, le paquet glpi-agent-task-network est manquant.
 
+![alt text](../Images/Verification_installation_agent_et_modules.png)
+
 
 ### Partie 2 : Configuration de l'Agent
 
 **Configuration du serveur et du SSL**
 
-Nous modifions le fichier de configuration pour pointer vers le serveur GLPI. 
+Par défaut, le fichier de configuration est commenté (inactif), ce qui empêche le démarrage du service. Il faut définir l'URL du serveur manuellement.
 
-Si le serveur GLPI utilise un certificat auto-signé, la vérification SSL doit être désactivée.
-
-**Définir l'URL du serveur cible**
+Ouvrir le fichier de configuration :
 
 ```bash
-sudo sed -i 's|# server = http://localhost/glpi|server = https://glpi_test.archeagglo.fr/front/inventory.php|' /etc/glpi-agent/agent.cfg
+sudo nano /etc/glpi-agent/agent.cfg
 ```
 
-**Désactiver la vérification SSL (Uniquement pour environnement de test)**
+Modifications à effectuer : Rechercher la ligne # server = ... au début du fichier.
 
-```bash
-echo "no-ssl-check = 1" | sudo tee -a /etc/glpi-agent/agent.cfg
-```
+* Enlever le # (décommenter).
+
+* Indiquer l'URL du serveur.
+
+* Ajouter la ligne no-ssl-check si le certificat est auto-signé.
+
+**Le fichier doit ressembler à ceci :**
+
+![alt text](../Images/Configuration_serveur_et_ssl.png)
 
 **Vérification du Service Systemd**
 
@@ -117,6 +133,8 @@ sudo systemctl edit --full glpi-agent.service
 ```Ini, TOML
 ExecStart=/usr/bin/glpi-agent --daemon --no-fork $OPTIONS
 ```
+
+![alt text](../Images/Ligne_Execstart.png)
 
 (Si le chemin indique /usr/local/bin, le corriger vers /usr/bin).
 
@@ -140,16 +158,33 @@ sudo systemctl restart glpi-agent
 sudo systemctl status glpi-agent
 ```
 
+![alt text](../Images/Redémarrage_et_vérification_du_statut_de_l'agent.png)
+
+* Première communication forcée
+
+Pour que l'agent apparaisse dans la liste des agents sur l'interface web, il faut qu'il communique au moins une fois avec succès.
+
+```bash
+sudo glpi-agent --force
+```
+
+![alt text](../Images/Forcer_l'agent.png)
+
+
 ### Partie 3 : Configuration dans GLPI (Interface Web)
 
 **Activation de l'Agent**
 
-* Aller dans **Parc > Agents**.
+* Aller dans **Administration > Inventaire > agents**.
 * Sélectionner l'agent nouvellement remonté.
-* Aller dans l'onglet **Modules** (ou Configuration).
+* Aller dans l'onglet **Modules**
 * Activer les options suivantes :
   * Découverte réseau : Oui
   * Inventaire réseau : Oui
+
+![alt text](../Images/Activation_des_options_de_l'agent.png)
+
+![alt text](../Images/Activation_de_l'agent.png)
 
 **Création des identifiants SNMP**
 
@@ -161,26 +196,39 @@ L'agent a besoin de la communauté ("mot de passe") pour interroger les switchs.
 * **Communauté** : *public* (ou la communauté configurée sur le matériel).
 * **Version** : v2c (Standard actuel).
 
+![alt text](../Images/Identifiant_snmp.png)
+
 **Définition de la cible (Plage IP)**
 
-* Aller dans **Administration > Inventaire > Plages IP**.
+* Aller dans **Administration > GLPI Inventory > Plages IP**.
 * Créer une nouvelle plage (ex: "Switchs Salle Serveur").
 * Renseigner l'IP de début et de fin (ex: **192.168.1.50** à **192.168.1.50** pour cibler un équipement unique).
 
-**Création de la Tâche de Découverte**
+![alt text](../Images/Plage_IP.png)
+
+**Création de la Tâche**
 
 Cette étape lie l'agent, la cible et les identifiants.
 
-* Aller dans **Administration > Inventaire > Tâches**.
-* Créer une tâche nommée "Scan Découverte" et cocher la case **Actif**.
+* Aller dans **Administration > GLPI Inventory > Tâches > Gestion des tâches**.
+* Créer une tâche nommée "Scan Découverte" par exemple et cocher la case **Actif**.
 * Dans l'onglet **Configuration du Job** :
+  * **Nom** : Mettre le nom qu'on veut
   * **Méthode du module** : Sélectionner Découverte réseau.
   * **Cibles** : Ajouter la Plage IP créée précédemment.
   * **Acteurs** : Ajouter l' Agent configuré.
-  * **Identifiants SNMP** : Ajouter la communauté créée à l'étape 2.
 * Cliquer sur **Mettre à jour**.
 
-### Partie 4 : Exécution et Importation
+* Action finale : Dans la liste des tâches (ou via le bouton d'action), cliquer sur "Forcer le démarrage" pour préparer le travail.
+
+![alt text](../Images/Gestion_des_tâches1.png)
+![alt text](../Images/Gestion_des_tâches2.png)
+![alt text](../Images/Gestion_des_tâches3.png)
+![alt text](../Images/Gestion_des_tâches4.png)
+![alt text](../Images/Gestion_des_tâches5.png)
+
+
+### Partie 4 : Exécution et Vérification
 
 **Lancer le scan (Force Run)**
 
@@ -192,16 +240,32 @@ sudo glpi-agent --force
 
 Vérification : Le terminal doit afficher running task NetDiscovery.
 
-**Importer le matériel**
+![alt text](../Images/Forcer_l'agent.png)
 
-Une fois le scan terminé :
+**Vérification de l'importation**
 
-* Retourner dans GLPI : **Administration > Inventaire > Matériel non géré**.
-* Repérer la ligne correspondant au switch (Vérifier que l'Adresse MAC est présente).
-* Cocher la ligne.
-* Cliquer sur **Actions > Importer**.
-* Choisir le type : **Matériel réseau**.
+Grâce à la configuration SNMP correcte, GLPI possède désormais toutes les informations (Adresse MAC, Numéro de Série) pour identifier le matériel. L'importation est donc automatique.
 
-**Résultat :**
+Aller dans **Parc** > **Matériel réseau**.
 
- Le switch est désormais visible, géré et détaillé (ports, VLANs) dans le menu **Parc > Matériel réseau**.
+Vérifier la présence du nouveau switch dans la liste.
+
+Cliquer sur le nom du switch pour valider la remontée des informations (Ports, Modèle, Firmware).
+
+![alt text](../Images/Import_SNMP.png)
+
+**Cas de dépannage** (Si le switch n'apparaît pas)
+
+Si le switch n'est pas dans le Parc, c'est que l'identification a échoué (souvent un problème de communauté SNMP). Il est alors mis en quarantaine.
+
+Aller dans **Administration** > **GLPI Inventory** > **Nombre de Actifs non gérés**.
+
+Si le switch est présent ici, c'est qu'il manque des informations critiques (MAC/Serial) pour l'import automatique.
+
+Action corrective : Vérifier la communauté SNMP et relancer le scan.
+
+![alt text](../Images/Dépannage_d'import_SNMP.png)
+
+### Conclusion
+
+Ce déploiement assure désormais une remontée automatique et détaillée des équipements réseau vers GLPI. Cette solution garantit une **CMDB (Configuration Management Database)** toujours à jour sans intervention humaine, offrant ainsi une vision précise de l'infrastructure pour une gestion proactive du parc informatique.
