@@ -52,9 +52,9 @@ Le projet couvre :
 - la **procédure d’installation et de déploiement**
 
 📄 **Documents associés :**
-- 🏗️ [Document d'Architecture Technique (DAT)](./Projet_entreprise/Document_d'Architecture_Technique_GLPI.md)
-- 🛠️ [Procédure d’installation et de déploiement GLPI](./Projet_entreprise/Procédure_pour_installation_GLPI.md)
-- 📡 [Déploiement Agent GLPI & Inventaire SNMP](./Projet_entreprise/Procédure_de_déploiement_Agent_GLPI_et_Inventaire_Réseau_SNMP_sous_Debian.md)
+- 🏗️ [Document d'Architecture Technique (DAT)](./apprentissage/Projet_entreprise/Document_d'Architecture_Technique_GLPI.md)
+- 🛠️ [Procédure d’installation et de déploiement GLPI](./apprentissage/Projet_entreprise/Procédure_pour_installation_GLPI.md)
+- 📡 [Déploiement Agent GLPI & Inventaire SNMP](./apprentissage/Projet_entreprise/Procédure_de_déploiement%20_Agent_GLPI_et_Inventaire_Réseau_SNMP_sous_Debian.md)
 
 ---
 
