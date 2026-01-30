@@ -35,6 +35,7 @@ Il contient divers **projets techniques**, **études comparatives**, **captures 
 | 📄 **Etude_comparative_des_differentes_solutions_Bastions.md** | Étude des solutions Bastion (Azure, Guacamole, Teleport) |
 | 📄 **Sensibilisation_Cybersécurité.md** | Support de sensibilisation à la cybersécurité |
 | 📄 **Analyser_La_Sécurité_Du_Trafic_Réseau.md** | Analyse complète du trafic réseau avec Wireshark |
+| 📄 **HSRP.md** | Mise en place du protocole de redondance HSRP (Cisco) |
 | 🐍 **test.py / test6.py** | Scripts Python d’essai |
 | 📘 **README.md** | Ce fichier de présentation |
 
@@ -50,9 +51,10 @@ Le projet couvre :
 - les **aspects sécurité**
 - la **procédure d’installation et de déploiement**
 
-📄 Documents associés :
-- 📌 [Besoins pour l’installation de GLPI](./apprentissage/Projet_entreprise/Besoins_pour_installation_GLPI.md)
-- 🛠️ [Procédure d’installation et de déploiement GLPI](./apprentissage/Projet_entreprise/Procédure_pour_installation_GLPI.md)
+📄 **Documents associés :**
+- 🏗️ [Document d'Architecture Technique (DAT)](./Projet_entreprise/Document_d'Architecture_Technique_GLPI.md)
+- 🛠️ [Procédure d’installation et de déploiement GLPI](./Projet_entreprise/Procédure_pour_installation_GLPI.md)
+- 📡 [Déploiement Agent GLPI & Inventaire SNMP](./Projet_entreprise/Procédure_de_déploiement_Agent_GLPI_et_Inventaire_Réseau_SNMP_sous_Debian.md)
 
 ---
 
