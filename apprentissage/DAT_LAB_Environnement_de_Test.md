@@ -4,6 +4,12 @@
 
 **DAT_Lab: Environnement de test**
 
+
+**Auteur** : Yann (Administrateur Infrastructure Sécurisée)
+
+**Projet** : Octobre 2025
+
+
 1. **Résumé :**
 
 Ce DAT décrit le déploiement d'un laboratoire reproduisant un service d'entreprise avec un contrôleur de domaine Windows server 2022, un pc client Windows 10 et un serveur Linux hébergeant l'application VulnerableLightApp. L'objectif est de fournir un environnement réaliste et vulnérable pour des exercices d'audit.
@@ -142,7 +148,3 @@ L’exécution du script BadBlood a enrichi le domaine Active Directory avec des
 L’ensemble des services a été vérifié : connexions SSH et WinRM réussies, partages SMB opérationnels avec droits NTFS.Sur le plan technique, ce projet m’a permis de renforcer mes compétences en administration système Windows et Linux, en gestion des droits NTFS et des comptes AD.
 
  En conclusion, ce laboratoire constitue une base solide pour les futurs audits de sécurité, tests d’exploitation et exercices de pentest.
-
-### Auteur : ESCRIVA Yann
-
-### Projet : Octobre 2025

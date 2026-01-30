@@ -4,6 +4,12 @@
 
 # Analyser la sécurité du trafic réseau
 
+
+**Auteur** : Yann (Administrateur Infrastructure Sécurisée)
+
+**Projet** : Novembre 2025
+
+
 **Rappels :**
 
 * **Quelle est votre adresse IP ? Quelle est sa classe (IPv4) ?**
@@ -184,11 +190,3 @@ Pour protéger la confidentialité d'un partage SMB, il faut :
 * **Limiter les ports SMB** aux réseaux de confiance via le pare-feu.
 
 * **VPN ou tunnel sécurisé** si les partages sont accessibles depuis l’extérieur.
-
-
-
-
-
-### Auteur : ESCRIVA Yann
-
-### Projet : Novembre 2025

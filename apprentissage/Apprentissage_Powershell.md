@@ -4,6 +4,12 @@
 
 # **Apprentissage et script Powershell**
 
+
+**Auteur** : Yann (Administrateur Infrastructure Sécurisée)
+
+**Projet** : Octobre 2025
+
+
 1.Vérifiez à l'aide d'un langage de script si vous avez les KB5049622, KB5049625 et Un KB présent de votre choix présent sur votre OS
 
 Windows. Le script devra afficher en Vert les KB présents et en rouge les KB absents.
@@ -142,7 +148,3 @@ la présence ou l’absence des KB listés.
 ![alt text](Images/signature.png)
 ![alt text](Images/vérification_signature.png)
 ![alt text](Images/kerberos.png)
-
-### Auteur : ESCRIVA Yann
-
-### Projet : Octobre 2025

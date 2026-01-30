@@ -4,6 +4,12 @@
 
 INITIALISATION A LA CLASSIFICATION DES VULNERABILITEES
 
+
+**Auteur** : Yann (Administrateur Infrastructure Sécurisée)
+
+**Projet** : Octobre 2025
+
+
 **Eternal Blue :**
 
 1. **Donnez la référence CVE** :CVE-2017-0144
@@ -187,7 +193,3 @@ Vecteur (CVSS 4.0) : CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/
 5. **Déterminer si un exploit est disponible publiquement, si oui en prendre connaissance et le citer en référence.**
 
 Pas d'exploit public pour le moment.
-
-### Auteur : ESCRIVA Yann
-
-### Projet : Octobre 2025

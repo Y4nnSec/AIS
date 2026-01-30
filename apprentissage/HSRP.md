@@ -6,6 +6,10 @@
 ## TP Réseau HSRP
 
 
+**Auteur** : Yann (Administrateur Infrastructure Sécurisée)
+
+**Projet** : Janvier 2025
+
 
 ### 1. Objectif
 
@@ -113,11 +117,6 @@ délais, ainsi que les commandes permettant d'activer HSRP sur l'interface.
 `standby 1 timers 3 10` : 
 * 3 = intervalle d’envoi des messages hello
 * 10 = hold time (temps avant de déclarer un routeur actif en panne)
-
-
-### Auteur : ESCRIVA Yann
-
-### Projet : Janvier 2025
 
 
 

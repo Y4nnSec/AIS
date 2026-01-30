@@ -4,6 +4,12 @@
 
 **Etude comparative des différentes solutions Bastions**
 
+
+**Auteur** : Yann (Administrateur Infrastructure Sécurisée)
+
+**Projet** : Janvier 2026
+
+
 | **Solution**                         | **Azure Bastion**                      | **Apache Guacamole**                     | **Teleport**                              |
 | ------------------------------------------ | -------------------------------------------- | ---------------------------------------------- | ----------------------------------------------- |
 | **Type**                             | Commercial (SaaS, Cloud)                     | Open Source, Auto-hébergé                    | Open Source, Cloud-ready                        |
@@ -53,7 +59,3 @@ Connections SSH
 Connection RDP
 
 ![alt text](Images/Connection_RDP_de_Guacamole.png)
-
-### Auteur : ESCRIVA Yann
-
-### Projet : Octobre 2025

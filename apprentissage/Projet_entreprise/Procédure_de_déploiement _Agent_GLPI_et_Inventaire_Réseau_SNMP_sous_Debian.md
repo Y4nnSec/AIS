@@ -9,6 +9,7 @@
 
 **Projet :** Janvier 2026
 
+
 **Contexte :** Mise en place d'une remontée automatique d'inventaire réseau (Switchs) vers GLPI.
 
 
