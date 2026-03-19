@@ -19,11 +19,12 @@ Installer et configurer l'agent GLPI sur un serveur Debian 13 pour effectuer la 
 
 ### Prérequis :
 
-* Serveur : Debian 12 ou supérieur.
-* Privilèges : Accès Root ou utilisateur avec droits sudo.
-* Serveur GLPI : Accessible via HTTPS.
+### Prérequis
 
-Informations nécessaires : URL du serveur GLPI, Communauté SNMP des équipements (ex: public).
+* **Serveur :** Debian 12 ou supérieur.
+* **Privilèges :** Accès Root ou utilisateur avec droits sudo.
+* **Serveur GLPI :** Accessible via HTTPS.
+* **Informations nécessaires :** URL du serveur GLPI, identifiants SNMPv3 des équipements (Utilisateur, mots de passe de chiffrement SHA/AES).
 
 ### Partie 1 : Installation de l'Agent
 
@@ -256,15 +257,13 @@ Cliquer sur le nom du switch pour valider la remontée des informations (Ports, 
 
 ![alt text](../Images/Import_SNMP.png)
 
-**Cas de dépannage** (Si le switch n'apparaît pas)
+### Cas de dépannage (Si le switch n'apparaît pas)
 
-Si le switch n'est pas dans le Parc, c'est que l'identification a échoué (souvent un problème de communauté SNMP). Il est alors mis en quarantaine.
+Si le switch n'est pas dans le Parc, c'est que l'identification a échoué (souvent un problème d'authentification ou de chiffrement SNMPv3). Il est alors mis en quarantaine.
 
-Aller dans **Administration** > **GLPI Inventory** > **Nombre de Actifs non gérés**.
-
-Si le switch est présent ici, c'est qu'il manque des informations critiques (MAC/Serial) pour l'import automatique.
-
-Action corrective : Vérifier la communauté SNMP et relancer le scan.
+* Aller dans **Administration > GLPI Inventory > Nombre de Actifs non gérés**.
+* Si le switch est présent ici, c'est qu'il manque des informations critiques (MAC/Serial) pour l'import automatique.
+* **Action corrective :** Vérifier les mots de passe et les protocoles de chiffrement SNMPv3 (SHA/AES) dans GLPI et sur le switch, puis relancer le scan.
 
 ![alt text](../Images/Depannage_d_import_SNMP.png)
 
