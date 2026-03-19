@@ -9,132 +9,7 @@
 
 **Projet :** Décembre 2025 à Avril 2026
 
-```mermaid
-graph TB
-    %% ==========================================
-    %% SORTIE INTERNET ET COEUR LOGIQUE
-    %% ==========================================
-    Internet((Internet / Fibre))
-    
-    subgraph SECU_CENTRALE [Zone de Sécurité Périmétrique]
-        FW_PROD{FW-CENTRAL-01<br/>Pare-Feu Principal<br/>10.50.20.254}
-        FW_BACKUP{FW-CENTRAL-02<br/>Pare-Feu HA}
-    end
-
-    Internet --- FW_PROD
-    FW_PROD --- FW_BACKUP
-
-    MPLS(((NUAGE MPLS - RÉSEAU OPÉRATEUR ANONYMISÉ)))
-    
-    FW_PROD ===|Lien-Fibre-Dédié| MPLS
-
-    %% ==========================================
-    %% 1. SITE MAUVES (HQ - DATACENTER)
-    %% ==========================================
-    subgraph SITE_MAUVES [SITE CENTRAL - MAUVES - 10.50.0.0/16]
-        direction TB
-        
-        subgraph RESEAU_COEUR_MVS [Cœur de Réseau & Routage]
-            RT_MVS_WAN{RTR-MVS-WAN-01}
-            SW_MVS_CORE_1[SW-MVS-CORE-01<br/>Châssis Cœur A]
-            SW_MVS_CORE_2[SW-MVS-CORE-02<br/>Châssis Cœur B]
-            RT_MVS_WAN --- SW_MVS_CORE_1
-            SW_MVS_CORE_1 === SW_MVS_CORE_2
-        end
-
-        subgraph DATA_CENTER [VLAN 99 - Management & Wazuh]
-            SW_MVS_SRV[SW-MVS-SRV-01]
-            SRV_GLPI[SRV-MVS-GLPI-01<br/>10.50.99.100]
-            SRV_WAZUH[SRV-MVS-WAZUH-01<br/>10.50.99.101]
-            SW_MVS_SRV --- SRV_GLPI
-            SW_MVS_SRV --- SRV_WAZUH
-        end
-
-        SW_MVS_CORE_1 --- SW_MVS_SRV
-    end
-
-    MPLS ===|Lien-Principal-100M| RT_MVS_WAN
-
-    %% ==========================================
-    %% 2. SITE ST DONAT - 10.61.x.x
-    %% ==========================================
-    subgraph SITE_STD [SITE DISTANT - ST DONAT - 10.61.0.0/16]
-        direction TB
-        RT_STD_WAN{RTR-STD-WAN-01}
-        
-        subgraph INFRA_STD [Répartition St Donat]
-            SW_STD_CORE[SW-STD-CORE-01]
-            SW_STD_EXT[SW-STD-EXT-01]
-            AP_STD[Bornes Wi-Fi Camping/Snack]
-            
-            SW_STD_CORE --- SW_STD_EXT
-            SW_STD_EXT --- AP_STD
-        end
-        RT_STD_WAN --- SW_STD_CORE
-    end
-
-    MPLS ===|Lien-Cuivre-10M| RT_STD_WAN
-
-    %% ==========================================
-    %% 3. SITE MERCUROL - 10.62.x.x (DÉTAILLÉ)
-    %% ==========================================
-    subgraph SITE_MER [SITE DISTANT - MERCUROL - 10.62.0.0/16]
-        direction TB
-        RT_MER_1{RTR-MER-01<br/>Routeur Principal}
-        RT_MER_2{RTR-MER-02<br/>Routeur Secours}
-        
-        subgraph SWITCHS_MER [Distribution Mercurol]
-            SW_MER_VOX[SW-MER-VOX-01<br/>VLAN Voix]
-            SW_MER_DAT1[SW-MER-DAT-01<br/>VLAN Data A]
-            SW_MER_DAT2[SW-MER-DAT-02<br/>VLAN Data B]
-            
-            SW_MER_VOX --- SW_MER_DAT1
-            SW_MER_VOX --- SW_MER_DAT2
-        end
-        
-        RT_MER_1 --- SW_MER_VOX
-        RT_MER_2 --- SW_MER_VOX
-    end
-
-    MPLS ===|Lien-Fibre-100M| RT_MER_1
-
-    %% ==========================================
-    %% 4. AUTRES SITES (Regroupés)
-    %% ==========================================
-    subgraph SITES_SATELLITES [Autres Sites Satellites]
-        RT_STF{RTR-ST-FELICIEN}
-        RT_QUI{RTR-QUIBLIER}
-        RT_TCH{RTR-TECH-CHAMP}
-        RT_EDT{RTR-EAUX-TOURNON}
-    end
-
-    MPLS --- RT_STF
-    MPLS --- RT_QUI
-    MPLS --- RT_TCH
-    MPLS --- RT_EDT
-
-    %% ==========================================
-    %% FLUX DE SUPERVISION
-    %% ==========================================
-    SRV_GLPI -.->|SNMPv3-Inventaire| SW_MVS_CORE_1
-    SRV_GLPI -.->|SNMPv3-Inventaire| SW_STD_CORE
-    SRV_GLPI -.->|SNMPv3-Inventaire| SW_MER_VOX
-    SRV_WAZUH -.->|HIDS-Agent| SRV_GLPI
-    FW_PROD -.->|Syslog-Security| SRV_WAZUH
-
-    %% STYLES
-    classDef hq fill:#f0f7ff,stroke:#00529b,stroke-width:2px;
-    classDef site fill:#fff5f5,stroke:#c4122d,stroke-width:2px;
-    classDef fw fill:#ffeded,stroke:#e74c3c,stroke-width:3px;
-    classDef srv fill:#f6ffed,stroke:#52c41a,stroke-width:2px;
-    classDef wazuh fill:#fff7e6,stroke:#d48806,stroke-width:2px,font-weight:bold;
-
-    class SITE_MAUVES hq;
-    class SITE_STD,SITE_MER,SITES_SATELLITES site;
-    class FW_PROD,FW_BACKUP fw;
-    class SRV_GLPI srv;
-    class SRV_WAZUH wazuh;
-```
+![alt text](../Images/Plan_Arche_Agglo.png)
 
 ## Table des matières
 
@@ -171,11 +46,11 @@ graph TB
       - [B. Stack applicative logicielle (L.A.M.P)](#b-stack-applicative-logicielle-lamp)
       - [C. Espace d'adressage et Filtrage local (UFW)](#c-espace-dadressage-et-filtrage-local-ufw)
       - [D. Cartographie des Flux Applicatifs et Sécurité](#d-cartographie-des-flux-applicatifs-et-sécurité)
-    - [4.6. Sécurisation de l’infrastructure](#46-sécurisation-de-linfrastructure)
+    - [4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)](#46-sécurisation-de-linfrastructure-durcissement-os-et-flux)
     - [4.7 Analyse des risques](#47-analyse-des-risques)
     - [4.8 Supervision et exploitation](#48-supervision-et-exploitation)
     - [4.9 Continuité de service](#49-continuité-de-service)
-    - [4.10 Justification des choix de sécurité](#410-justification-des-choix-de-sécurité)
+    - [4.10 Justification des choix de sécurité et évolutions](#410-justification-des-choix-de-sécurité-et-évolutions)
   - [5. L’organisation de la mise en œuvre](#5-lorganisation-de-la-mise-en-œuvre)
     - [5.1. Revue de code et configuration](#51-revue-de-code-et-configuration)
 - [Téléchargement de l'agent et du module réseau](#téléchargement-de-lagent-et-du-module-réseau)
@@ -391,71 +266,7 @@ Afin de garantir un haut niveau de sécurité, l'architecture cible a été pens
 
 #### A. Architecture Réseau Globale
 
-```mermaid
-graph TD
-    %% Éléments externes
-    Internet((Internet))
-    VPN((VPN Télétravail<br>10.8.0.0/24))
-    FW{FW-MAUVES-01<br>Pare-Feu Central}
-
-    %% Connexions externes
-    Internet --- FW
-    VPN -.-|Accès Admin chiffré| FW
-
-    %% Passerelles des VLANs
-    V10((Passerelle<br>VLAN 10))
-    V20((Passerelle<br>VLAN 20))
-    V99((Passerelle<br>VLAN 99))
-
-    %% Routage depuis le pare-feu
-    FW ---|10.50.10.254| V10
-    FW ---|10.50.20.254| V20
-    FW ---|10.50.99.254| V99
-
-    %% VLAN 10 Utilisateurs
-    subgraph VLAN10 [VLAN 10 - Utilisateurs 10.50.10.0/24]
-        PC1[Postes Mairie]
-        PC2[Postes Agglo]
-    end
-    V10 --- PC1
-    V10 --- PC2
-
-    %% VLAN 20 Équipements
-    subgraph VLAN20 [VLAN 20 - Équipements 10.50.20.0/24]
-        SW1[SW-MAUVES-CORE-01<br>Switch Cœur]
-        SW2[SW-MAUVES-DAT-01<br>Switch Répartiteur]
-    end
-    V20 --- SW1
-    V20 --- SW2
-
-    %% VLAN 99 Management / Proxmox
-    subgraph VLAN99 [VLAN 99 - Management IT 10.50.99.0/24]
-        subgraph PROXMOX [Hyperviseur Proxmox]
-            AD[SRV-MAUVES-AD-01<br>Active Directory]
-            GLPI[SRV-MAUVES-GLPI-01<br>10.50.99.100]
-            WAZUH[SRV-MAUVES-WAZUH-01<br>10.50.99.101]
-        end
-    end
-    V99 --- AD
-    V99 --- GLPI
-    V99 --- WAZUH
-
-    %% Flux réseau
-    GLPI -.-|UDP 161 : SNMPv3| SW1
-    PC1 -.-|TCP 443 : Remontée Agent| GLPI
-    GLPI -.-|TCP 1514 : Envoi Logs| WAZUH
-
-    %% Couleurs et Styles
-    classDef firewall fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff;
-    classDef server fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff;
-    classDef network fill:#3498db,stroke:#2980b9,stroke-width:2px,color:#fff;
-    classDef vpn fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff;
-    
-    class FW firewall;
-    class GLPI,WAZUH,AD server;
-    class V10,V20,V99 network;
-    class VPN vpn;
-```
+![alt text](../Images/Architecture_Réseau_Globale.png)
 
 #### B. Plan d'adressage cible et Segmentation (VLAN)
 
@@ -515,59 +326,26 @@ Le serveur dispose d'une adresse IPv4 fixe (`10.50.99.100`) et d'un enregistreme
 
 Ce diagramme synthétise les interactions réseaux entrantes et sortantes du serveur GLPI au sein de l'infrastructure :
 
-```mermaid
-graph TD
-    %% Éléments externes et services
-    Internet((Internet<br>Dépôts Debian))
-    AD[SRV-MAUVES-AD-01<br>LDAPS]
-    Mail[Relais Mail<br>SMTP]
-    WAZUH[SRV-MAUVES-WAZUH-01<br>10.50.99.101]
+![alt text](<../Images/Cartographie des Flux Applicatifs et Sécurité.png>)
 
-    %% Pare-feu et Serveur Central
-    FW{FW-MAUVES-01<br>Pare-feu Central}
-    GLPI["SRV-MAUVES-GLPI-01<br>10.50.99.100<br>Debian 13 / Apache2"]
+### 4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)
 
-    %% Parc et Admin
-    Clients[Agents Windows<br>VLAN 10]
-    Equipements[Switchs & Routeurs<br>VLAN 20]
-    Admin[Admin IT / VPN<br>10.8.0.0/24]
+La sécurisation de l'environnement GLPI a été traitée selon le principe de défense en profondeur, en appliquant les bonnes pratiques de durcissement recommandées par l'ANSSI
 
-    %% Liaisons Entrantes
-    Internet --- FW
-    FW ---|TCP 443 / HTTPS| GLPI
-    Admin ---|TCP 22 / SSH| GLPI
-    Clients ---|TCP 443 / Remontée Agent| GLPI
+* **Durcissement du Système (OS) :**
+    * **Cloisonnement réseau :** Le pare-feu local UFW est configuré avec une politique par défaut stricte (Default Deny) en entrée, n'autorisant que les ports strictement nécessaires au service (TCP 22, 443)[cite: 862].
+    * **Accès distant sécurisé (SSH) :** L'authentification par mot de passe et l'accès direct en tant que `root` ont été désactivés (`PermitRootLogin no`, `PasswordAuthentication no`). L'administration se fait uniquement via des clés cryptographiques robustes (ex: ED25519 ou RSA 4096) depuis le réseau VPN IT.
+    * **Lutte contre le bruteforce :** L'outil `fail2ban` est déployé avec des "jails" (prisons) actives surveillant les logs d'authentification SSH (`sshd`) et web (`apache-auth`), bannissant automatiquement et dynamiquement les adresses IP suspectes[cite: 864].
 
-    %% Liaisons Sortantes
-    GLPI ---|TCP 636 / LDAPS| AD
-    GLPI ---|TCP 587 / SMTP| Mail
-    GLPI ---|UDP 161 / SNMPv3| Equipements
-    GLPI ---|TCP 1514 / Logs| WAZUH
-    GLPI ---|TCP 443 / Updates| FW
+* **Sécurité Applicative et Flux :**
+    * **Chiffrement en transit :** L'accès à l'interface web est forcé en HTTPS[cite: 856]. Les requêtes d'authentification vers l'Active Directory transitent via un tunnel chiffré LDAPS (Port TCP 636) pour éviter toute compromission des identifiants sur le réseau local[cite: 856, 857].
+    * **Hygiène applicative :** Conformément aux prérequis de sécurité de l'éditeur, le dossier `/install` de GLPI a été définitivement supprimé de l'arborescence après le déploiement.
 
-    %% Styles
-    classDef main fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff;
-    classDef firewall fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff;
-    classDef admin fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff;
-    class GLPI main;
-    class FW firewall;
-    class Admin admin;
-```
+* **Résilience et PRA :**
+    * Une politique de sauvegarde automatisée (via Veeam) assure des snapshots réguliers de la machine virtuelle, couplés à des "dumps" logiques quotidiens de la base de données MariaDB[cite: 865]. Une rétention de 30 jours permet de valider un Plan de Reprise d'Activité (PRA) efficace.
 
-### 4.6. Sécurisation de l’infrastructure
-
-La sécurisation de l'environnement GLPI est une priorité traitée à plusieurs niveaux :
-
-**Sécurité Applicative et Flux :** Utilisation obligatoire du protocole HTTPS pour chiffrer les échanges web. Les requêtes d'authentification vers l'Active Directory sont encapsulées dans un tunnel sécurisé (LDAPS port 636). Après installation, le dossier `/install` de GLPI est obligatoirement supprimé.
-
-**Durcissement du Système :** Désactivation de l'accès SSH pour l'utilisateur `root`.
-  * Authentification SSH par clé cryptographique uniquement.
-  * Mise en place d'un pare-feu local (UFW) sur la machine Debian.
-  * Déploiement de `Fail2ban` pour contrer les attaques par force brute sur les services SSH et Apache.
-
-**Résilience des données :** Sauvegardes automatisées (Veeam) quotidiennes incluant des dumps de la base MariaDB, avec une politique de rétention de 30 jours, permettant un Plan de Reprise d'Activité (PRA) efficace.
-
-**Supervision :** Monitoring proactif (charge CPU, RAM, espace disque, statut Apache/MariaDB) via requêtes SNMP et HTTP(S).
+* **Supervision et Audit :**
+    * Le monitoring système (CPU, RAM, Disque) s'effectue via SNMPv3, et l'intégration avec le serveur centralisé **Wazuh** (SIEM) assure la remontée et l'analyse continue des événements de sécurité.
 
 ### 4.7 Analyse des risques
 
@@ -644,31 +422,15 @@ En cas d’incident majeur :
 
 Cette organisation garantit une remise en service rapide tout en limitant la perte de données.
 
-### 4.10 Justification des choix de sécurité
+### 4.10 Justification des choix de sécurité et évolutions
 
-Certains choix techniques ont été réalisés en tenant compte du contexte d’un environnement de test.
+Certains choix techniques ont été réalisés de manière itérative, en tenant compte des contraintes de l'environnement de test et des exigences de cybersécurité:
 
-**SNMP v2c**
+* **Élévation de la sécurité SNMP (De la v2c à la v3) :**
+    Dans un premier temps, le protocole SNMP v2c (avec la communauté `public`) a été utilisé lors des phases de test pour valider rapidement l'ouverture des flux et le bon fonctionnement du module de découverte. Cependant, pour répondre aux exigences de sécurité du titre AIS et protéger les données d'inventaire contre l'interception sur le réseau (sniffing), **la configuration finale a été élevée en SNMPv3**. Le modèle de sécurité `AuthPriv` a été implémenté, garantissant l'authentification (via l'algorithme SHA) et le chiffrement des données de bout en bout (via AES), comme illustré sur les schémas d'architecture.
 
-Le protocole SNMP v2c avec communauté `public` a été retenu afin de :
-
-- Faciliter les tests de découverte réseau  
-- Valider les flux d’inventaire  
-
-Cependant :
-
-- Usage limité à un périmètre interne  
-- Non exposé à Internet  
-- Migration prévue vers SNMPv3 en production  
-
-**Certificat SSL auto-signé**
-
-L’usage d’un certificat auto-signé est justifié par :
-
-- L’absence d’exposition externe  
-- La nature temporaire de l’environnement  
-
-> Un certificat reconnu sera déployé en production
+* **Usage d'un certificat SSL auto-signé :**
+    La mise en place d'un certificat auto-signé pour l'accès HTTPS est justifiée par l'isolement strict de la maquette (non exposée sur Internet et confinée au VLAN de Management). Ce choix technique est temporaire. Lors du futur passage en production, un certificat valide généré par l'Autorité de Certification (PKI) interne de la collectivité ou un organisme reconnu sera déployé afin de garantir la confiance et supprimer les avertissements de sécurité sur les navigateurs des utilisateurs.
 
 
 ## 5. L’organisation de la mise en œuvre
@@ -718,34 +480,7 @@ L'architecture détaillée du déploiement met en évidence le cloisonnement des
 
 Ce diagramme de séquence détaille les interactions réseau entre l'agent Linux (équipé du module network) et les équipements lors du processus de découverte SNMP.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Agent as Agent GLPI (Debian)
-    participant Serveur as SRV-MAUVES-GLPI-01 (10.50.99.100)
-    participant Switch as SW-STD-DAT-01 (10.61.20.1)
-
-    %% Initialisation
-    rect rgb(240, 248, 255)
-    Note over Agent, Serveur: Flux 1 : Récupération de la tâche
-    Agent->>Serveur: Requête HTTPS (Vérification des tâches)
-    Serveur-->>Agent: Envoi des paramètres "Scan Découverte" (Plage 10.61.20.0/24, Identifiants SNMPv3)
-    end
-
-    %% Découverte SNMP
-    rect rgb(255, 250, 240)
-    Note over Agent, Switch: Flux 2 : Découverte et Inventaire Réseau
-    Agent->>Switch: Requête SNMP Get (UDP 161, SNMPv3 AuthPriv)
-    Switch-->>Agent: Réponse SNMP chiffrée avec les OID (Modèle, MAC, Serial)
-    end
-
-    %% Remontée
-    rect rgb(240, 255, 240)
-    Note over Agent, Serveur: Flux 3 : Remontée vers la CMDB
-    Agent->>Serveur: Envoi du fichier XML d'inventaire réseau (TCP 443 / HTTPS)
-    Serveur-->>Agent: Accusé de réception (HTTP 200) et Import dans le parc
-    end
-```
+![alt text](<../Images/Diagramme de Séquence du Protocole SNMP.png>)
 
 
 ## 6. Les relations avec les principaux acteurs du projet
