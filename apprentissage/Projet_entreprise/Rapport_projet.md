@@ -19,7 +19,7 @@ graph TD
     MPLS(((Nuage MPLS<br>Réseau Opérateur)))
     
     Internet --- FW
-    FW ===|Lien Principal| MPLS
+    FW ===|Lien-Principal| MPLS
 
     %% ==========================================
     %% 1. SITE MAUVES (HQ / Datacenter) - 10.50.x.x
@@ -29,7 +29,7 @@ graph TD
         RT_MVS_1{RTR-MVS-01<br>Routeur<br>10.50.20.253}
         RT_MVS_2{RTR-MVS-02<br>Routeur Secours<br>10.50.20.252}
         
-        SW_MVS_CORE[SW-MVS-CORE-01<br>Switch Cœur<br>10.50.20.1]
+        SW_MVS_CORE[SW-MVS-CORE-01<br>Switch Coeur<br>10.50.20.1]
         SW_MVS_VOX_1[SW-MVS-VOX-01<br>Switch Voix<br>10.50.30.1]
         SW_MVS_DAT_1[SW-MVS-DAT-01<br>Switch Data<br>10.50.10.1]
         SW_MVS_DAT_2[SW-MVS-DAT-02<br>Switch Data<br>10.50.10.2]
@@ -60,12 +60,11 @@ graph TD
         SW_STD_VOX2[SW-STD-VOX-02<br>Switch Voix<br>10.61.30.2]
         SW_STD_VOX3[SW-STD-VOX-03<br>Switch Voix<br>10.61.30.3]
         
-        SW_STD_CAM[SW-STD-EXT-01<br>Switch Extérieur<br>10.61.40.1]
-        SW_STD_CAM2[SW-STD-EXT-02<br>Switch Extérieur<br>10.61.40.2]
-        SW_STD_CAM3[SW-STD-EXT-03<br>Switch Extérieur<br>10.61.40.3]
-        SW_STD_CAM4[SW-STD-EXT-04<br>Switch Extérieur<br>10.61.40.4]
+        SW_STD_CAM[SW-STD-EXT-01<br>Switch Exterieur<br>10.61.40.1]
+        SW_STD_CAM2[SW-STD-EXT-02<br>Switch Exterieur<br>10.61.40.2]
+        SW_STD_CAM3[SW-STD-EXT-03<br>Switch Exterieur<br>10.61.40.3]
+        SW_STD_CAM4[SW-STD-EXT-04<br>Switch Exterieur<br>10.61.40.4]
         
-        %% Bornes Wi-Fi
         AP_CAMPING[AP-STD-CAMPING-01<br>Borne Wi-Fi<br>10.61.40.10]
         AP_SNACK[AP-STD-SNACK-01<br>Borne Wi-Fi<br>10.61.40.11]
         AP_CAB1[AP-STD-CABANE-01<br>Borne Wi-Fi<br>10.61.40.12]
@@ -86,7 +85,6 @@ graph TD
         SW_STD_CAM --- SW_STD_CAM3
         SW_STD_CAM --- SW_STD_CAM4
         
-        %% Connexions Wi-Fi
         SW_STD_CAM --- AP_CAMPING
         SW_STD_CAM --- AP_SNACK
         SW_STD_CAM --- AP_CAB1
@@ -118,9 +116,9 @@ graph TD
     end
 
     %% ==========================================
-    %% 4. SITE ST FÉLICIEN - 10.63.x.x
+    %% 4. SITE ST FELICIEN - 10.63.x.x
     %% ==========================================
-    subgraph SITE_STF [ST FÉLICIEN - 10.63.0.0/16]
+    subgraph SITE_STF [ST FELICIEN - 10.63.0.0/16]
         RT_STF1{RTR-STF-01<br>Routeur<br>10.63.20.254}
         RT_STF2{RTR-STF-02<br>Routeur Secours<br>10.63.20.253}
         RT_STF1 --- RT_STF2
@@ -132,7 +130,7 @@ graph TD
     subgraph SITE_QUI [QUIBLIER - 10.64.0.0/16]
         RT_QUI1{RTR-QUI-01<br>Routeur<br>10.64.20.254}
         RT_QUI2{RTR-QUI-02<br>Routeur Secours<br>10.64.20.253}
-        SW_QUI_CORE[SW-QUI-CORE-01<br>Switch Cœur<br>10.64.20.1]
+        SW_QUI_CORE[SW-QUI-CORE-01<br>Switch Coeur<br>10.64.20.1]
         
         RT_QUI1 --- SW_QUI_CORE
         RT_QUI2 --- SW_QUI_CORE
@@ -166,13 +164,13 @@ graph TD
     %% ==========================================
     %% CONNEXIONS AU NUAGE MPLS
     %% ==========================================
-    MPLS ===|Lien Fibre 100M| RT_MVS_1
-    MPLS ===|Lien 10M| RT_STD
-    MPLS ===|Lien Fibre 100M| RT_MER_1
-    MPLS ===|Lien VDSL| RT_STF1
-    MPLS ===|Lien Fibre 10M| RT_QUI1
-    MPLS ===|Lien Fibre 100M| RT_TCH1
-    MPLS ===|Lien Fibre| RT_EDT1
+    MPLS ===|Fibre-100M| RT_MVS_1
+    MPLS ===|Cuivre-10M| RT_STD
+    MPLS ===|Fibre-100M| RT_MER_1
+    MPLS ===|VDSL| RT_STF1
+    MPLS ===|Fibre-10M| RT_QUI1
+    MPLS ===|Fibre-100M| RT_TCH1
+    MPLS ===|Lien-Fibre| RT_EDT1
 
     %% ==========================================
     %% STYLES
