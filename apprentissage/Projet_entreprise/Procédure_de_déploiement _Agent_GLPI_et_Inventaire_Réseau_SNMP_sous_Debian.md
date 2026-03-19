@@ -183,23 +183,28 @@ sudo glpi-agent --force
 
 ![alt text](../Images/activation_de_l_agent.png)
 
-**Création des identifiants SNMP**
+### Création des identifiants SNMPv3
 
-L'agent a besoin de la communauté ("mot de passe") pour interroger les switchs.
+L'agent a besoin d'identifiants chiffrés pour interroger les switchs de manière sécurisée sans que les données transitent en clair sur le réseau.
 
 * Aller dans **Administration > Inventaire > Authentification SNMP**.
 * Cliquer sur **Ajouter**.
-* **Nom** : Switchs (explicite).
-* **Communauté** : *public* (ou la communauté configurée sur le matériel).
-* **Version** : v2c (Standard actuel).
+* **Nom :** SW-STD-DAT-01.
+* **Version SNMP :** 3
+* **Utilisateurs :** ADMIN_GLPI
+* **Protocole d'authentification :** SHA256
+* **Protocole de chiffrement des données :** AES128
 
-![alt text](../Images/Identifiant_snmp.png)
-
-**Définition de la cible (Plage IP)**
+### Définition de la cible (Plage IP)
 
 * Aller dans **Administration > GLPI Inventory > Plages IP**.
-* Créer une nouvelle plage (ex: "Switchs Salle Serveur").
-* Renseigner l'IP de début et de fin (ex: **192.168.1.50** à **192.168.1.50** pour cibler un équipement unique).
+* Créer une nouvelle plage (ex: "Switchs VLAN 20 - St Donat" ou "Switchs VLAN 20 - Mauves").
+* Renseigner l'IP de début et de fin correspondant à notre plan d'adressage cible :
+  * *Exemple pour cibler le sous-réseau complet de St Donat :* `10.61.20.1` à `10.61.20.254`.
+  * *Exemple pour cibler le switch répartiteur SW-STD-DAT-01 spécifiquement :* `10.61.20.1` à `10.61.20.1`.
+  * *Exemple pour le réseau d'équipements du site principal (Mauves) :* `10.50.20.1` à `10.50.20.254`.
+
+![alt text](../Images/Identifiant_snmp.png)
 
 ![alt text](../Images/Plage_IP.png)
 
