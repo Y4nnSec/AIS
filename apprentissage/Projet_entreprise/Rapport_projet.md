@@ -24,7 +24,7 @@ graph TB
     Internet --- FW_PROD
     FW_PROD --- FW_BACKUP
 
-    MPLS(((NUAGE MPLS - OPÉRATEUR AXIONE ANONYMISÉ)))
+    MPLS(((NUAGE MPLS - RÉSEAU OPÉRATEUR ANONYMISÉ)))
     
     FW_PROD ===|Lien-Fibre-Dédié| MPLS
 
@@ -35,93 +35,94 @@ graph TB
         direction TB
         
         subgraph RESEAU_COEUR_MVS [Cœur de Réseau & Routage]
-            RT_MVS_WAN{RTR-MVS-WAN-01<br/>Terminaison MPLS}
+            RT_MVS_WAN{RTR-MVS-WAN-01}
             SW_MVS_CORE_1[SW-MVS-CORE-01<br/>Châssis Cœur A]
             SW_MVS_CORE_2[SW-MVS-CORE-02<br/>Châssis Cœur B]
             RT_MVS_WAN --- SW_MVS_CORE_1
             SW_MVS_CORE_1 === SW_MVS_CORE_2
         end
 
-        subgraph DATA_CENTER [VLAN 99 - Baie Serveurs Proxmox]
-            SW_MVS_SRV[SW-MVS-SRV-01<br/>Top-of-Rack]
-            SRV_AD[SRV-MVS-AD-01<br/>Contrôleur de Domaine]
-            SRV_GLPI[SRV-MVS-GLPI-01<br/>Inventaire & Helpdesk<br/>10.50.99.100]
-            SRV_WAZUH[SRV-MVS-WAZUH-01<br/>SIEM & Alerting<br/>10.50.99.101]
-            
-            SW_MVS_SRV --- SRV_AD
+        subgraph DATA_CENTER [VLAN 99 - Management & Wazuh]
+            SW_MVS_SRV[SW-MVS-SRV-01]
+            SRV_GLPI[SRV-MVS-GLPI-01<br/>10.50.99.100]
+            SRV_WAZUH[SRV-MVS-WAZUH-01<br/>10.50.99.101]
             SW_MVS_SRV --- SRV_GLPI
             SW_MVS_SRV --- SRV_WAZUH
         end
 
-        subgraph ACCES_MVS [VLAN 10 - Bureautique Mauves]
-            SW_MVS_DAT_1[SW-MVS-ACC-01]
-            SW_MVS_DAT_2[SW-MVS-ACC-02]
-            POSTES_MVS[Postes Agents & Elus]
-            SW_MVS_DAT_1 --- POSTES_MVS
-        end
-
         SW_MVS_CORE_1 --- SW_MVS_SRV
-        SW_MVS_CORE_1 --- SW_MVS_DAT_1
     end
 
-    %% Connexion Mauves
     MPLS ===|Lien-Principal-100M| RT_MVS_WAN
 
     %% ==========================================
-    %% 2. SITE ST DONAT (Le plus dense)
+    %% 2. SITE ST DONAT - 10.61.x.x
     %% ==========================================
     subgraph SITE_STD [SITE DISTANT - ST DONAT - 10.61.0.0/16]
         direction TB
         RT_STD_WAN{RTR-STD-WAN-01}
         
-        subgraph BAIE_STD [Répartition St Donat]
+        subgraph INFRA_STD [Répartition St Donat]
             SW_STD_CORE[SW-STD-CORE-01]
-            SW_STD_EXT[SW-STD-EXT-01<br/>Switch Durci Extérieur]
+            SW_STD_EXT[SW-STD-EXT-01]
+            AP_STD[Bornes Wi-Fi Camping/Snack]
             
-            subgraph WIFI_STD [Couverture Wi-Fi]
-                AP_CAMP[AP-STD-CAMP-01]
-                AP_SNACK[AP-STD-SNACK-01]
-                AP_TOUR[AP-STD-TOUR-01]
-            end
+            SW_STD_CORE --- SW_STD_EXT
+            SW_STD_EXT --- AP_STD
         end
-        
         RT_STD_WAN --- SW_STD_CORE
-        SW_STD_CORE --- SW_STD_EXT
-        SW_STD_EXT --- AP_CAMP
-        SW_STD_EXT --- AP_SNACK
-        SW_STD_EXT --- AP_TOUR
     end
 
     MPLS ===|Lien-Cuivre-10M| RT_STD_WAN
 
     %% ==========================================
-    %% 3. AUTRES SITES (Regroupés pour la taille)
+    %% 3. SITE MERCUROL - 10.62.x.x (DÉTAILLÉ)
     %% ==========================================
-    subgraph SITES_SATELLITES [Autres Sites Interconnectés]
-        RT_MER{RTR-MERCUROL}
+    subgraph SITE_MER [SITE DISTANT - MERCUROL - 10.62.0.0/16]
+        direction TB
+        RT_MER_1{RTR-MER-01<br/>Routeur Principal}
+        RT_MER_2{RTR-MER-02<br/>Routeur Secours}
+        
+        subgraph SWITCHS_MER [Distribution Mercurol]
+            SW_MER_VOX[SW-MER-VOX-01<br/>VLAN Voix]
+            SW_MER_DAT1[SW-MER-DAT-01<br/>VLAN Data A]
+            SW_MER_DAT2[SW-MER-DAT-02<br/>VLAN Data B]
+            
+            SW_MER_VOX --- SW_MER_DAT1
+            SW_MER_VOX --- SW_MER_DAT2
+        end
+        
+        RT_MER_1 --- SW_MER_VOX
+        RT_MER_2 --- SW_MER_VOX
+    end
+
+    MPLS ===|Lien-Fibre-100M| RT_MER_1
+
+    %% ==========================================
+    %% 4. AUTRES SITES (Regroupés)
+    %% ==========================================
+    subgraph SITES_SATELLITES [Autres Sites Satellites]
         RT_STF{RTR-ST-FELICIEN}
         RT_QUI{RTR-QUIBLIER}
         RT_TCH{RTR-TECH-CHAMP}
         RT_EDT{RTR-EAUX-TOURNON}
     end
 
-    MPLS --- RT_MER
     MPLS --- RT_STF
     MPLS --- RT_QUI
     MPLS --- RT_TCH
     MPLS --- RT_EDT
 
     %% ==========================================
-    %% FLUX DE SUPERVISION (Lignes de vie)
+    %% FLUX DE SUPERVISION
     %% ==========================================
     SRV_GLPI -.->|SNMPv3-Inventaire| SW_MVS_CORE_1
     SRV_GLPI -.->|SNMPv3-Inventaire| SW_STD_CORE
-    SRV_WAZUH -.->|HIDS-Agent-Logs| SRV_GLPI
+    SRV_GLPI -.->|SNMPv3-Inventaire| SW_MER_VOX
+    SRV_WAZUH -.->|HIDS-Agent| SRV_GLPI
     FW_PROD -.->|Syslog-Security| SRV_WAZUH
 
-    %% ==========================================
     %% STYLES
-    %% ==========================================
     classDef hq fill:#f0f7ff,stroke:#00529b,stroke-width:2px;
     classDef site fill:#fff5f5,stroke:#c4122d,stroke-width:2px;
     classDef fw fill:#ffeded,stroke:#e74c3c,stroke-width:3px;
@@ -129,9 +130,9 @@ graph TB
     classDef wazuh fill:#fff7e6,stroke:#d48806,stroke-width:2px,font-weight:bold;
 
     class SITE_MAUVES hq;
-    class SITE_STD,SITES_SATELLITES site;
+    class SITE_STD,SITE_MER,SITES_SATELLITES site;
     class FW_PROD,FW_BACKUP fw;
-    class SRV_GLPI,SRV_AD srv;
+    class SRV_GLPI srv;
     class SRV_WAZUH wazuh;
 ```
 
