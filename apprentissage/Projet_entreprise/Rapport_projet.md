@@ -10,186 +10,129 @@
 **Projet :** Décembre 2025 à Avril 2026
 
 ```mermaid
-graph TD
+graph TB
     %% ==========================================
-    %% CŒUR DE RÉSEAU OPÉRATEUR & INTERNET
+    %% SORTIE INTERNET ET COEUR LOGIQUE
     %% ==========================================
-    Internet((Internet))
-    FW{FW-CENTRAL-01<br>Pare-Feu<br>10.50.20.254}
-    MPLS(((Nuage MPLS<br>Réseau Opérateur)))
+    Internet((Internet / Fibre))
     
-    Internet --- FW
-    FW ===|Lien-Principal| MPLS
+    subgraph SECU_CENTRALE [Zone de Sécurité Périmétrique]
+        FW_PROD{FW-CENTRAL-01<br/>Pare-Feu Principal<br/>10.50.20.254}
+        FW_BACKUP{FW-CENTRAL-02<br/>Pare-Feu HA}
+    end
+
+    Internet --- FW_PROD
+    FW_PROD --- FW_BACKUP
+
+    MPLS(((NUAGE MPLS - OPÉRATEUR AXIONE ANONYMISÉ)))
+    
+    FW_PROD ===|Lien-Fibre-Dédié| MPLS
 
     %% ==========================================
-    %% 1. SITE MAUVES (HQ / Datacenter) - 10.50.x.x
+    %% 1. SITE MAUVES (HQ - DATACENTER)
     %% ==========================================
-    subgraph SITE_MAUVES [MAUVES - HQ - 10.50.0.0/16]
+    subgraph SITE_MAUVES [SITE CENTRAL - MAUVES - 10.50.0.0/16]
         direction TB
-        RT_MVS_1{RTR-MVS-01<br>Routeur<br>10.50.20.253}
-        RT_MVS_2{RTR-MVS-02<br>Routeur Secours<br>10.50.20.252}
         
-        SW_MVS_CORE[SW-MVS-CORE-01<br>Switch Coeur<br>10.50.20.1]
-        SW_MVS_VOX_1[SW-MVS-VOX-01<br>Switch Voix<br>10.50.30.1]
-        SW_MVS_DAT_1[SW-MVS-DAT-01<br>Switch Data<br>10.50.10.1]
-        SW_MVS_DAT_2[SW-MVS-DAT-02<br>Switch Data<br>10.50.10.2]
-        
-        SRV_GLPI[SRV-MVS-GLPI-01<br>Serveur Inventaire<br>10.50.99.100]
-        
-        RT_MVS_1 --- SW_MVS_CORE
-        RT_MVS_2 --- SW_MVS_CORE
-        SW_MVS_CORE --- SW_MVS_VOX_1
-        SW_MVS_CORE --- SW_MVS_DAT_1
-        SW_MVS_CORE --- SW_MVS_DAT_2
-        SW_MVS_CORE -.- SRV_GLPI
+        subgraph RESEAU_COEUR_MVS [Cœur de Réseau & Routage]
+            RT_MVS_WAN{RTR-MVS-WAN-01<br/>Terminaison MPLS}
+            SW_MVS_CORE_1[SW-MVS-CORE-01<br/>Châssis Cœur A]
+            SW_MVS_CORE_2[SW-MVS-CORE-02<br/>Châssis Cœur B]
+            RT_MVS_WAN --- SW_MVS_CORE_1
+            SW_MVS_CORE_1 === SW_MVS_CORE_2
+        end
+
+        subgraph DATA_CENTER [VLAN 99 - Baie Serveurs Proxmox]
+            SW_MVS_SRV[SW-MVS-SRV-01<br/>Top-of-Rack]
+            SRV_AD[SRV-MVS-AD-01<br/>Contrôleur de Domaine]
+            SRV_GLPI[SRV-MVS-GLPI-01<br/>Inventaire & Helpdesk<br/>10.50.99.100]
+            SRV_WAZUH[SRV-MVS-WAZUH-01<br/>SIEM & Alerting<br/>10.50.99.101]
+            
+            SW_MVS_SRV --- SRV_AD
+            SW_MVS_SRV --- SRV_GLPI
+            SW_MVS_SRV --- SRV_WAZUH
+        end
+
+        subgraph ACCES_MVS [VLAN 10 - Bureautique Mauves]
+            SW_MVS_DAT_1[SW-MVS-ACC-01]
+            SW_MVS_DAT_2[SW-MVS-ACC-02]
+            POSTES_MVS[Postes Agents & Elus]
+            SW_MVS_DAT_1 --- POSTES_MVS
+        end
+
+        SW_MVS_CORE_1 --- SW_MVS_SRV
+        SW_MVS_CORE_1 --- SW_MVS_DAT_1
     end
 
+    %% Connexion Mauves
+    MPLS ===|Lien-Principal-100M| RT_MVS_WAN
+
     %% ==========================================
-    %% 2. SITE ST DONAT - 10.61.x.x
+    %% 2. SITE ST DONAT (Le plus dense)
     %% ==========================================
-    subgraph SITE_STD [ST DONAT - 10.61.0.0/16]
+    subgraph SITE_STD [SITE DISTANT - ST DONAT - 10.61.0.0/16]
         direction TB
-        RT_STD{RTR-STD-01<br>Routeur<br>10.61.20.254}
+        RT_STD_WAN{RTR-STD-WAN-01}
         
-        SW_STD_DAT1[SW-STD-DAT-01<br>Switch Data<br>10.61.10.1]
-        SW_STD_DAT2[SW-STD-DAT-02<br>Switch Data<br>10.61.10.2]
-        SW_STD_DAT3[SW-STD-DAT-03<br>Switch Data<br>10.61.10.3]
-        SW_STD_DAT4[SW-STD-DAT-04<br>Switch Data<br>10.61.10.4]
+        subgraph BAIE_STD [Répartition St Donat]
+            SW_STD_CORE[SW-STD-CORE-01]
+            SW_STD_EXT[SW-STD-EXT-01<br/>Switch Durci Extérieur]
+            
+            subgraph WIFI_STD [Couverture Wi-Fi]
+                AP_CAMP[AP-STD-CAMP-01]
+                AP_SNACK[AP-STD-SNACK-01]
+                AP_TOUR[AP-STD-TOUR-01]
+            end
+        end
         
-        SW_STD_VOX1[SW-STD-VOX-01<br>Switch Voix<br>10.61.30.1]
-        SW_STD_VOX2[SW-STD-VOX-02<br>Switch Voix<br>10.61.30.2]
-        SW_STD_VOX3[SW-STD-VOX-03<br>Switch Voix<br>10.61.30.3]
-        
-        SW_STD_CAM[SW-STD-EXT-01<br>Switch Exterieur<br>10.61.40.1]
-        SW_STD_CAM2[SW-STD-EXT-02<br>Switch Exterieur<br>10.61.40.2]
-        SW_STD_CAM3[SW-STD-EXT-03<br>Switch Exterieur<br>10.61.40.3]
-        SW_STD_CAM4[SW-STD-EXT-04<br>Switch Exterieur<br>10.61.40.4]
-        
-        AP_CAMPING[AP-STD-CAMPING-01<br>Borne Wi-Fi<br>10.61.40.10]
-        AP_SNACK[AP-STD-SNACK-01<br>Borne Wi-Fi<br>10.61.40.11]
-        AP_CAB1[AP-STD-CABANE-01<br>Borne Wi-Fi<br>10.61.40.12]
-        AP_CAB2[AP-STD-CABANE-02<br>Borne Wi-Fi<br>10.61.40.13]
-        AP_BAT[AP-STD-BATIMENT-01<br>Borne Wi-Fi<br>10.61.40.14]
-        AP_TOUR[AP-STD-TOUR-01<br>Borne Wi-Fi<br>10.61.40.15]
-        
-        RT_STD --- SW_STD_DAT1
-        SW_STD_DAT1 --- SW_STD_DAT2
-        SW_STD_DAT1 --- SW_STD_DAT3
-        SW_STD_DAT1 --- SW_STD_DAT4
-        SW_STD_DAT1 --- SW_STD_VOX1
-        SW_STD_DAT2 --- SW_STD_VOX2
-        SW_STD_DAT3 --- SW_STD_VOX3
-        
-        SW_STD_DAT1 --- SW_STD_CAM
-        SW_STD_CAM --- SW_STD_CAM2
-        SW_STD_CAM --- SW_STD_CAM3
-        SW_STD_CAM --- SW_STD_CAM4
-        
-        SW_STD_CAM --- AP_CAMPING
-        SW_STD_CAM --- AP_SNACK
-        SW_STD_CAM --- AP_CAB1
-        SW_STD_CAM --- AP_CAB2
-        SW_STD_CAM --- AP_BAT
-        SW_STD_CAM --- AP_TOUR
+        RT_STD_WAN --- SW_STD_CORE
+        SW_STD_CORE --- SW_STD_EXT
+        SW_STD_EXT --- AP_CAMP
+        SW_STD_EXT --- AP_SNACK
+        SW_STD_EXT --- AP_TOUR
     end
 
-    %% ==========================================
-    %% 3. SITE MERCUROL - 10.62.x.x
-    %% ==========================================
-    subgraph SITE_MER [MERCUROL - 10.62.0.0/16]
-        RT_MER_1{RTR-MER-01<br>Routeur<br>10.62.20.254}
-        RT_MER_2{RTR-MER-02<br>Routeur Secours<br>10.62.20.253}
-        
-        SW_MER_VOX1[SW-MER-VOX-01<br>Switch Voix<br>10.62.30.1]
-        SW_MER_VOX2[SW-MER-VOX-02<br>Switch Voix<br>10.62.30.2]
-        SW_MER_VOX3[SW-MER-VOX-03<br>Switch Voix<br>10.62.30.3]
-        
-        SW_MER_DAT1[SW-MER-DAT-01<br>Switch Data<br>10.62.10.1]
-        SW_MER_DAT2[SW-MER-DAT-02<br>Switch Data<br>10.62.10.2]
-        
-        RT_MER_1 --- SW_MER_VOX1
-        RT_MER_2 --- SW_MER_VOX1
-        SW_MER_VOX1 --- SW_MER_VOX2
-        SW_MER_VOX1 --- SW_MER_VOX3
-        SW_MER_VOX1 --- SW_MER_DAT1
-        SW_MER_VOX1 --- SW_MER_DAT2
-    end
+    MPLS ===|Lien-Cuivre-10M| RT_STD_WAN
 
     %% ==========================================
-    %% 4. SITE ST FELICIEN - 10.63.x.x
+    %% 3. AUTRES SITES (Regroupés pour la taille)
     %% ==========================================
-    subgraph SITE_STF [ST FELICIEN - 10.63.0.0/16]
-        RT_STF1{RTR-STF-01<br>Routeur<br>10.63.20.254}
-        RT_STF2{RTR-STF-02<br>Routeur Secours<br>10.63.20.253}
-        RT_STF1 --- RT_STF2
+    subgraph SITES_SATELLITES [Autres Sites Interconnectés]
+        RT_MER{RTR-MERCUROL}
+        RT_STF{RTR-ST-FELICIEN}
+        RT_QUI{RTR-QUIBLIER}
+        RT_TCH{RTR-TECH-CHAMP}
+        RT_EDT{RTR-EAUX-TOURNON}
     end
 
-    %% ==========================================
-    %% 5. SITE QUIBLIER - 10.64.x.x
-    %% ==========================================
-    subgraph SITE_QUI [QUIBLIER - 10.64.0.0/16]
-        RT_QUI1{RTR-QUI-01<br>Routeur<br>10.64.20.254}
-        RT_QUI2{RTR-QUI-02<br>Routeur Secours<br>10.64.20.253}
-        SW_QUI_CORE[SW-QUI-CORE-01<br>Switch Coeur<br>10.64.20.1]
-        
-        RT_QUI1 --- SW_QUI_CORE
-        RT_QUI2 --- SW_QUI_CORE
-    end
+    MPLS --- RT_MER
+    MPLS --- RT_STF
+    MPLS --- RT_QUI
+    MPLS --- RT_TCH
+    MPLS --- RT_EDT
 
     %% ==========================================
-    %% 6. SITE TECH CHAMPAGNE - 10.65.x.x
+    %% FLUX DE SUPERVISION (Lignes de vie)
     %% ==========================================
-    subgraph SITE_TCH [TECH CHAMPAGNE - 10.65.0.0/16]
-        RT_TCH1{RTR-TCH-01<br>Routeur<br>10.65.20.254}
-        RT_TCH2{RTR-TCH-02<br>Routeur Secours<br>10.65.20.253}
-        RT_TCH1 --- RT_TCH2
-    end
-
-    %% ==========================================
-    %% 7. SITE EAUX DE TOURNON - 10.66.x.x
-    %% ==========================================
-    subgraph SITE_EDT [EAUX TOURNON - 10.66.0.0/16]
-        RT_EDT1{RTR-EDT-01<br>Routeur<br>10.66.20.254}
-        RT_EDT2{RTR-EDT-02<br>Routeur Secours<br>10.66.20.253}
-        SW_EDT_DAT[SW-EDT-DAT-01<br>Switch Data<br>10.66.10.1]
-        SW_EDT_VOX1[SW-EDT-VOX-01<br>Switch Voix<br>10.66.30.1]
-        SW_EDT_VOX2[SW-EDT-VOX-02<br>Switch Voix<br>10.66.30.2]
-        
-        RT_EDT1 --- SW_EDT_DAT
-        RT_EDT2 --- SW_EDT_DAT
-        SW_EDT_DAT --- SW_EDT_VOX1
-        SW_EDT_DAT --- SW_EDT_VOX2
-    end
-
-    %% ==========================================
-    %% CONNEXIONS AU NUAGE MPLS
-    %% ==========================================
-    MPLS ===|Fibre-100M| RT_MVS_1
-    MPLS ===|Cuivre-10M| RT_STD
-    MPLS ===|Fibre-100M| RT_MER_1
-    MPLS ===|VDSL| RT_STF1
-    MPLS ===|Fibre-10M| RT_QUI1
-    MPLS ===|Fibre-100M| RT_TCH1
-    MPLS ===|Lien-Fibre| RT_EDT1
+    SRV_GLPI -.->|SNMPv3-Inventaire| SW_MVS_CORE_1
+    SRV_GLPI -.->|SNMPv3-Inventaire| SW_STD_CORE
+    SRV_WAZUH -.->|HIDS-Agent-Logs| SRV_GLPI
+    FW_PROD -.->|Syslog-Security| SRV_WAZUH
 
     %% ==========================================
     %% STYLES
     %% ==========================================
-    classDef hq fill:#e8f4f8,stroke:#3498db,stroke-width:2px;
-    classDef site fill:#f9ebea,stroke:#e74c3c,stroke-width:2px;
-    classDef firewall fill:#c0392b,stroke:#922b21,stroke-width:2px,color:#fff;
-    classDef router fill:#e67e22,stroke:#d35400,stroke-width:2px,color:#fff;
-    classDef switch fill:#27ae60,stroke:#1e8449,stroke-width:2px,color:#fff;
-    classDef wifi fill:#f1c40f,stroke:#f39c12,stroke-width:2px,color:#000;
-    classDef server fill:#8e44ad,stroke:#732d91,stroke-width:2px,color:#fff;
+    classDef hq fill:#f0f7ff,stroke:#00529b,stroke-width:2px;
+    classDef site fill:#fff5f5,stroke:#c4122d,stroke-width:2px;
+    classDef fw fill:#ffeded,stroke:#e74c3c,stroke-width:3px;
+    classDef srv fill:#f6ffed,stroke:#52c41a,stroke-width:2px;
+    classDef wazuh fill:#fff7e6,stroke:#d48806,stroke-width:2px,font-weight:bold;
 
     class SITE_MAUVES hq;
-    class SITE_STD,SITE_MER,SITE_STF,SITE_QUI,SITE_TCH,SITE_EDT site;
-    class FW firewall;
-    class RT_MVS_1,RT_MVS_2,RT_STD,RT_MER_1,RT_MER_2,RT_STF1,RT_STF2,RT_QUI1,RT_QUI2,RT_TCH1,RT_TCH2,RT_EDT1,RT_EDT2 router;
-    class SW_MVS_CORE,SW_MVS_VOX_1,SW_MVS_DAT_1,SW_MVS_DAT_2,SW_STD_DAT1,SW_STD_DAT2,SW_STD_DAT3,SW_STD_DAT4,SW_STD_VOX1,SW_STD_VOX2,SW_STD_VOX3,SW_STD_CAM,SW_STD_CAM2,SW_STD_CAM3,SW_STD_CAM4,SW_MER_VOX1,SW_MER_VOX2,SW_MER_VOX3,SW_MER_DAT1,SW_MER_DAT2,SW_QUI_CORE,SW_EDT_DAT,SW_EDT_VOX1,SW_EDT_VOX2 switch;
-    class AP_CAMPING,AP_SNACK,AP_CAB1,AP_CAB2,AP_BAT,AP_TOUR wifi;
-    class SRV_GLPI server;
+    class SITE_STD,SITES_SATELLITES site;
+    class FW_PROD,FW_BACKUP fw;
+    class SRV_GLPI,SRV_AD srv;
+    class SRV_WAZUH wazuh;
 ```
 
 ## Table des matières
