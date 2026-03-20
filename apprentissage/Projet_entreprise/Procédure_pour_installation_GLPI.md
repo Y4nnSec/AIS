@@ -844,7 +844,7 @@ Valider le bon fonctionnement du service SNMP sur le serveur GLPI.
 **Test local**
 
 ```bash
-snmpwalk -v3 -l authPriv -u ADMIN_GLPI -a SHA -A 'Auth!Str0ng2026' -x AES -X 'Priv@cyCrypt2026' localhost 1.3.6.1.2.1.1
+snmpwalk -v3 -l authPriv -u ADMIN_GLPI -a SHA -A 'Auth!Str0ng2026' -x AES -X 'Priv@cyCrypt2026' localhost .1
 ```
 
 ![alt text](<../Images/Commande snmpwalk.png>)
