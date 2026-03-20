@@ -777,7 +777,7 @@ Permettre la supervision du serveur GLPI par un outil externe via le protocole S
 
 ```bash
 sudo apt update
-sudo apt install snmp snmpd -y
+sudo apt install snmp snmpd libsnmp-dev -y
 ```
 
 ![alt text](../Images/Installation_des_services_SNMP_SNMPD.png)
@@ -790,24 +790,33 @@ snmpd -v
 
 ![alt text](../Images/Vérification_version_snmp.png)
 
+**Création de l'utilisateur SNMPv3 (AuthPriv) :**
+
+```bash
+sudo systemctl stop snmpd
+sudo net-snmp-config --create-snmpv3-user -ro -a SHA -A 'Auth!Str0ng2026' -x AES -X 'Priv@cyCrypt2026' ADMIN_GLPI
+sudo systemctl start snmpd
+```
+
+![alt text](<../Images/Création de l'utilisateur snmpv3.png>)
+
 **Configuration du service SNMP**
 
 ```bash
 sudo nano /etc/snmp/snmpd.conf
 ```
 
-Configuration minimale sécurisée (SNMP v2c – environnement de test) :
+Configuration minimale sécurisée (SNMP v3):
 
-```bash
+```Plaintext
 agentAddress udp:161
-rocommunity public 127.0.0.1
-rocommunity public <IP_SUPERVISION>
 
 sysLocation Salle serveur - Environnement de test
-sysContact admin@domaine.local
+sysContact admin@archeagglo.fr
 ```
 
 ![alt text](../Images/Configuration_snmp_pour_test.png)
+![alt text](../Images/Configuration_snmp_pour_test_2.png)
 
 **Redémarrage, activation et vértification du statut du service :**
 
@@ -816,19 +825,16 @@ sudo systemctl restart snmpd
 sudo systemctl enable snmpd
 sudo systemctl status snmpd
 ```
+![alt text](../Images/redémarrage_activation_et_statut_snmp.png)
 
-![alt text](../Images/redémarrage_et_activation_snmp.png)
-
-![alt text](../Images/Vérification_status_snmp.png)
-
-**Ouverture du port SNMP (si pare-feu actif)**
+**Ouverture du port SNMP**
 
 ```bash
 sudo ufw allow 161/udp
 sudo ufw reload
 ```
 
-
+![alt text](<../Images/Ouverture du port 161.png>)
 
 ### 13.10 Tests de supervision SNMP
 
@@ -838,9 +844,11 @@ Valider le bon fonctionnement du service SNMP sur le serveur GLPI.
 **Test local**
 
 ```bash
-snmpwalk -v2c -c public localhost 1.3.6.1.2.1.1
+snmpwalk -v3 -l authPriv -u ADMIN_GLPI -a SHA -A 'Auth!Str0ng2026' -x AES -X 'Priv@cyCrypt2026' localhost 1.3.6.1.2.1.1
 ```
 
+![alt text](<../Images/Commande snmpwalk.png>)
+![alt text](<../Images/Commande snmpwalk2.png>)
 
 ### 14. Table de correspondance DAT ↔ Procédure
 
