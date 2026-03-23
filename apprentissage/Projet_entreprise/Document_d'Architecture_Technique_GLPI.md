@@ -50,12 +50,12 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
 * Infrastructure virtualisée sous Proxmox
 * Serveur de messagerie existant
 * Outil de supervision existant :
-  * Présence d’un outil de supervision (Zabbix, Centreon, Nagios) : à valider
+  * Présence d’un outil de supervision (Zabbix) :
 * Méthode de supervision attendue :
   * SNMP (supervision réseau et système)
   * HTTP(S) : vérification que l’application GLPI est accessible et fonctionne correctement via un navigateur web. 
 * Solution de sauvegarde existante :
-  * Présence d’un outil de sauvegarde (Veeam, Proxmox Backup, Cobian Backup, etc.) : à valider
+  * Présence d’un outil de sauvegarde (Veeam) :
   * Version de la solution de sauvegarde : à valider
   * Périmètre couvert par la sauvegarde (VM, fichiers, bases de données) : à valider
   * Politique de rétention existante : à valider
@@ -170,6 +170,7 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 ### 5.3 Schéma réseau – Déploiement GLPI
 
 ```plaintext
+
 +----------------+
 |    Internet    |
 +----------------+
@@ -179,21 +180,22 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 |    Firewall    |
 +----------------+
      IN │ TCP 443, TCP 22
-    OUT │ TCP 443, TCP 636, TCP 587, UDP 161
+    OUT │ TCP 636, TCP 587, UDP 161
         │
 ┌-------┴--------┐
 ▼                ▼
 +---------------------+  +---------------------+
-| Réseau interne GLPI |  | Réseau AD / Mail    |
-+---------------------+  +---------------------+
-         │                     │
-         │ OUT TCP 443         │ OUT TCP 636, 587
-         ▼                     ▼
-  +----------------+       +-----------------+
-  | VM Debian GLPI |       | Active Directory|
-  | Apache2        |       | / SMTP          |
-  | MariaDB        |       +-----------------+
-  | PHP 8.2        |
+| Nginx Proxy Manager |  | Réseau AD / Mail    |
+| (Reverse Proxy)     |  +---------------------+
++---------------------+            │
+         │                         │ OUT TCP 636, 587
+         │ OUT TCP 80              ▼
+         ▼                 +-----------------+
+  +----------------+       | Active Directory|
+  | VM Debian GLPI |       | / SMTP          |
+  | Apache2        |       +-----------------+
+  | MariaDB        |
+  | PHP 8.4        |
   +----------------+
          │
          ▼

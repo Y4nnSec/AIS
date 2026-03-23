@@ -72,48 +72,50 @@
 ### 1.1 Objectifs
 
 Installer GLPI 11 sur Debian 13 dans un environnement de test conforme aux exigences du DAT :
-- gestion de parc
-- helpdesk
-- intégration LDAP
-- sécurité
-- sauvegardes et PRA
+  
+* gestion de parc
+* helpdesk
+* intégration LDAP
+* sécurité
+* sauvegardes et PRA
 
 
 ## 2. Prérequis
 
 ### 2.1 Matériel
 
-- VM Proxmox  
-- 2 vCPU  
-- 4 Go RAM  
-- 50 Go SSD  
+* VM Proxmox  
+* 2 vCPU  
+* 4 Go RAM  
+* 50 Go SSD  
 
 Partitionnement recommandé :
-- `/` : 15 Go  
-- `/var` : 10 Go  
-- `/var/log` : 5 Go  
-- `/var/lib/mysql` : 15 Go  
-- `/home` : 5 Go  
+  
+* `/` : 15 Go  
+* `/var` : 10 Go  
+* `/var/log` : 5 Go  
+* `/var/lib/mysql` : 15 Go  
+* `/home` : 5 Go  
 
 ### 2.2 Logiciel
 
-- Debian 13
-- Apache2
-- MariaDB ≥ 10.11
-- PHP 8.4 (version plus récente et compatible GLPI 11)
-- Extensions PHP requises :
-  - mysqli, curl, gd, intl, ldap, zip, mbstring, xml, bz2
+* Debian 13
+* Apache2
+* MariaDB ≥ 10.11
+* PHP 8.4 (version plus récente et compatible GLPI 11)
+* Extensions PHP requises :
+*  mysqli, curl, gd, intl, ldap, zip, mbstring, xml, bz2
 
 ### 2.3 Réseau et flux
 
-- IP fixe
-- DNS fonctionnel
-- Ports :
-  - 22 (SSH)
-  - 443 (HTTPS)
-  - 636 (LDAPS)
-  - 587 (SMTP)
-  - 161 (SNMP)
+* IP fixe
+* DNS fonctionnel
+* Ports :
+  * 22 (SSH)
+  * 80 (HTTP)
+  * 636 (LDAPS)
+  * 587 (SMTP)
+  * 161 (SNMP)
 
 
 ## 3. Préparation du serveur Debian 13
@@ -227,28 +229,34 @@ sudo chmod -R 750 \
 ### 7.1 VirtualHost complet
 
 ```bash
-sudo nano /etc/apache2/sites-available/glpi_test.archeagglo.fr.conf
+sudo nano /etc/apache2/sites-available/glpi-test.archeagglo.fr.conf
 ```
 
 ```apache
 <VirtualHost *:80>
-    ServerName glpi_test.archeagglo.fr
-
+    ServerName glpi-test.archeagglo.fr
     DocumentRoot /var/www/glpi/public
-
-    # Alias optionnel
-    # Alias "/glpi" "/var/www/glpi/public"
+    
+    # Indispensable derrière un Reverse Proxy (SSL Offloading)
+    SetEnvIf X-Forwarded-Proto "https" HTTPS=on
 
     <Directory /var/www/glpi/public>
         Require all granted
-
         RewriteEngine On
+        # Transmission des headers Authorization
         RewriteCond %{HTTP:Authorization} ^(.+)$
         RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
+        # Redirection GLPI
         RewriteCond %{REQUEST_FILENAME} !-f
         RewriteRule ^(.*)$ index.php [QSA,L]
     </Directory>
+
+    <FilesMatch \.php$>
+        SetHandler "proxy:unix:/run/php/php8.4-fpm.sock|fcgi://localhost/"
+    </FilesMatch>
+
+    ErrorLog ${APACHE_LOG_DIR}/glpi_error.log
+    CustomLog ${APACHE_LOG_DIR}/glpi_access.log combined
 </VirtualHost>
 ```
 
@@ -257,7 +265,7 @@ sudo nano /etc/apache2/sites-available/glpi_test.archeagglo.fr.conf
 ### 7.2 Activation et redémarrage
 
 ```bash
-sudo a2ensite glpi_test.archeagglo.fr.conf
+sudo a2ensite glpi-test.archeagglo.fr.conf
 sudo a2dissite 000-default.conf
 sudo a2enmod rewrite proxy_fcgi setenvif
 sudo systemctl restart apache2
@@ -309,7 +317,7 @@ nécessaire de configurer le VirtualHost GLPI.
 Éditer le fichier du VirtualHost :
 
 ```bash
-sudo nano /etc/apache2/sites-available/glpi_test.archeagglo.fr.conf
+sudo nano /etc/apache2/sites-available/glpi-test.archeagglo.fr.conf
 ```
 
 Ajouter la directive suivante à l’intérieur du VirtualHost :
@@ -384,13 +392,30 @@ sudo rm /var/www/glpi/install/install.php
 
 ## 10. Sécurisation post-installation
 
-* HTTPS (Let's Encrypt en production)
-Pour ce test, un certificat SSL auto-signé a été utilisé afin de sécuriser l’accès en HTTPS à GLPI.
-Ce type de certificat n’est pas reconnu par défaut par les navigateurs. Il est donc adapté pour un environnement de test.
+**10.1 Sécurisation des flux web (SSL Offloading via Nginx Proxy Manager)**
 
-Pour un usage en production, il est recommandé d’utiliser un certificat signé par une autorité de certification reconnue afin d’éviter les alertes de sécurité dans les navigateurs
+Dans le cadre de cette infrastructure, la sécurisation des échanges HTTPS n'est pas gérée directement par le serveur Apache local, mais déléguée à un Reverse Proxy centralisé (Nginx Proxy Manager). Cette architecture, appelée SSL Offloading (ou déchargement SSL), présente plusieurs avantages :
 
-![alt text](../Images/Redirection_HTTPS.png)
+Centralisation : Le certificat Wildcard de l'entreprise (*.archeagglo.fr) est géré à un seul endroit.
+
+Performance : Le serveur GLPI est déchargé des calculs cryptographiques liés au chiffrement SSL/TLS.
+
+Sécurité : Le serveur GLPI n'est pas exposé directement sur Internet ou le réseau public.
+
+Le trafic entre le client et le Reverse Proxy est chiffré (HTTPS - Port 443), tandis que le trafic interne entre le Reverse Proxy et la VM GLPI circule en clair (HTTP - Port 80) sur le réseau local sécurisé.
+
+Configuration du Proxy Host (Nginx Proxy Manager) :
+Le flux a été configuré de la manière suivante dans l'interface de NPM :
+
+Domain Names : glpi-test.archeagglo.fr
+
+Scheme : http
+
+Forward Hostname / IP : <IP_PRIVEE_VM_GLPI>
+
+Forward Port : 80
+
+![alt text](../Images/Config_nginx.png)
 
 * SSH restreint / clé
 * Fail2ban
@@ -415,17 +440,21 @@ de la plateforme GLPI déployée dans l’environnement de test
 
 **Objectif :**
 
-S’assurer que l’application GLPI est accessible de manière sécurisée via HTTPS.
+S’assurer que l’application GLPI est accessible de manière sécurisée via HTTPS depuis le poste client, grâce au Reverse Proxy de l'infrastructure.
 
 **Actions réalisées :**
-- Mise en place d’un certificat SSL auto-signé
-- Configuration Apache avec redirection HTTPS
-- Test d’accès via navigateur et commande `curl`
+
+* Configuration du domaine glpi-test.archeagglo.fr sur Nginx Proxy Manager (NPM).
+* Association du certificat SSL valide de l'entreprise (Wildcard) au Proxy Host.
+* Configuration du déchargement SSL (SSL Offloading) pour relayer le trafic de manière transparente vers le port 80 du serveur GLPI interne.
+
+Test d’accès via navigateur web.
 
 **Résultat :**
-- Accès HTTPS fonctionnel
-- Certificat fonctionnel (auto-signé, accepté dans le cadre de l’environnement de test)
-- Communication chiffrée confirmée
+
+* Accès HTTPS parfaitement fonctionnel.
+* Certificat valide et reconnu (aucune alerte de sécurité navigateur).
+* Communication chiffrée confirmée de bout en bout entre le client et le Reverse Proxy.
 
 ![alt text](../Images/Connexion_en_HTTPS.png)
 
