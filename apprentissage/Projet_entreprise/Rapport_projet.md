@@ -28,7 +28,6 @@
   - [3. Gestion de projet](#3-gestion-de-projet)
     - [3.1. Planification et suivi](#31-planification-et-suivi)
     - [3.2. Macro-planning](#32-macro-planning)
-    - [3.2. Macro-planning](#32-macro-planning-1)
     - [3.3. Environnement humain](#33-environnement-humain)
       - [3.3.1. Les acteurs du projet](#331-les-acteurs-du-projet)
   - [4. Environnement technique](#4-environnement-technique)
@@ -45,6 +44,7 @@
       - [A. Ressources et Partitionnement (Proxmox)](#a-ressources-et-partitionnement-proxmox)
       - [B. Stack applicative logicielle (L.A.M.P)](#b-stack-applicative-logicielle-lamp)
       - [C. Espace d'adressage et Filtrage local (UFW)](#c-espace-dadressage-et-filtrage-local-ufw)
+      - [C. Espace d'adressage et Filtrage local (UFW)](#c-espace-dadressage-et-filtrage-local-ufw-1)
       - [D. Cartographie des Flux Applicatifs et Sécurité](#d-cartographie-des-flux-applicatifs-et-sécurité)
     - [4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)](#46-sécurisation-de-linfrastructure-durcissement-os-et-flux)
     - [4.7 Analyse des risques](#47-analyse-des-risques)
@@ -55,6 +55,7 @@
     - [5.1. Revue de code et configuration](#51-revue-de-code-et-configuration)
 - [Téléchargement de l'agent et du module réseau](#téléchargement-de-lagent-et-du-module-réseau)
 - [Installation simultanée](#installation-simultanée)
+    - [C. Configuration SNMP pour la découverte réseau](#c-configuration-snmp-pour-la-découverte-réseau)
     - [5.2. Schéma détaillé](#52-schéma-détaillé)
     - [5.3. Diagramme de Séquence du Protocole SNMP](#53-diagramme-de-séquence-du-protocole-snmp)
   - [6. Les relations avec les principaux acteurs du projet](#6-les-relations-avec-les-principaux-acteurs-du-projet)
@@ -195,10 +196,6 @@ Bien que l’ensemble des tâches soit aujourd’hui achevé, cette structuratio
 
 ### 3.2. Macro-planning
 
-Le projet s'est déroulé en plusieurs phases distinctes, allant de l'expression du besoin jusqu'à la livraison de la documentation. Voici le macro-planning des grandes étapes :
-
-### 3.2. Macro-planning
-
 Le projet s'est déroulé en plusieurs phases distinctes, allant de l'expression du besoin jusqu'à la livraison de la documentation. Afin de sécuriser l'avancement, des jalons de validation ont été définis avec la DSI à la fin de chaque étape clé :
 
 | Phase                                   | Période                           | Description des tâches                                                                                      | Livrables associés                                           | Jalons (Points de validation)                                      |
@@ -313,9 +310,13 @@ La machine virtuelle hébergeant GLPI est dimensionnée selon les recommandation
 
 Le serveur dispose d'une adresse IPv4 fixe (`10.50.99.100`) et d'un enregistrement DNS. En complément du pare-feu périmétrique, les ouvertures de ports locales (Firewall UFW) sont strictement limitées :
 
+#### C. Espace d'adressage et Filtrage local (UFW)
+
+Le serveur dispose d'une adresse IPv4 fixe (`10.50.99.100`) et d'un enregistrement DNS. En complément du pare-feu périmétrique, les ouvertures de ports locales (Firewall UFW) sont strictement limitées :
+
 | Direction | Port | Protocole | Service | Justification |
 | :--- | :--- | :--- | :--- | :--- |
-| **Entrant (IN)** | 443 | TCP | HTTPS | Accès interface web et remontée des agents |
+| **Entrant (IN)** | **80** | **TCP** | **HTTP** | **Flux web applicatif et agents relayés par le Reverse Proxy NPM** |
 | **Entrant (IN)** | 22 | TCP | SSH | Administration (restreint aux IP administrateurs) |
 | **Sortant (OUT)** | 443 | TCP | HTTPS | Mises à jour système et plugins |
 | **Sortant (OUT)** | 636 | TCP | LDAPS | Authentification sécurisée vers l'Active Directory |
@@ -330,36 +331,36 @@ Ce diagramme synthétise les interactions réseaux entrantes et sortantes du ser
 
 ### 4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)
 
-La sécurisation de l'environnement GLPI a été traitée selon le principe de défense en profondeur, en appliquant les bonnes pratiques de durcissement recommandées par l'ANSSI
+La sécurisation de l'environnement GLPI a été traitée selon le principe de défense en profondeur, en appliquant les bonnes pratiques de durcissement recommandées par l'ANSSI.
 
-* **Durcissement du Système (OS) :**
-    * **Cloisonnement réseau :** Le pare-feu local UFW est configuré avec une politique par défaut stricte (Default Deny) en entrée, n'autorisant que les ports strictement nécessaires au service (TCP 22, 443)[cite: 862].
-    * **Accès distant sécurisé (SSH) :** L'authentification par mot de passe et l'accès direct en tant que `root` ont été désactivés (`PermitRootLogin no`, `PasswordAuthentication no`). L'administration se fait uniquement via des clés cryptographiques robustes (ex: ED25519 ou RSA 4096) depuis le réseau VPN IT.
-    * **Lutte contre le bruteforce :** L'outil `fail2ban` est déployé avec des "jails" (prisons) actives surveillant les logs d'authentification SSH (`sshd`) et web (`apache-auth`), bannissant automatiquement et dynamiquement les adresses IP suspectes[cite: 864].
+**Durcissement du Système (OS) :**
+* **Cloisonnement réseau :** Le pare-feu local UFW est configuré avec une politique par défaut stricte (Default Deny) en entrée, n'autorisant que les ports strictement nécessaires au service **(TCP 22 pour l'administration SSH, et TCP 80 pour le flux applicatif relayé par le Reverse Proxy)**.
+* **Accès distant sécurisé (SSH) :** L'authentification par mot de passe et l'accès direct en tant que *root* ont été désactivés (`PermitRootLogin no`, `PasswordAuthentication no`). L'administration se fait uniquement via des clés cryptographiques robustes (ex: ED25519 ou RSA 4096) depuis le réseau VPN IT.
+* **Lutte contre le bruteforce :** L'outil *fail2ban* est déployé avec des "jails" (prisons) actives surveillant les logs d'authentification SSH (sshd) et web (apache-auth), bannissant automatiquement et dynamiquement les adresses IP suspectes.
 
-* **Sécurité Applicative et Flux :**
-    * **Chiffrement en transit :** L'accès à l'interface web est forcé en HTTPS[cite: 856]. Les requêtes d'authentification vers l'Active Directory transitent via un tunnel chiffré LDAPS (Port TCP 636) pour éviter toute compromission des identifiants sur le réseau local[cite: 856, 857].
-    * **Hygiène applicative :** Conformément aux prérequis de sécurité de l'éditeur, le dossier `/install` de GLPI a été définitivement supprimé de l'arborescence après le déploiement.
+**Sécurité Applicative et Flux :**
+* **Chiffrement en transit :** L'accès client à l'interface web est **sécurisé et forcé en HTTPS grâce à un mécanisme de SSL Offloading porté par le Reverse Proxy Nginx Proxy Manager**. Les requêtes d'authentification du serveur vers l'Active Directory transitent via un tunnel chiffré LDAPS (Port TCP 636) pour éviter toute compromission des identifiants sur le réseau local.
+* **Hygiène applicative :** Conformément aux prérequis de sécurité de l'éditeur, le dossier `/install` de GLPI a été définitivement supprimé de l'arborescence après le déploiement.
 
-* **Résilience et PRA :**
-    * Une politique de sauvegarde automatisée (via Veeam) assure des snapshots réguliers de la machine virtuelle, couplés à des "dumps" logiques quotidiens de la base de données MariaDB[cite: 865]. Une rétention de 30 jours permet de valider un Plan de Reprise d'Activité (PRA) efficace.
+**Résilience et PRA :**
+* Une politique de sauvegarde automatisée (via Veeam) assure des snapshots réguliers de la machine virtuelle, couplés à des "dumps" logiques quotidiens de la base de données MariaDB. Une rétention de 30 jours permet de valider un Plan de Reprise d'Activité (PRA) efficace.
 
-* **Supervision et Audit :**
-    * Le monitoring système (CPU, RAM, Disque) s'effectue via SNMPv3, et l'intégration avec le serveur centralisé **Wazuh** (SIEM) assure la remontée et l'analyse continue des événements de sécurité.
+**Supervision et Audit :**
+* Le monitoring système (CPU, RAM, Disque) s'effectue via SNMPv3, et l'intégration avec le serveur centralisé Wazuh qui assure la remontée et l'analyse continue des événements de sécurité.
 
 ### 4.7 Analyse des risques
 
 Dans le cadre du déploiement de la maquette GLPI, une analyse des risques a été réalisée afin d’identifier les menaces potentielles liées à l’environnement de test et d’anticiper leur impact sur le système d’information.
 
-| Risque identifié            | Impact potentiel                     | Probabilité | Mesures de réduction mises en place             |
-| --------------------------- | ------------------------------------ | ----------- | ----------------------------------------------- |
-| Utilisation de SNMP v2c     | Interception des informations réseau | Faible      | Usage limité à un VLAN interne isolé            |
-| Certificat SSL auto-signé   | Risque Man-In-The-Middle             | Faible      | Utilisation uniquement en environnement interne |
-| Machine virtuelle unique    | Point de défaillance unique (SPOF)   | Moyen       | Snapshots réguliers + sauvegardes               |
-| Mauvaise configuration LDAP | Échec d’authentification             | Moyen       | Tests réalisés en pré-production                |
-| Saturation disque           | Indisponibilité du service           | Faible      | Supervision du stockage                         |
-| Vulnérabilités applicatives | Compromission GLPI                   | Faible      | Mises à jour automatiques                       |
-| Accès SSH non maîtrisé      | Compromission serveur                | Faible      | Authentification par clé + Fail2ban             |
+| Risque identifié                    | Impact potentiel                                       | Probabilité | Mesures de réduction mises en place                                 |
+| ----------------------------------- | ------------------------------------------------------ | ----------- | ------------------------------------------------------------------- |
+| **Compromission des clés SNMPv3** | **Fuite d'informations de supervision système/réseau** | **Faible** | **Utilisation du mode AuthPriv (Authentification + Chiffrement AES)**|
+| Flux interne non chiffré (HTTP)     | Interception réseau (Sniffing) entre Proxy et GLPI     | Faible      | Confinement sur un VLAN backend d'administration hyper-sécurisé     |
+| Machine virtuelle unique            | Point de défaillance unique (SPOF)                     | Moyen       | Snapshots réguliers + sauvegardes                                   |
+| Mauvaise configuration LDAP         | Échec d’authentification                               | Moyen       | Tests réalisés en pré-production                                    |
+| Saturation disque                   | Indisponibilité du service                             | Faible      | Supervision du stockage                                             |
+| Vulnérabilités applicatives         | Compromission GLPI                                     | Faible      | Mises à jour automatiques                                           |
+| Accès SSH non maîtrisé              | Compromission serveur                                  | Faible      | Authentification par clé + Fail2ban                                 |
 
 ### 4.8 Supervision et exploitation
 
@@ -424,13 +425,13 @@ Cette organisation garantit une remise en service rapide tout en limitant la per
 
 ### 4.10 Justification des choix de sécurité et évolutions
 
-Certains choix techniques ont été réalisés de manière itérative, en tenant compte des contraintes de l'environnement de test et des exigences de cybersécurité:
+Certains choix techniques ont été réalisés de manière itérative, en tenant compte des contraintes de l'environnement de test et des exigences de cybersécurité :
 
 * **Élévation de la sécurité SNMP (De la v2c à la v3) :**
-    Dans un premier temps, le protocole SNMP v2c (avec la communauté `public`) a été utilisé lors des phases de test pour valider rapidement l'ouverture des flux et le bon fonctionnement du module de découverte. Cependant, pour répondre aux exigences de sécurité du titre AIS et protéger les données d'inventaire contre l'interception sur le réseau (sniffing), **la configuration finale a été élevée en SNMPv3**. Le modèle de sécurité `AuthPriv` a été implémenté, garantissant l'authentification (via l'algorithme SHA) et le chiffrement des données de bout en bout (via AES), comme illustré sur les schémas d'architecture.
+    Dans un premier temps, le protocole SNMP v2c (avec la communauté `public`) a été utilisé lors des phases de test pour valider rapidement l'ouverture des flux et le bon fonctionnement du module de découverte. Cependant, pour répondre aux exigences de sécurité du titre AIS et protéger les données d'inventaire contre l'interception sur le réseau (sniffing), la configuration finale a été élevée en SNMPv3. Le modèle de sécurité `AuthPriv` a été implémenté, garantissant l'authentification (via l'algorithme SHA) et le chiffrement des données de bout en bout (via AES), comme illustré sur les schémas d'architecture.
 
-* **Usage d'un certificat SSL auto-signé :**
-    La mise en place d'un certificat auto-signé pour l'accès HTTPS est justifiée par l'isolement strict de la maquette (non exposée sur Internet et confinée au VLAN de Management). Ce choix technique est temporaire. Lors du futur passage en production, un certificat valide généré par l'Autorité de Certification (PKI) interne de la collectivité ou un organisme reconnu sera déployé afin de garantir la confiance et supprimer les avertissements de sécurité sur les navigateurs des utilisateurs.
+* **Centralisation HTTPS et Déchargement SSL (SSL Offloading) :**
+    Plutôt que d'exposer directement le serveur GLPI et de gérer un certificat localement sur Apache, le choix s'est porté sur une architecture de type "Reverse Proxy" (via Nginx Proxy Manager). Cette approche permet de centraliser la gestion du certificat "Wildcard" officiel de l'infrastructure (`*.archeagglo.fr`). Le trafic client est chiffré de bout en bout (HTTPS) jusqu'au proxy, qui relaie ensuite les requêtes en clair (HTTP) vers la VM GLPI sur un réseau interne isolé. Ce choix technique décharge le serveur applicatif des calculs cryptographiques, masque la topologie interne et respecte le principe de défense en profondeur.
 
 
 ## 5. L’organisation de la mise en œuvre
@@ -468,9 +469,9 @@ sudo apt install ./glpi-agent_1.15-1_all.deb ./glpi-agent-task-network_1.15-1_al
 
 Le fichier de configuration /etc/glpi-agent/agent.cfg a ensuite été modifié pour spécifier l'URL du serveur GLPI et ignorer la vérification SSL (no-ssl-check) du certificat auto-signé de la maquette.
 
-**C. Configuration SNMP pour la découverte réseau.**
+### C. Configuration SNMP pour la découverte réseau
 
-La découverte du matériel réseau a été orchestrée depuis l'interface web de GLPI. Les modules de découverte et d'inventaire réseau ont été activés sur l'agent. J'ai ensuite créé les identifiants SNMP en version v2c avec la communauté public, défini les plages IP cibles, et créé une tâche "Scan Découverte". Une exécution forcée (sudo glpi-agent --force) a permis l'importation automatique des switchs avec leurs adresses MAC et numéros de série.
+La découverte du matériel réseau a été orchestrée depuis l'interface web de GLPI. Les modules de découverte et d'inventaire réseau ont été activés sur l'agent. Afin de respecter les exigences de sécurité de l'infrastructure, j'ai ensuite créé les identifiants **SNMP en version v3 (modèle AuthPriv garantissant l'authentification et le chiffrement AES)**, défini les plages IP cibles, et créé une tâche "Scan Découverte". Une exécution forcée (`sudo glpi-agent --force`) a permis l'importation automatique des switchs avec leurs adresses MAC et numéros de série.
 
 ### 5.2. Schéma détaillé
 

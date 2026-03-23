@@ -411,7 +411,7 @@ Domain Names : glpi-test.archeagglo.fr
 
 Scheme : http
 
-Forward Hostname / IP : <IP_PRIVEE_VM_GLPI>
+Forward Hostname / IP : 10.50.99.100
 
 Forward Port : 80
 
