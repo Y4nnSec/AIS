@@ -159,14 +159,13 @@ Le déploiement s'effectuera sur une **Machine Virtuelle (VM)** hébergée sur u
 **5.2 Matrice de Flux (Firewall)**
 
 | Sens | Protocole | Port | Service | Description |
-|------|----------|------|---------|-------------|
-| **IN**  | TCP | 443 | HTTPS | Accès sécurisé utilisateurs et agents |
-| **IN**  | TCP | 22  | SSH   | Administration (restreint IP admins) |
+|------|-----------|------|---------|-------------|
+| **IN** | TCP | **80** | **HTTP** | **Flux web applicatif provenant du Reverse Proxy (NPM)** |
+| **IN** | TCP | 22  | SSH   | Administration (restreint IP admins) |
 | **OUT** | TCP | 443 | HTTPS | Accès Internet sécurisé (mises à jour, plugins) |
 | **OUT** | TCP | 636 | LDAPS | Liaison sécurisée Active Directory |
 | **OUT** | TCP | 587 | SMTP  | Relais messagerie |
 | **OUT** | UDP | 161 | SNMP  | Supervision |
-
 ### 5.3 Schéma réseau – Déploiement GLPI
 
 ```plaintext
