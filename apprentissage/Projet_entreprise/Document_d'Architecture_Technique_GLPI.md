@@ -1,16 +1,3 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
-</p>
-
-
-# Projet : Document d'Architecture Technique de déploiement de GLPI
-
-
-**Auteur :** Yann (Administrateur Infrastructure Sécurisée)
-
-**Projet :** Décembre 2025
-
-
 ### Contexte :
 
 Mise en place d’une solution GLPI destinée à la gestion de parc informatique et au support utilisateurs, dans un premier temps en environnement de test, avec une mise en production ultérieure.

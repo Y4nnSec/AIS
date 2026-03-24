@@ -1,16 +1,3 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
-</p>
-
-
-# Procédure d’installation et de préparation de GLPI 11
-
-
-**Auteur :** Yann (Administrateur Infrastructure Sécurisée) 
-
-**Projet :** Janvier 2026
-
-
 ## Sommaire
 
 - [Procédure d’installation et de préparation de GLPI 11](#procédure-dinstallation-et-de-préparation-de-glpi-11)

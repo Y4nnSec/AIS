@@ -49,18 +49,24 @@
     - [4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)](#46-sécurisation-de-linfrastructure-durcissement-os-et-flux)
     - [4.7 Analyse des risques](#47-analyse-des-risques)
     - [4.8 Supervision et exploitation](#48-supervision-et-exploitation)
+    - [4.8.1 Déploiement automatisé des agents GLPI](#481-déploiement-automatisé-des-agents-glpi)
+    - [4.8.2 Gestion des mises à jour des agents GLPI](#482-gestion-des-mises-à-jour-des-agents-glpi)
+    - [4.8.3 Exploitation des fonctionnalités ITSM](#483-exploitation-des-fonctionnalités-itsm)
     - [4.9 Continuité de service](#49-continuité-de-service)
     - [4.10 Justification des choix de sécurité et évolutions](#410-justification-des-choix-de-sécurité-et-évolutions)
   - [5. L’organisation de la mise en œuvre](#5-lorganisation-de-la-mise-en-œuvre)
-    - [5.1. Revue de code et configuration](#51-revue-de-code-et-configuration)
-- [Téléchargement de l'agent et du module réseau](#téléchargement-de-lagent-et-du-module-réseau)
-- [Installation simultanée](#installation-simultanée)
-    - [C. Configuration SNMP pour la découverte réseau](#c-configuration-snmp-pour-la-découverte-réseau)
+    - [5.1 Revue de code et configuration](#51-revue-de-code-et-configuration)
+    - [B. Déploiement de l'agent GLPI sous Debian](#b-déploiement-de-lagent-glpi-sous-debian)
+      - [Installation](#installation)
     - [5.2. Schéma détaillé](#52-schéma-détaillé)
     - [5.3. Diagramme de Séquence du Protocole SNMP](#53-diagramme-de-séquence-du-protocole-snmp)
-  - [6. Les relations avec les principaux acteurs du projet](#6-les-relations-avec-les-principaux-acteurs-du-projet)
-  - [7. Synthèse et conclusion](#7-synthèse-et-conclusion)
-  - [8. Annexes](#8-annexes)
+  - [6. Déploiement de la solution de supervision de sécurité (SIEM)](#6-déploiement-de-la-solution-de-supervision-de-sécurité-siem)
+    - [6.1 Choix technique et architecture Wazuh](#61-choix-technique-et-architecture-wazuh)
+    - [6.2 Déploiement du socle de sécurité](#62-déploiement-du-socle-de-sécurité)
+    - [6.3 Enrôlement des agents (Surveillance du serveur GLPI)](#63-enrôlement-des-agents-surveillance-du-serveur-glpi)
+  - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
+  - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
+  - [9. Annexes](#9-annexes)
 
 
 ## 1. Liste des compétences mises en œuvre dans le cadre du projet
@@ -366,7 +372,7 @@ Dans le cadre du déploiement de la maquette GLPI, une analyse des risques a ét
 
 Au-delà de l’identification des risques, la mise en place d’une supervision constitue un élément essentiel pour assurer la disponibilité et la stabilité du service dans le temps.
 
-Afin de garantir la disponibilité et la fiabilité du service GLPI, l’environnement de test a été intégré dans une démarche de supervision proactive.
+Afin de garantir sa disponibilité et sa fiabilité, le serveur hébergeant GLPI a été intégré dans notre solution globale de supervision (SIEM Wazuh) pour surveiller sa santé et sa sécurité de manière proactive."
 
 **Indicateurs surveillés**
 
@@ -396,7 +402,105 @@ Afin de garantir la disponibilité et la fiabilité du service GLPI, l’environ
 
 - Détection anticipée des incidents  
 - Meilleure continuité de service  
-- Exploitation facilitée en production  
+- Exploitation facilitée en production
+
+### 4.8.1 Déploiement automatisé des agents GLPI
+
+**Objectif**
+
+Afin de garantir une remontée homogène et automatisée des informations du parc informatique, une stratégie de déploiement centralisée des agents GLPI a été mise en place.
+
+**Principe**
+
+Le déploiement repose sur l’utilisation des stratégies de groupe Active Directory (GPO), permettant :
+
+- une installation automatique des agents  
+- une standardisation des configurations  
+- une réduction des erreurs humaines  
+
+**Mise en œuvre technique**
+
+Le package d’installation MSI de l’agent GLPI a été téléchargé puis déposé sur un partage réseau accessible par les machines du domaine :
+
+\\srv-ad\deploy\glpi-agent.msi
+
+Une GPO a ensuite été créée et appliquée à l’ensemble des postes utilisateurs :
+
+* Chemin :  
+  Configuration ordinateur → Paramètres logiciels → Installation de logiciel  
+
+* Mode de déploiement :  
+  Assigné 
+
+**Installation silencieuse**
+
+Afin d’automatiser entièrement le processus, une installation silencieuse a été utilisée avec les paramètres suivants :
+
+msiexec /i glpi-agent.msi /quiet /norestart SERVER=https://glpi-test.archeagglo.fr/front/inventory.php
+
+**Résultat**
+
+* Installation automatique au démarrage des postes  
+* Remontée immédiate des informations dans GLPI  
+* Aucun besoin d’intervention utilisateur  
+
+**Sécurité**
+
+* Accès au partage limité aux machines du domaine  
+* Flux HTTP/HTTPS contrôlé via firewall  
+* Flux intégralement chiffrés en HTTPS entre les postes clients et le Reverse Proxy.
+
+### 4.8.2 Gestion des mises à jour des agents GLPI
+
+**Objectif**
+
+Maintenir les agents GLPI à jour afin de garantir la compatibilité, la sécurité et la fiabilité des remontées d’inventaire.
+
+**Mise à jour sous Windows**
+
+Deux méthodes ont été définies :
+
+**Via GPO (méthode principale)**
+
+* Mise à jour du package MSI sur le partage réseau  
+* Redéploiement automatique via GPO  
+
+**Via script**
+
+msiexec /i glpi-agent.msi /quiet /norestart REINSTALL=ALL REINSTALLMODE=vomus
+
+**Mise à jour sous Debian**
+
+* Mise à jour via APT
+
+```bash
+sudo apt update 
+sudo apt --only-upgrade install glpi-agent glpi-agent-task-network -y
+```
+
+**Vérification**
+
+glpi-agent --version  
+
+**Résultat**
+
+* Maintien en condition opérationnelle (MCO)  
+* Correction des vulnérabilités  
+* Compatibilité avec GLPI  
+
+### 4.8.3 Exploitation des fonctionnalités ITSM
+
+Bien que la découverte réseau soit le moteur de l'inventaire, GLPI a été configuré pour exploiter ses capacités de gestion des services informatiques (ITSM) conformément aux bonnes pratiques ITIL.
+
+**Fonctionnalités mises en œuvre :**
+
+* Helpdesk et Ticketing : Centralisation des demandes d'assistance des utilisateurs avec un portail dédié.
+
+* Gestion des SLA (Service Level Agreement) : Création de règles d'affectation automatiques et de temps de résolution cibles (ex: SLA de 4h pour un incident critique réseau).
+
+* Liaison Parc / Incident : Chaque ticket ouvert peut être lié directement à l'équipement matériel remonté par l'agent (ex: le switch SW-MER-DATA1), permettant un suivi précis de l'historique des pannes par équipement.
+
+* Gestion administrative : Suivi des licences logicielles et des dates de fin de garantie des équipements pour anticiper le renouvellement du matériel.
 
 ### 4.9 Continuité de service
 
@@ -411,40 +515,71 @@ Afin d’assurer la résilience du service GLPI, des objectifs de reprise ont é
 
 Ces objectifs sont rendus possibles grâce à :
 
-- Sauvegardes quotidiennes automatisées  
-- Dumps MariaDB  
-- Snapshots VM  
-- Stockage multi-supports (3-2-1)  
+* Sauvegardes quotidiennes automatisées  
+* Dumps MariaDB  
+* Snapshots VM  
+* Stockage multi-supports (3-2-1)  
 
 En cas d’incident majeur :
 
-- Restauration complète de la VM possible  
-- Restauration de la base GLPI indépendante  
+* Restauration complète de la VM possible  
+* Restauration de la base GLPI indépendante  
 
 Cette organisation garantit une remise en service rapide tout en limitant la perte de données.
 
 ### 4.10 Justification des choix de sécurité et évolutions
 
-Certains choix techniques ont été réalisés de manière itérative, en tenant compte des contraintes de l'environnement de test et des exigences de cybersécurité :
+Certains choix techniques ont été réalisés de manière itérative, en tenant compte des contraintes de l'environnement de test et des exigences de cybersécurité.
 
-* **Élévation de la sécurité SNMP (De la v2c à la v3) :**
-    Dans un premier temps, le protocole SNMP v2c (avec la communauté `public`) a été utilisé lors des phases de test pour valider rapidement l'ouverture des flux et le bon fonctionnement du module de découverte. Cependant, pour répondre aux exigences de sécurité du titre AIS et protéger les données d'inventaire contre l'interception sur le réseau (sniffing), la configuration finale a été élevée en SNMPv3. Le modèle de sécurité `AuthPriv` a été implémenté, garantissant l'authentification (via l'algorithme SHA) et le chiffrement des données de bout en bout (via AES), comme illustré sur les schémas d'architecture.
+**Élévation de la sécurité SNMP (de la v2c à la v3)**
 
-* **Centralisation HTTPS et Déchargement SSL (SSL Offloading) :**
-    Plutôt que d'exposer directement le serveur GLPI et de gérer un certificat localement sur Apache, le choix s'est porté sur une architecture de type "Reverse Proxy" (via Nginx Proxy Manager). Cette approche permet de centraliser la gestion du certificat "Wildcard" officiel de l'infrastructure (`*.archeagglo.fr`). Le trafic client est chiffré de bout en bout (HTTPS) jusqu'au proxy, qui relaie ensuite les requêtes en clair (HTTP) vers la VM GLPI sur un réseau interne isolé. Ce choix technique décharge le serveur applicatif des calculs cryptographiques, masque la topologie interne et respecte le principe de défense en profondeur.
+Dans un premier temps, le protocole SNMP v2c (avec la communauté `public`) a été utilisé lors des phases de test afin de valider rapidement l’ouverture des flux réseau et le bon fonctionnement du module de découverte de GLPI.
+
+Cependant, ce protocole ne proposant ni authentification forte ni chiffrement, il présente des vulnérabilités importantes, notamment face aux attaques de type interception réseau (sniffing).
+
+Afin de répondre aux exigences de sécurité du titre AIS, la configuration a été migrée vers SNMPv3 en mode `AuthPriv`. Cette configuration garantit :
+
+* une authentification forte via l’algorithme SHA  
+* un chiffrement des échanges via AES  
+* une protection des données d’inventaire contre toute interception  
+
+La mise en œuvre a été réalisée via la création d’un utilisateur SNMPv3 dédié et la restriction des accès aux équipements autorisés. Des tests de validation ont été effectués à l’aide de la commande `snmpwalk`, confirmant le bon fonctionnement des échanges sécurisés.
+
+**Centralisation HTTPS et déchargement SSL (SSL Offloading)**
+
+Afin de sécuriser l’accès à l’interface GLPI, une architecture reposant sur un reverse proxy a été mise en place (Nginx Proxy Manager).
+
+Ce choix permet de centraliser la gestion des certificats SSL, notamment via l’utilisation d’un certificat wildcard (`*.archeagglo.fr`), tout en évitant la gestion individuelle des certificats sur chaque serveur applicatif.
+
+Le fonctionnement est le suivant :
+
+* le trafic client est chiffré en HTTPS jusqu’au reverse proxy  
+* le proxy relaie ensuite les requêtes vers le serveur GLPI en HTTP sur un réseau interne isolé  
+* le serveur GLPI n’est pas exposé directement à Internet  
+
+Cette architecture présente plusieurs avantages :
+
+* réduction de la surface d’attaque  
+* masquage de l’infrastructure interne  
+* amélioration des performances grâce au déchargement des opérations cryptographiques  
+* centralisation et simplification de la gestion des certificats  
+
+Ce choix s’inscrit dans une logique de défense en profondeur, en combinant cloisonnement réseau, chiffrement des flux et contrôle des accès.
 
 
 ## 5. L’organisation de la mise en œuvre
 
 La mise en œuvre de la maquette GLPI s'est déroulée de manière itérative, en veillant à documenter chaque étape technique. L'organisation s'est découpée en l'installation du socle applicatif, la sécurisation du serveur, et enfin le déploiement de l'agent Linux pour la découverte réseau.
 
-### 5.1. Revue de code et configuration
+### 5.1 Revue de code et configuration
 
 Pour illustrer le travail technique réalisé, voici des extraits significatifs des configurations et commandes mises en place pour assurer le déploiement de la solution.
 
 **A. Installation du socle applicatif et liaison PHP-FPM**
 
-L'installation de GLPI a été réalisée sur un serveur Debian 13 en utilisant une stack LAMP moderne comprenant Apache2, MariaDB (version ≥ 10.11) et PHP 8.4-fpm. L'utilisation de PHP-FPM permet une meilleure gestion des processus et renforce la sécurité. Pour cela, le VirtualHost d'Apache a été configuré pour déléguer l'exécution des scripts via un socket Unix :
+L'installation de GLPI a été réalisée sur un serveur Debian 13 en utilisant une stack LAMP comprenant Apache2, MariaDB (version ≥ 10.11) et PHP 8.4-fpm.
+
+L'utilisation de PHP-FPM permet une meilleure gestion des processus et une isolation renforcée des traitements PHP. Le VirtualHost Apache a été configuré pour déléguer l'exécution des scripts via un socket Unix :
 
 ```apache
 <FilesMatch \.php$>
@@ -452,26 +587,30 @@ L'installation de GLPI a été réalisée sur un serveur Debian 13 en utilisant 
 </FilesMatch>
 ```
 
-**B. Déploiement de l'Agent GLPI sous Debian**
+**Sécurisation des permissions du répertoire web**
 
-Afin d'assurer la remontée automatique de l'inventaire réseau, l'agent GLPI a été déployé manuellement sur un serveur Debian en version 1.15. L'installation s'est faite via les paquets .deb officiels, en incluant le module network indispensable pour scanner les switchs
+Afin d'éviter toute compromission par une faille applicative, les droits sur le répertoire GLPI ont été strictement verrouillés pour que seul l'utilisateur d'Apache (www-data) puisse y accéder, avec des permissions restreintes :
 
-# Téléchargement de l'agent et du module réseau
+```Bash
+sudo chown -R www-data:www-data /var/www/html/glpi
+sudo find /var/www/html/glpi -type d -exec chmod 755 {} \;
+sudo find /var/www/html/glpi -type f -exec chmod 644 {} \;
+```
 
-wget [https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent_1.15-1_all.deb](https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent_1.15-1_all.deb)
-wget [https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent-task-network_1.15-1_all.deb](https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent-task-network_1.15-1_all.deb)
+### B. Déploiement de l'agent GLPI sous Debian
 
-# Installation simultanée
+Afin d'assurer la remontée automatique de l'inventaire, l'agent GLPI a été déployé sur un serveur Debian en version 1.15 avec le module réseau.
+
+#### Installation
 
 ```bash
+wget https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent_1.15-1_all.deb
+wget https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent-task-network_1.15-1_all.deb
+
 sudo apt install ./glpi-agent_1.15-1_all.deb ./glpi-agent-task-network_1.15-1_all.deb -y
 ```
 
-Le fichier de configuration /etc/glpi-agent/agent.cfg a ensuite été modifié pour spécifier l'URL du serveur GLPI et ignorer la vérification SSL (no-ssl-check) du certificat auto-signé de la maquette.
 
-### C. Configuration SNMP pour la découverte réseau
-
-La découverte du matériel réseau a été orchestrée depuis l'interface web de GLPI. Les modules de découverte et d'inventaire réseau ont été activés sur l'agent. Afin de respecter les exigences de sécurité de l'infrastructure, j'ai ensuite créé les identifiants **SNMP en version v3 (modèle AuthPriv garantissant l'authentification et le chiffrement AES)**, défini les plages IP cibles, et créé une tâche "Scan Découverte". Une exécution forcée (`sudo glpi-agent --force`) a permis l'importation automatique des switchs avec leurs adresses MAC et numéros de série.
 
 ### 5.2. Schéma détaillé
 
@@ -484,7 +623,105 @@ Ce diagramme de séquence détaille les interactions réseau entre l'agent Linux
 ![alt text](<../Images/Diagramme de Séquence du Protocole SNMP.png>)
 
 
-## 6. Les relations avec les principaux acteurs du projet
+## 6. Déploiement de la solution de supervision de sécurité (SIEM)
+
+La mise en place d'une infrastructure robuste nécessite une visibilité complète sur les événements de sécurité. Pour répondre aux exigences de maintien en condition de sécurité (MCS) du titre AIS, la solution open-source Wazuh a été déployée. Elle combine des capacités de SIEM (Security Information and Event Management) et de XDR (Extended Detection and Response).
+
+### 6.1 Choix technique et architecture Wazuh
+
+Le choix s'est porté sur Wazuh pour sa capacité à unifier la détection d'intrusions, la surveillance d'intégrité des fichiers et la réponse automatisée aux incidents. Contrairement à de simples analyseurs de journaux, Wazuh permet une corrélation avancée des événements.
+
+**Choix de l'architecture :**
+Pour répondre aux besoins de cette maquette et optimiser les ressources de l'hyperviseur Proxmox, une architecture centralisée de type **"All-in-one" (Tout-en-un)** a été privilégiée. 
+Ce serveur unique, hébergé sur une distribution **Ubuntu 24.04 LTS** garantissant stabilité et support de sécurité à long terme, regroupe les trois composants fondamentaux du socle :
+* **Wazuh Indexer :** Le moteur de recherche et de stockage hautement évolutif qui indexe et stocke les alertes générées.
+* **Wazuh Manager :** Le cerveau du système. Il analyse les données reçues par les agents déployés, déclenche le moteur de règles et gère l'enrôlement sécurisé.
+* **Wazuh Dashboard :** L'interface utilisateur web permettant l'exploration des données et la visualisation des tableaux de bord de sécurité.
+
+### 6.2 Déploiement du socle de sécurité
+
+Afin de garantir une installation standardisée et, surtout, d'assurer la génération sans faille des certificats cryptographiques liant les trois composants, le déploiement a été réalisé via l'assistant d'installation automatisé officiel de Wazuh.
+
+Le script d'installation a été exécuté avec l'argument `-a` pour un déploiement autonome:
+
+```bash
+curl -sO [https://packages.wazuh.com/4.x/wazuh-install.sh](https://packages.wazuh.com/4.x/wazuh-install.sh)
+sudo bash ./wazuh-install.sh -a
+```
+
+À l'issue de l'installation, un condensé sécurisé (wazuh-install-files.tar) contenant l'ensemble des certificats PKI et des mots de passe générés aléatoirement pour les administrateurs a été archivé en lieu sûr.
+
+Validation du socle :
+Une vérification des démons système confirme que le socle de sécurité est pleinement opérationnel et prêt à recevoir les connexions chiffrées (port 1514) des agents de l'infrastructure :
+
+```bash
+systemctl is-active wazuh-manager wazuh-indexer wazuh-dashboard
+# Résultat obtenu : active (pour les 3 services)
+```
+
+![alt text](../Images/wazuh_tout_en_un.png)
+
+### 6.3 Enrôlement des agents (Surveillance du serveur GLPI)
+
+**Objectif de la supervision**
+
+Le serveur GLPI centralisant l'inventaire matériel et les données d'assistance (Helpdesk) de la collectivité, il constitue une cible de choix pour d'éventuels attaquants. Afin d'assurer sa protection (détection d'intrusions, surveillance de l'intégrité des fichiers web, analyse des journaux système), le déploiement de l'agent Wazuh s'est avéré indispensable.
+
+**Principe de communication sécurisée**
+
+L'agent Wazuh est un composant léger qui collecte les événements système et applicatifs pour les transmettre au Manager. Afin de respecter les exigences de confidentialité et d'intégrité, la communication entre l'agent (sur le serveur Debian GLPI) et le Manager (serveur Ubuntu) s'effectue sur le port TCP 1514 de manière intégralement chiffrée (AES) et authentifiée par un échange de clés (Pre-Shared Key).
+
+**Procédure de déploiement sous Debian 13**
+
+L'installation de l'agent a été réalisée en ligne de commande via l'ajout du dépôt officiel sécurisé par une clé GPG, garantissant l'intégrité des paquets téléchargés. La variable d'environnement `WAZUH_MANAGER` a été utilisée pour automatiser l'enrôlement de l'agent vers l'adresse IP du socle de sécurité lors de l'installation :
+
+**1. Télécharger et importer la clé de sécurité GPG :**
+
+```bash
+sudo curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUHhttps://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import
+```
+
+**2. Appliquer les bonnes permissions sur le fichier de clé :**
+
+```bash
+sudo chmod 644 /usr/share/keyrings/wazuh.gpg
+```
+
+**3. Ajouter le dépôt officiel de Wazuh aux sources du système :**
+
+```bash
+sudo echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
+```
+
+**4. Mettre à jour la liste des paquets :**
+
+```bash
+sudo apt update
+```
+
+![alt text](../Images/Import_des_clés_agent_wazuh_et_mise_à_jour.png)
+
+**5. Lancer l'installation avec pointage vers le Manager :**
+
+```bash
+WAZUH_MANAGER="10.50.99.101" apt-get install wazuh-agent -y
+```
+
+Une fois l'installation terminée, le démon de l'agent a été activé pour garantir son exécution automatique à chaque redémarrage du serveur :
+
+**6. Activer et démarrer le service de l'agent :**
+
+```bash
+systemctl daemon-reload
+systemctl enable wazuh-agent
+systemctl start wazuh-agent
+```
+
+**Validation de l'enrôlement**
+
+Afin de confirmer la bonne intégration du serveur dans le SIEM, une vérification a été effectuée depuis la console d'administration centralisée de Wazuh (Dashboard). L'agent installé sur le serveur glpi-test remonte avec le statut Active, confirmant que le canal de communication chiffré est opérationnel et que les premiers événements de sécurité sont en cours d'indexation.
+
+## 7. Les relations avec les principaux acteurs du projet
 
 La réussite de cette preuve de concept a nécessité une communication fluide et régulière avec les différentes parties prenantes au sein de la Direction des Systèmes d'Information (DSI) d'ARCHE Agglo. 
 
@@ -501,7 +738,7 @@ La réussite de cette preuve de concept a nécessité une communication fluide e
   En tant qu'alternant AIS, j'ai agi en tant que référent technique sur ce projet. J'ai dû vulgariser certains concepts de sécurité (comme la nécessité du durcissement système ou de l'isolation des flux) pour justifier mes choix d'architecture lors des points de suivi, renforçant ainsi ma posture de conseil.
 
 
-## 7. Synthèse et conclusion
+## 8. Synthèse et conclusion
 
 Le projet de déploiement d'un environnement de test GLPI pour ARCHE Agglo s'est achevé avec succès. L'ensemble des objectifs définis dans le cahier des charges a été atteint : la plateforme est fonctionnelle, sécurisée, et répond parfaitement aux exigences du Document d'Architecture Technique (DAT). 
 
@@ -520,7 +757,7 @@ D'un point de vue professionnel, ce projet valide pleinement les compétences vi
 La maquette ayant fait ses preuves de stabilité et de sécurité, la prochaine étape logique sera la migration de cette configuration vers l'environnement de production. À plus long terme, comme identifié lors de l'étude d'architecture, l'implémentation d'un système d'authentification unique (SSO) basé sur le protocole OpenID Connect constituera une évolution majeure. Cela permettra de centraliser la gestion des identités tout en offrant une expérience utilisateur simplifiée et plus sécurisée aux agents de la collectivité.
 
 
-## 8. Annexes
+## 9. Annexes
 
 * **Annexe 1 :** Document d'Architecture Technique (DAT) GLPI.
 

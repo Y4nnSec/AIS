@@ -1,13 +1,4 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
-</p>
-
-
 # Procédure de déploiement : Agent GLPI et Inventaire Réseau SNMP
-
-**Auteur :** Yann (Administrateur Infrastructure Sécurisée) 
-
-**Projet :** Janvier 2026
 
 
 **Contexte :** Mise en place d'une remontée automatique d'inventaire réseau (Switchs) vers GLPI.
