@@ -243,7 +243,7 @@ sudo glpi-agent --force
 
 Vérification : Le terminal doit afficher running task NetDiscovery.
 
-![alt text](../Images/forcer_l_agent.png)
+![alt text](../Images/Forcer_l'agent_pour_snmp.png)
 
 **Vérification de l'importation**
 
@@ -256,6 +256,7 @@ Vérifier la présence du nouveau switch dans la liste.
 Cliquer sur le nom du switch pour valider la remontée des informations (Ports, Modèle, Firmware).
 
 ![alt text](../Images/Import_SNMP.png)
+![alt text](../Images/Import_SNMP2.png)
 
 ### Cas de dépannage (Si le switch n'apparaît pas)
 
