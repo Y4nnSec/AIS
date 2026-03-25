@@ -678,7 +678,7 @@ L'installation de l'agent a été réalisée en ligne de commande via l'ajout du
 **1. Télécharger et importer la clé de sécurité GPG :**
 
 ```bash
-sudo curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUHhttps://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import
+curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | sudo gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import
 ```
 
 **2. Appliquer les bonnes permissions sur le fichier de clé :**
@@ -690,21 +690,19 @@ sudo chmod 644 /usr/share/keyrings/wazuh.gpg
 **3. Ajouter le dépôt officiel de Wazuh aux sources du système :**
 
 ```bash
-sudo echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
+echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | sudo tee /etc/apt/sources.list.d/wazuh.list
 ```
 
 **4. Mettre à jour la liste des paquets :**
 
 ```bash
-sudo apt update
+sudo apt-get update
 ```
-
-![alt text](../Images/Import_des_clés_agent_wazuh_et_mise_à_jour.png)
 
 **5. Lancer l'installation avec pointage vers le Manager :**
 
 ```bash
-WAZUH_MANAGER="10.50.99.101" apt-get install wazuh-agent -y
+sudo env WAZUH_MANAGER="10.50.99.101" apt-get install wazuh-agent -y
 ```
 
 Une fois l'installation terminée, le démon de l'agent a été activé pour garantir son exécution automatique à chaque redémarrage du serveur :
@@ -717,9 +715,15 @@ systemctl enable wazuh-agent
 systemctl start wazuh-agent
 ```
 
+![alt text](../Images/Installation_agent_wazuh_Glpi.png)
+
 **Validation de l'enrôlement**
 
 Afin de confirmer la bonne intégration du serveur dans le SIEM, une vérification a été effectuée depuis la console d'administration centralisée de Wazuh (Dashboard). L'agent installé sur le serveur glpi-test remonte avec le statut Active, confirmant que le canal de communication chiffré est opérationnel et que les premiers événements de sécurité sont en cours d'indexation.
+
+![alt text](../Images/Dashboard_wazuh.png)
+
+
 
 ## 7. Les relations avec les principaux acteurs du projet
 
