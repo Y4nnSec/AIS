@@ -64,6 +64,8 @@
     - [6.1 Choix technique et architecture Wazuh](#61-choix-technique-et-architecture-wazuh)
     - [6.2 Déploiement du socle de sécurité](#62-déploiement-du-socle-de-sécurité)
     - [6.3 Enrôlement des agents (Surveillance du serveur GLPI)](#63-enrôlement-des-agents-surveillance-du-serveur-glpi)
+    - [6.4 Simulations d'attaques et détection (Cas pratiques)](#64-simulations-dattaques-et-détection-cas-pratiques)
+      - [6.4.1 Détection d'intrusion (Bruteforce SSH)](#641-détection-dintrusion-bruteforce-ssh)
   - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
   - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
   - [9. Annexes](#9-annexes)
@@ -723,7 +725,21 @@ Afin de confirmer la bonne intégration du serveur dans le SIEM, une vérificati
 
 ![alt text](../Images/Dashboard_wazuh.png)
 
+### 6.4 Simulations d'attaques et détection (Cas pratiques)
 
+Afin de valider le bon fonctionnement de la chaîne de supervision et la pertinence des règles de sécurité déployées, plusieurs scénarios d'attaques ont été simulés à l'encontre de l'infrastructure de test GLPI. L'objectif est de démontrer la capacité du SIEM Wazuh à détecter, remonter et alerter en temps réel lors de comportements malveillants ou d'anomalies de configuration.
+
+#### 6.4.1 Détection d'intrusion (Bruteforce SSH)
+
+**Scénario de l'attaque**
+Le protocole d'administration SSH étant un vecteur d'attaque privilégié, une attaque par force brute a été simulée depuis une machine distante vers le serveur GLPI. L'objectif de l'attaquant fictif était de deviner les identifiants de connexion en effectuant de multiples tentatives échouées de manière très rapprochée.
+
+**Détection par Wazuh**
+L'agent Wazuh, en analysant en temps réel les journaux d'authentification (`/var/log/auth.log`) du serveur Debian, a immédiatement intercepté la multiplication des échecs de connexion. Le moteur de corrélation du Manager a alors déclenché une alerte de sécurité critique de niveau 10, correspondant à la règle "Multiple authentication failures".
+
+*[Insérer ici la capture d'écran du Dashboard Wazuh montrant l'alerte rouge du Bruteforce SSH]*
+
+Cette simulation confirme que toute tentative de compromission des accès d'administration est tracée et visible instantanément sur le tableau de bord, permettant une réaction rapide (telle que le bannissement automatique de l'IP attaquante via des outils comme Fail2ban ou le module Active Response de Wazuh).
 
 ## 7. Les relations avec les principaux acteurs du projet
 
