@@ -196,7 +196,7 @@ SecAction \
     t:none,\
     nolog,\
     tag:'OWASP_CRS',\
-    ver:'OWASP_CRS/4.18.0',\
+    ver:'OWASP_CRS/4.25.0',\
     setvar:tx.blocking_paranoia_level=1"
 ```
 
@@ -213,7 +213,7 @@ SecAction \
     t:none,\
     nolog,\
     tag:'OWASP_CRS',\
-    ver:'OWASP_CRS/4.18.0',\
+    ver:'OWASP_CRS/4.25.0',\
     setvar:tx.crs_setup_version=4180"
 ```
 
@@ -419,3 +419,49 @@ La mise en place d'un WAF efficace est un processus méthodique. Les points clé
   * ✅ **Réglage structuré** : Gérez les faux positifs via des fichiers d'exclusion personnalisés.
 
 Ce guide a couvert les fondations essentielles. Les étapes suivantes incluent l'écriture de règles personnalisées, la création d'exclusions plus granulaires (`SecRuleUpdateTargetById`) et l'intégration des journaux dans un système **SIEM** (Security Information and Event Management) pour une surveillance centralisée.
+
+
+
+        echo "<p style='background-color:red; color:white; padding:10px;'>Échec de la connexion. Identifiants incorrects.</p>";
+    }
+}
+?>
+
+<hr>
+<h3>1. Enregistrer un utilisateur</h3>
+<form method="POST" action="">
+    Utilisateur : <input type="text" name="reg_username"><br><br>
+    Mot de passe : <input type="password" name="reg_password"><br><br>
+    <input type="submit" name="register" value="S'inscrire">
+</form>
+
+<hr>
+<h3>2. Se connecter</h3>
+<form method="POST" action="">
+    Utilisateur : <input type="text" name="log_username"><br><br>
+    Mot de passe : <input type="password" name="log_password"><br><br>
+    <input type="submit" name="login" value="Connexion">
+</form>
+```
+### Étape 4 : Tester l'attaque (Sans ModSecurity actif)
+Avant d'activer la protection ModSecurity, testez la vulnérabilité de votre formulaire de connexion.
+
+Allez sur http://votre_ip_serveur/index.php.
+Dans le formulaire 2. Se connecter, entrez la charge utile (payload) classique suivante dans le champ "Utilisateur" :
+
+' OR '1'='1
+
+Et mettez n'importe quoi dans le mot de passe.
+
+:warning 
+Explication : La requête SQL exécutée par le serveur deviendra :
+
+SELECT * FROM utilisateurs WHERE username = '' OR '1'='1' AND password = '...'
+
+Comme 1=1 est toujours vrai, la base de données renverra le premier utilisateur de la table (souvent l'administrateur), permettant de contourner l'authentification. Vous devriez voir le message vert de réussite.
+
+### Dans l'URL du navigateur, tester l'injection SQL suivante: 
+
+http://<votre_ip_serveur>/?id=1' OR 1=1--
+
+<img width="537" height="353" alt="image" src="https://github.com/user-attachments/assets/26b5be62-cb31-45cc-8bd1-f514ab89136a" />
