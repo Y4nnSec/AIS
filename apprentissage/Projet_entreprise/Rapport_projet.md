@@ -66,6 +66,8 @@
     - [6.3 Enrôlement des agents (Surveillance du serveur GLPI)](#63-enrôlement-des-agents-surveillance-du-serveur-glpi)
     - [6.4 Simulations d'attaques et détection (Cas pratiques)](#64-simulations-dattaques-et-détection-cas-pratiques)
       - [6.4.1 Détection d'intrusion (Bruteforce SSH)](#641-détection-dintrusion-bruteforce-ssh)
+      - [6.4.2 Surveillance d'Intégrité des Fichiers (FIM)](#642-surveillance-dintégrité-des-fichiers-fim)
+      - [6.4.3 Réponse Active (IPS - Active Response)](#643-réponse-active-ips---active-response)
   - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
   - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
   - [9. Annexes](#9-annexes)
@@ -110,12 +112,11 @@ Mes missions principales incluent :
 **Ce qu'est ARCHE Agglo :**
 ARCHE Agglo est une collectivité publique (Établissement Public de Coopération Intercommunale) créée en 2017. Située à cheval entre l'Ardèche et la Drôme, elle regroupe 41 communes pour environ 60 000 habitants.
 
-**Son activité (ses missions) :**
-Son rôle est de gérer des services publics de proximité. Ses 5 grands pôles d'activités sont :
+Ses 5 grands pôles d'activités sont :
 * **L'économie :** Aider les entreprises et développer l'emploi local.
 * **L'environnement :** Collecter les déchets et entretenir les cours d'eau.
 * **Les services aux habitants :** Gérer la petite enfance (crèches) et l'action sociale.
-* **L'Aménagement :** Organiser les transports et la politique du logement.
+* **L'aménagement :** Organiser les transports et la politique du logement.
 * **Le tourisme :** Développer l'attractivité (office de tourisme, sentiers de randonnée).
 
 #### 2.1.1. Organigramme
@@ -731,15 +732,58 @@ Afin de valider le bon fonctionnement de la chaîne de supervision et la pertine
 
 #### 6.4.1 Détection d'intrusion (Bruteforce SSH)
 
-**Scénario de l'attaque**
-Le protocole d'administration SSH étant un vecteur d'attaque privilégié, une attaque par force brute a été simulée depuis une machine distante vers le serveur GLPI. L'objectif de l'attaquant fictif était de deviner les identifiants de connexion en effectuant de multiples tentatives échouées de manière très rapprochée.
+**Scénario de l'attaque :** Le protocole d'administration SSH étant un vecteur d'attaque privilégié, une attaque par force brute a été simulée depuis une machine distante vers le serveur GLPI. L'objectif de l'attaquant fictif était de deviner les identifiants de connexion en effectuant de multiples tentatives échouées de manière très rapprochée.
 
-**Détection par Wazuh**
-L'agent Wazuh, en analysant en temps réel les journaux d'authentification (`/var/log/auth.log`) du serveur Debian, a immédiatement intercepté la multiplication des échecs de connexion. Le moteur de corrélation du Manager a alors déclenché une alerte de sécurité critique de niveau 10, correspondant à la règle "Multiple authentication failures".
+**Détection par Wazuh :** L'agent Wazuh, en analysant en temps réel les journaux d'authentification (`/var/log/auth.log`) du serveur Debian, a immédiatement intercepté la multiplication des échecs de connexion. Le moteur de corrélation du Manager a alors déclenché une alerte de sécurité critique de niveau 10, correspondant à la règle "Multiple authentication failures" (Identifiant MITRE ATT&CK : T1110).
 
-*[Insérer ici la capture d'écran du Dashboard Wazuh montrant l'alerte rouge du Bruteforce SSH]*
+![alt text](../Images/Test_brute_force.png)
 
-Cette simulation confirme que toute tentative de compromission des accès d'administration est tracée et visible instantanément sur le tableau de bord, permettant une réaction rapide (telle que le bannissement automatique de l'IP attaquante via des outils comme Fail2ban ou le module Active Response de Wazuh).
+Cette simulation confirme que toute tentative de compromission des accès d'administration est tracée et visible instantanément sur le tableau de bord, permettant une réaction rapide.
+
+#### 6.4.2 Surveillance d'Intégrité des Fichiers (FIM)
+
+**Objectif :** Afin de garantir que le système n'est pas altéré par un attaquant ayant réussi à s'introduire, ou par une erreur de manipulation, le module FIM (File Integrity Monitoring) de Wazuh a été activé et testé.
+
+**Scénario et Détection :** Le module surveille en permanence les répertoires critiques du système (comme `/etc/`). Lors de la modification de fichiers sensibles de gestion des utilisateurs et mots de passe (`/etc/shadow`), Wazuh a immédiatement remonté une alerte de niveau 7 (Règle 550 : "Integrity checksum changed").
+
+![alt text](<../Images/Extrait_du_journal_d'alerte_Wazuh_(FIM - Niveau 7).png>)
+
+Le système stocke et compare les empreintes cryptographiques (MD5, SHA1, SHA256) avant et après modification, garantissant l'intégrité absolue des fichiers vitaux du système selon les principes de la triade CID (Confidentialité, Intégrité, Disponibilité).
+
+#### 6.4.3 Réponse Active (IPS - Active Response)
+
+**Objectif :** L'enjeu est de faire évoluer la plateforme d'une simple détection passive (IDS) vers une prévention active (IPS). L'infrastructure doit être capable de s'auto-défendre en réagissant en temps réel aux menaces critiques, limitant ainsi la fenêtre d'exposition avant l'intervention humaine.
+
+**Mise en œuvre technique :** La configuration est centralisée sur le Manager Wazuh (via le fichier ossec.conf). Un bloc de réponse active a été défini pour cibler spécifiquement les attaques de force brute.
+
+* Condition de déclenchement : Alerte de Niveau 10 ou supérieur.
+
+* Action : Exécution du script firewall-drop sur l'agent concerné.
+
+* Mécanisme de blocage : Utilisation de iptables pour bannir l'IP source.
+
+* Temporalité : Le bannissement est configuré pour durer 180 secondes (3 minutes), permettant de stopper l'agression tout en évitant un blocage définitif en cas de faux positif.
+
+**Validation de la détection :** Lors d'une simulation d'attaque Brute Force SSH (utilisateur "hacker" depuis l'IP publique de test 8.8.8.8), Wazuh analyse les journaux d'authentification et génère une alerte de haute priorité.
+
+* Règle identifiée : 5712 (sshd: brute force trying to get access).
+
+* Extraction des données : Le moteur d'analyse extrait dynamiquement l'adresse IP de l'attaquant (data.srcip) pour la transmettre au module de réponse.
+
+![alt text](../Images/detection_wazuh_bruteforce_ssh.png)
+
+**Preuve d'exécution sur l'agent :** Le succès de la mesure de protection est confirmé par la consultation du journal local active-responses.log sur le serveur **glpi-test.**
+
+![alt text](../Images/validation_active_response_logs_agent.png)
+
+**Analyse du cycle de protection :** 
+
+1. **Phase d'ajout (08:26:49) :** Le Manager ordonne le blocage. On observe l'état Starting du script firewall-drop pour l'IP 8.8.8.8. À cet instant, l'attaquant ne peut plus communiquer avec le serveur.
+2. **Phase de maintien :** L'agent maintient la règle DROP dans iptables.
+3. **Phase de libération (08:29:49) :** Conformément au timeout de 180s, le système lance la commande delete, purgeant la règle du pare-feu et rétablissant l'état initial du serveur.
+
+**Conclusion technique :** L'implémentation de l'Active Response permet de sécuriser les services critiques (comme GLPI) contre les scans automatisés et les tentatives d'intrusion répétées, assurant une résilience accrue de l'infrastructure périmétrique.
+
 
 ## 7. Les relations avec les principaux acteurs du projet
 

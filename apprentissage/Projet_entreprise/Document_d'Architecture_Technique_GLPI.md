@@ -27,9 +27,12 @@ Avant tout déploiement technique, il est nécessaire de valider le périmètre 
 
 **1.2 Volumétrie**
 
-  * Nombre d’utilisateurs finaux : à valider
-  * Nombre d’agents techniques : à valider
-  * Nombre estimé d’équipements inventoriés : à valider
+Afin de dimensionner l'environnement de test de manière réaliste et représentative du futur périmètre de production, la volumétrie cible est définie comme suit :
+* **Nombre d'utilisateurs finaux :** ~150 utilisateurs (agents de la collectivité répartis sur les différents sites).
+* **Nombre d'agents techniques :** 5 techniciens (utilisant l'interface Helpdesk et administration au quotidien).
+* **Nombre estimé d'équipements inventoriés :** ~200 équipements actifs (postes de travail, serveurs, switchs et équipements réseau).
+
+*Note : Cette volumétrie justifie l'allocation matérielle de la maquette (2 vCPU, 4 Go de RAM), la préconisation éditeur imposant un passage à 8 Go de RAM uniquement au-delà de 500 utilisateurs.*
 
 **1.3 Environnement existant**
 
