@@ -60,14 +60,17 @@
       - [Installation](#installation)
     - [5.2. Schéma détaillé](#52-schéma-détaillé)
     - [5.3. Diagramme de Séquence du Protocole SNMP](#53-diagramme-de-séquence-du-protocole-snmp)
-  - [6. Déploiement de la solution de supervision de sécurité (SIEM)](#6-déploiement-de-la-solution-de-supervision-de-sécurité-siem)
+  - [6. Mise en place d'une solution de supervision et de détection d'intrusion](#6-mise-en-place-dune-solution-de-supervision-et-de-détection-dintrusion)
     - [6.1 Choix technique et architecture Wazuh](#61-choix-technique-et-architecture-wazuh)
     - [6.2 Déploiement du socle de sécurité](#62-déploiement-du-socle-de-sécurité)
     - [6.3 Enrôlement des agents (Surveillance du serveur GLPI)](#63-enrôlement-des-agents-surveillance-du-serveur-glpi)
-    - [6.4 Simulations d'attaques et détection (Cas pratiques)](#64-simulations-dattaques-et-détection-cas-pratiques)
-      - [6.4.1 Détection d'intrusion (Bruteforce SSH)](#641-détection-dintrusion-bruteforce-ssh)
-      - [6.4.2 Surveillance d'Intégrité des Fichiers (FIM)](#642-surveillance-dintégrité-des-fichiers-fim)
+    - [6.4 Configuration et validation de Wazuh SIEM](#64-configuration-et-validation-de-wazuh-siem)
+      - [6.4.1 Validation de la détection de Brute Force SSH](#641-validation-de-la-détection-de-brute-force-ssh)
+      - [6.4.2 Validation du File Integrity Monitoring (FIM)](#642-validation-du-file-integrity-monitoring-fim)
       - [6.4.3 Réponse Active (IPS - Active Response)](#643-réponse-active-ips---active-response)
+    - [6.5 Mise en place d'une protection active avec Fail2Ban](#65-mise-en-place-dune-protection-active-avec-fail2ban)
+      - [6.5.1 Configuration de la prison SSH](#651-configuration-de-la-prison-ssh)
+      - [6.5.2 Validation et preuve d'efficacité](#652-validation-et-preuve-defficacité)
   - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
   - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
   - [9. Annexes](#9-annexes)
@@ -626,7 +629,7 @@ Ce diagramme de séquence détaille les interactions réseau entre l'agent Linux
 ![alt text](<../Images/Diagramme de Séquence du Protocole SNMP.png>)
 
 
-## 6. Déploiement de la solution de supervision de sécurité (SIEM)
+## 6. Mise en place d'une solution de supervision et de détection d'intrusion
 
 La mise en place d'une infrastructure robuste nécessite une visibilité complète sur les événements de sécurité. Pour répondre aux exigences de maintien en condition de sécurité (MCS) du titre AIS, la solution open-source Wazuh a été déployée. Elle combine des capacités de SIEM (Security Information and Event Management) et de XDR (Extended Detection and Response).
 
@@ -726,49 +729,45 @@ Afin de confirmer la bonne intégration du serveur dans le SIEM, une vérificati
 
 ![alt text](../Images/Dashboard_wazuh.png)
 
-### 6.4 Simulations d'attaques et détection (Cas pratiques)
+### 6.4 Configuration et validation de Wazuh SIEM
 
-Afin de valider le bon fonctionnement de la chaîne de supervision et la pertinence des règles de sécurité déployées, plusieurs scénarios d'attaques ont été simulés à l'encontre de l'infrastructure de test GLPI. L'objectif est de démontrer la capacité du SIEM Wazuh à détecter, remonter et alerter en temps réel lors de comportements malveillants ou d'anomalies de configuration.
+Afin de valider le bon fonctionnement de la chaîne de supervision et la pertinence des règles de sécurité déployées, plusieurs scénarios d'incidents ont été simulés sur le serveur GLPI. L'objectif est de démontrer la capacité du SIEM Wazuh à détecter, indexer et alerter en temps réel lors de comportements suspects.
 
-#### 6.4.1 Détection d'intrusion (Bruteforce SSH)
+#### 6.4.1 Validation de la détection de Brute Force SSH
 
-**Scénario de l'attaque :** Le protocole d'administration SSH étant un vecteur d'attaque privilégié, une attaque par force brute a été simulée depuis une machine distante vers le serveur GLPI. L'objectif de l'attaquant fictif était de deviner les identifiants de connexion en effectuant de multiples tentatives échouées de manière très rapprochée.
-
-**Détection par Wazuh :** L'agent Wazuh, en analysant en temps réel les journaux d'authentification (`/var/log/auth.log`) du serveur Debian, a immédiatement intercepté la multiplication des échecs de connexion. Le moteur de corrélation du Manager a alors déclenché une alerte de sécurité critique de niveau 10, correspondant à la règle "Multiple authentication failures" (Identifiant MITRE ATT&CK : T1110).
+Dans cette partie, nous validons la capacité de Wazuh à identifier une activité anormale sur le protocole SSH. Pour ce faire, nous avons réalisé des tentatives d'authentification manuelles répétées avec des identifiants erronés depuis une machine tierce afin de simuler un début d'attaque par force brute.
 
 ![alt text](../Images/Test_brute_force.png)
 
-Cette simulation confirme que toute tentative de compromission des accès d'administration est tracée et visible instantanément sur le tableau de bord, permettant une réaction rapide.
+#### 6.4.2 Validation du File Integrity Monitoring (FIM)
 
-#### 6.4.2 Surveillance d'Intégrité des Fichiers (FIM)
+Le module FIM (File Integrity Monitoring) est un pilier de la surveillance d'infrastructure. Il a été configuré pour surveiller en temps réel les fichiers sensibles du serveur GLPI, notamment /etc/shadow et /etc/passwd.
 
-**Objectif :** Afin de garantir que le système n'est pas altéré par un attaquant ayant réussi à s'introduire, ou par une erreur de manipulation, le module FIM (File Integrity Monitoring) de Wazuh a été activé et testé.
+Pour valider cette fonctionnalité, une modification manuelle a été effectuée sur le fichier /etc/shadow. Wazuh a instantanément généré une alerte de Niveau 7 (Rule 550: Integrity checksum changed).
 
-**Scénario et Détection :** Le module surveille en permanence les répertoires critiques du système (comme `/etc/`). Lors de la modification de fichiers sensibles de gestion des utilisateurs et mots de passe (`/etc/shadow`), Wazuh a immédiatement remonté une alerte de niveau 7 (Règle 550 : "Integrity checksum changed").
+La preuve technique ci-dessous est extraite du journal d'alerte. Elle est particulièrement probante car elle affiche la comparaison des empreintes cryptographiques (hashes MD5 et SHA256) avant ("before") et après ("after") la modification, garantissant une traçabilité totale de l'intégrité du fichier.
 
 ![alt text](<../Images/Extrait_du_journal_d'alerte_Wazuh_(FIM - Niveau 7).png>)
 
-Le système stocke et compare les empreintes cryptographiques (MD5, SHA1, SHA256) avant et après modification, garantissant l'intégrité absolue des fichiers vitaux du système selon les principes de la triade CID (Confidentialité, Intégrité, Disponibilité).
-
 #### 6.4.3 Réponse Active (IPS - Active Response)
 
-**Objectif :** L'enjeu est de faire évoluer la plateforme d'une simple détection passive (IDS) vers une prévention active (IPS). L'infrastructure doit être capable de s'auto-défendre en réagissant en temps réel aux menaces critiques, limitant ainsi la fenêtre d'exposition avant l'intervention humaine.
+L'enjeu ici est de passer d'une détection passive (IDS) à une protection active (IPS). Wazuh est configuré pour interagir directement avec le pare-feu local du serveur GLPI.
 
-**Mise en œuvre technique :** La configuration est centralisée sur le Manager Wazuh (via le fichier ossec.conf). Un bloc de réponse active a été défini pour cibler spécifiquement les attaques de force brute.
+Mise en œuvre technique :
+Une règle de réponse active a été définie dans le fichier ossec.conf du Manager :
 
-* Condition de déclenchement : Alerte de Niveau 10 ou supérieur.
+Déclencheur : Alerte de niveau >= 10.
 
-* Action : Exécution du script firewall-drop sur l'agent concerné.
+Action : Exécution du script firewall-drop.
 
-* Mécanisme de blocage : Utilisation de iptables pour bannir l'IP source.
+Durée : Bannissement de l'IP source via iptables pendant 180 secondes.
 
-* Temporalité : Le bannissement est configuré pour durer 180 secondes (3 minutes), permettant de stopper l'agression tout en évitant un blocage définitif en cas de faux positif.
+Preuve d'exécution :
+Le succès de la protection est confirmé par la lecture du journal active-responses.log sur l'agent glpi-test.
 
-**Validation de la détection :** Lors d'une simulation d'attaque Brute Force SSH (utilisateur "hacker" depuis l'IP publique de test 8.8.8.8), Wazuh analyse les journaux d'authentification et génère une alerte de haute priorité.
+Phase d'ajout (08:26:49) : L'IP est bannie dès la détection de l'attaque.
 
-* Règle identifiée : 5712 (sshd: brute force trying to get access).
-
-* Extraction des données : Le moteur d'analyse extrait dynamiquement l'adresse IP de l'attaquant (data.srcip) pour la transmettre au module de réponse.
+Phase de libération (08:29:49) : L'accès est rétabli automatiquement après 3 minutes.
 
 ![alt text](../Images/detection_wazuh_bruteforce_ssh.png)
 
@@ -778,11 +777,37 @@ Le système stocke et compare les empreintes cryptographiques (MD5, SHA1, SHA256
 
 **Analyse du cycle de protection :** 
 
-1. **Phase d'ajout (08:26:49) :** Le Manager ordonne le blocage. On observe l'état Starting du script firewall-drop pour l'IP 8.8.8.8. À cet instant, l'attaquant ne peut plus communiquer avec le serveur.
+1. **Phase d'ajout :** Le Manager ordonne le blocage. On observe l'état Starting du script firewall-drop pour l'IP 8.8.8.8. À cet instant, l'attaquant ne peut plus communiquer avec le serveur.
 2. **Phase de maintien :** L'agent maintient la règle DROP dans iptables.
-3. **Phase de libération (08:29:49) :** Conformément au timeout de 180s, le système lance la commande delete, purgeant la règle du pare-feu et rétablissant l'état initial du serveur.
+3. **Phase de libération :** Conformément au timeout de 180s, le système lance la commande delete, purgeant la règle du pare-feu et rétablissant l'état initial du serveur.
 
 **Conclusion technique :** L'implémentation de l'Active Response permet de sécuriser les services critiques (comme GLPI) contre les scans automatisés et les tentatives d'intrusion répétées, assurant une résilience accrue de l'infrastructure périmétrique.
+
+### 6.5 Mise en place d'une protection active avec Fail2Ban
+
+Afin de renforcer la posture de sécurité de notre infrastructure en appliquant le principe de défense en profondeur, la solution logicielle Fail2Ban a été déployée sur le serveur GLPI. Bien que le SIEM Wazuh assure une surveillance globale, Fail2Ban offre une protection locale, granulaire et extrêmement réactive contre les attaques par force brute ciblant spécifiquement le service d'accès à distance (SSH).
+
+#### 6.5.1 Configuration de la prison SSH
+
+La configuration a été réalisée en respectant les bonnes pratiques d'administration système : la définition des paramètres personnalisés s'effectue dans un fichier de surcharge `jail.local` afin de préserver la configuration par défaut lors des mises à jour.
+
+Les paramètres de sécurité stricts suivants ont été appliqués pour la prison (jail) SSH :
+* **Filtre d'analyse :** Surveillance en temps réel des journaux d'authentification (`/var/log/auth.log`).
+* **Seuil de tolérance (`maxretry`) :** Limité à 3 tentatives d'authentification échouées.
+* **Fenêtre d'analyse (`findtime`) :** 10 minutes (600 secondes).
+* **Durée de la sanction (`bantime`) :** Bannissement de l'adresse IP via le pare-feu local pendant 30 minutes (1800 secondes).
+
+![alt text](../Images/fail2ban_config.png)
+
+#### 6.5.2 Validation et preuve d'efficacité
+
+Pour valider l'opérationnalité de cette mesure défensive, une série de tentatives de connexion avec des identifiants volontairement erronés a été effectuée depuis une machine du réseau (IP : 10.50.99.102).
+
+Dès la troisième tentative infructueuse, Fail2Ban a intercepté l'activité anormale et mis à jour dynamiquement la configuration d'iptables pour rejeter tout trafic en provenance de cette source. L'interrogation du statut du service via la commande `fail2ban-client status sshd` fournit la preuve technique de l'exécution de la sanction.
+
+![alt text](../Images/preuve_fail2ban.png)
+
+L'infrastructure dispose désormais d'un mécanisme de réponse autonome et immédiat contre les campagnes d'énumération d'identifiants, validant ainsi la capacité à sécuriser l'accès aux ressources systèmes critiques.
 
 
 ## 7. Les relations avec les principaux acteurs du projet
