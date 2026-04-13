@@ -39,38 +39,40 @@
       - [A. Architecture Réseau Globale](#a-architecture-réseau-globale)
       - [B. Plan d'adressage cible et Segmentation (VLAN)](#b-plan-dadressage-cible-et-segmentation-vlan)
       - [C. Les fonctionnalités clés de GLPI exploitées](#c-les-fonctionnalités-clés-de-glpi-exploitées)
-    - [Focus technique : La différence entre Découverte et Inventaire réseau](#focus-technique--la-différence-entre-découverte-et-inventaire-réseau)
+      - [D. Focus technique : La différence entre Découverte et Inventaire réseau](#d-focus-technique--la-différence-entre-découverte-et-inventaire-réseau)
     - [4.5. Solution retenue et détails techniques](#45-solution-retenue-et-détails-techniques)
       - [A. Ressources et Partitionnement (Proxmox)](#a-ressources-et-partitionnement-proxmox)
       - [B. Stack applicative logicielle (L.A.M.P)](#b-stack-applicative-logicielle-lamp)
       - [C. Espace d'adressage et Filtrage local (UFW)](#c-espace-dadressage-et-filtrage-local-ufw)
-      - [C. Espace d'adressage et Filtrage local (UFW)](#c-espace-dadressage-et-filtrage-local-ufw-1)
       - [D. Cartographie des Flux Applicatifs et Sécurité](#d-cartographie-des-flux-applicatifs-et-sécurité)
     - [4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)](#46-sécurisation-de-linfrastructure-durcissement-os-et-flux)
     - [4.7 Analyse des risques](#47-analyse-des-risques)
     - [4.8 Supervision et exploitation](#48-supervision-et-exploitation)
-    - [4.8.1 Déploiement automatisé des agents GLPI](#481-déploiement-automatisé-des-agents-glpi)
-    - [4.8.2 Gestion des mises à jour des agents GLPI](#482-gestion-des-mises-à-jour-des-agents-glpi)
-    - [4.8.3 Exploitation des fonctionnalités ITSM](#483-exploitation-des-fonctionnalités-itsm)
+      - [4.8.1 Déploiement automatisé des agents GLPI](#481-déploiement-automatisé-des-agents-glpi)
+      - [4.8.2 Gestion des mises à jour des agents GLPI](#482-gestion-des-mises-à-jour-des-agents-glpi)
+      - [4.8.3 Exploitation des fonctionnalités ITSM](#483-exploitation-des-fonctionnalités-itsm)
     - [4.9 Continuité de service](#49-continuité-de-service)
     - [4.10 Justification des choix de sécurité et évolutions](#410-justification-des-choix-de-sécurité-et-évolutions)
   - [5. L’organisation de la mise en œuvre](#5-lorganisation-de-la-mise-en-œuvre)
     - [5.1 Revue de code et configuration](#51-revue-de-code-et-configuration)
-    - [B. Déploiement de l'agent GLPI sous Debian](#b-déploiement-de-lagent-glpi-sous-debian)
-      - [Installation](#installation)
+      - [A. Installation du socle applicatif et liaison PHP-FPM\*\*](#a-installation-du-socle-applicatif-et-liaison-php-fpm)
+      - [B. Déploiement de l'agent GLPI sous Debian](#b-déploiement-de-lagent-glpi-sous-debian)
+      - [C. Installation](#c-installation)
     - [5.2. Schéma détaillé](#52-schéma-détaillé)
     - [5.3. Diagramme de Séquence du Protocole SNMP](#53-diagramme-de-séquence-du-protocole-snmp)
   - [6. Mise en place d'une solution de supervision et de détection d'intrusion](#6-mise-en-place-dune-solution-de-supervision-et-de-détection-dintrusion)
-    - [6.1 Choix technique et architecture Wazuh](#61-choix-technique-et-architecture-wazuh)
+    - [6.1 Mise en place de la supervision avec Wazuh](#61-mise-en-place-de-la-supervision-avec-wazuh)
     - [6.2 Déploiement du socle de sécurité](#62-déploiement-du-socle-de-sécurité)
     - [6.3 Enrôlement des agents (Surveillance du serveur GLPI)](#63-enrôlement-des-agents-surveillance-du-serveur-glpi)
     - [6.4 Configuration et validation de Wazuh SIEM](#64-configuration-et-validation-de-wazuh-siem)
       - [6.4.1 Validation de la détection de Brute Force SSH](#641-validation-de-la-détection-de-brute-force-ssh)
       - [6.4.2 Validation du File Integrity Monitoring (FIM)](#642-validation-du-file-integrity-monitoring-fim)
       - [6.4.3 Réponse Active (IPS - Active Response)](#643-réponse-active-ips---active-response)
-    - [6.5 Mise en place d'une protection active avec Fail2Ban](#65-mise-en-place-dune-protection-active-avec-fail2ban)
-      - [6.5.1 Configuration de la prison SSH](#651-configuration-de-la-prison-ssh)
-      - [6.5.2 Validation et preuve d'efficacité](#652-validation-et-preuve-defficacité)
+    - [6.5 — Mise en place de Fail2ban](#65--mise-en-place-de-fail2ban)
+      - [6.5.1 Objectifs de Fail2ban](#651-objectifs-de-fail2ban)
+    - [6.5.2 Défense en profondeur](#652-défense-en-profondeur)
+    - [6.5.3 Configuration Fail2ban](#653-configuration-fail2ban)
+      - [6.5.4 Test de validation](#654-test-de-validation)
   - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
   - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
   - [9. Annexes](#9-annexes)
@@ -291,7 +293,7 @@ Au-delà de la simple installation du socle web, la valeur ajoutée du projet r�
 * **La CMDB (Gestion de parc) :** Elle permet de maintenir un inventaire exhaustif et dynamique du matériel (PC, serveurs, équipements réseau) et des licences logicielles, offrant une excellente visibilité pour contrer le Shadow IT.
 * **Le Helpdesk (aligné ITIL) :** Il offre une gestion centralisée du cycle de vie des tickets (Incidents et Demandes), le suivi des accords de niveau de service (SLA), et permet la constitution d'une base de connaissances technique.
 
-### Focus technique : La différence entre Découverte et Inventaire réseau
+#### D. Focus technique : La différence entre Découverte et Inventaire réseau
 
 Pour automatiser la remontée des équipements réseau sans agent, le projet exploite deux mécanismes distincts mais complémentaires opérés par l'agent GLPI :
 
@@ -317,10 +319,6 @@ La machine virtuelle hébergeant GLPI est dimensionnée selon les recommandation
 * **Serveur Web :** Apache2
 * **Base de données :** MariaDB 10.11 minimum
 * **Langage :** PHP 8.4-fpm (Version requise pour la compatibilité avec GLPI 11, avec extensions `mysqli`, `curl`, `gd`, `intl`, `ldap`, `zip`, etc.)
-
-#### C. Espace d'adressage et Filtrage local (UFW)
-
-Le serveur dispose d'une adresse IPv4 fixe (`10.50.99.100`) et d'un enregistrement DNS. En complément du pare-feu périmétrique, les ouvertures de ports locales (Firewall UFW) sont strictement limitées :
 
 #### C. Espace d'adressage et Filtrage local (UFW)
 
@@ -382,12 +380,12 @@ Afin de garantir sa disponibilité et sa fiabilité, le serveur hébergeant GLPI
 
 **Indicateurs surveillés**
 
-- Disponibilité du service HTTPS  
-- Charge CPU  
-- Utilisation mémoire  
-- Espace disque  
-- Statut Apache  
-- Statut MariaDB  
+* Disponibilité du service HTTPS  
+* Charge CPU  
+* Utilisation mémoire  
+* Espace disque  
+* Statut Apache  
+* Statut MariaDB  
 
 **Seuils d’alerte**
 
@@ -401,16 +399,16 @@ Afin de garantir sa disponibilité et sa fiabilité, le serveur hébergeant GLPI
 
 **Méthodes de supervision**
 
-- SNMP pour les ressources système  
-- HTTP(S) pour la disponibilité applicative  
+* SNMP pour les ressources système  
+* HTTP(S) pour la disponibilité applicative  
 
 **Bénéfices**
 
-- Détection anticipée des incidents  
-- Meilleure continuité de service  
-- Exploitation facilitée en production
+* Détection anticipée des incidents  
+* Meilleure continuité de service  
+* Exploitation facilitée en production
 
-### 4.8.1 Déploiement automatisé des agents GLPI
+#### 4.8.1 Déploiement automatisé des agents GLPI
 
 **Objectif**
 
@@ -420,9 +418,9 @@ Afin de garantir une remontée homogène et automatisée des informations du par
 
 Le déploiement repose sur l’utilisation des stratégies de groupe Active Directory (GPO), permettant :
 
-- une installation automatique des agents  
-- une standardisation des configurations  
-- une réduction des erreurs humaines  
+* une installation automatique des agents  
+* une standardisation des configurations  
+* une réduction des erreurs humaines  
 
 **Mise en œuvre technique**
 
@@ -456,7 +454,7 @@ msiexec /i glpi-agent.msi /quiet /norestart SERVER=https://glpi-test.archeagglo.
 * Flux HTTP/HTTPS contrôlé via firewall  
 * Flux intégralement chiffrés en HTTPS entre les postes clients et le Reverse Proxy.
 
-### 4.8.2 Gestion des mises à jour des agents GLPI
+#### 4.8.2 Gestion des mises à jour des agents GLPI
 
 **Objectif**
 
@@ -494,7 +492,7 @@ glpi-agent --version
 * Correction des vulnérabilités  
 * Compatibilité avec GLPI  
 
-### 4.8.3 Exploitation des fonctionnalités ITSM
+#### 4.8.3 Exploitation des fonctionnalités ITSM
 
 Bien que la découverte réseau soit le moteur de l'inventaire, GLPI a été configuré pour exploiter ses capacités de gestion des services informatiques (ITSM) conformément aux bonnes pratiques ITIL.
 
@@ -581,7 +579,7 @@ La mise en œuvre de la maquette GLPI s'est déroulée de manière itérative, e
 
 Pour illustrer le travail technique réalisé, voici des extraits significatifs des configurations et commandes mises en place pour assurer le déploiement de la solution.
 
-**A. Installation du socle applicatif et liaison PHP-FPM**
+#### A. Installation du socle applicatif et liaison PHP-FPM**
 
 L'installation de GLPI a été réalisée sur un serveur Debian 13 en utilisant une stack LAMP comprenant Apache2, MariaDB (version ≥ 10.11) et PHP 8.4-fpm.
 
@@ -603,11 +601,11 @@ sudo find /var/www/html/glpi -type d -exec chmod 755 {} \;
 sudo find /var/www/html/glpi -type f -exec chmod 644 {} \;
 ```
 
-### B. Déploiement de l'agent GLPI sous Debian
+#### B. Déploiement de l'agent GLPI sous Debian
 
 Afin d'assurer la remontée automatique de l'inventaire, l'agent GLPI a été déployé sur un serveur Debian en version 1.15 avec le module réseau.
 
-#### Installation
+#### C. Installation
 
 ```bash
 wget https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent_1.15-1_all.deb
@@ -615,8 +613,6 @@ wget https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agen
 
 sudo apt install ./glpi-agent_1.15-1_all.deb ./glpi-agent-task-network_1.15-1_all.deb -y
 ```
-
-
 
 ### 5.2. Schéma détaillé
 
@@ -633,16 +629,57 @@ Ce diagramme de séquence détaille les interactions réseau entre l'agent Linux
 
 La mise en place d'une infrastructure robuste nécessite une visibilité complète sur les événements de sécurité. Pour répondre aux exigences de maintien en condition de sécurité (MCS) du titre AIS, la solution open-source Wazuh a été déployée. Elle combine des capacités de SIEM (Security Information and Event Management) et de XDR (Extended Detection and Response).
 
-### 6.1 Choix technique et architecture Wazuh
+### 6.1 Mise en place de la supervision avec Wazuh
 
-Le choix s'est porté sur Wazuh pour sa capacité à unifier la détection d'intrusions, la surveillance d'intégrité des fichiers et la réponse automatisée aux incidents. Contrairement à de simples analyseurs de journaux, Wazuh permet une corrélation avancée des événements.
+Afin de garantir la sécurité de l’infrastructure, une solution de supervision centralisée a été mise en place à l’aide de Wazuh. Cette solution permet de collecter, analyser et corréler les événements de sécurité provenant des différents systèmes.
 
-**Choix de l'architecture :**
-Pour répondre aux besoins de cette maquette et optimiser les ressources de l'hyperviseur Proxmox, une architecture centralisée de type **"All-in-one" (Tout-en-un)** a été privilégiée. 
-Ce serveur unique, hébergé sur une distribution **Ubuntu 24.04 LTS** garantissant stabilité et support de sécurité à long terme, regroupe les trois composants fondamentaux du socle :
-* **Wazuh Indexer :** Le moteur de recherche et de stockage hautement évolutif qui indexe et stocke les alertes générées.
-* **Wazuh Manager :** Le cerveau du système. Il analyse les données reçues par les agents déployés, déclenche le moteur de règles et gère l'enrôlement sécurisé.
-* **Wazuh Dashboard :** L'interface utilisateur web permettant l'exploration des données et la visualisation des tableaux de bord de sécurité.
+La supervision constitue un élément essentiel dans une architecture sécurisée, permettant de détecter rapidement les anomalies et les tentatives d’intrusion.
+
+**Objectifs de la supervision**
+
+La mise en place de Wazuh répond aux objectifs suivants :
+
+* Centralisation des journaux système
+* Détection des tentatives d'intrusion
+* Surveillance de l'intégrité des fichiers
+* Corrélation des événements de sécurité
+* Génération d’alertes en temps réel
+
+**Architecture Wazuh**
+
+L’architecture Wazuh repose sur plusieurs composants :
+
+* Wazuh Manager : analyse et corrélation des événements
+* Wazuh Indexer : stockage et indexation des logs
+* Wazuh Dashboard : interface de supervision
+* Wazuh Agent : installé sur les serveurs supervisés
+
+Cette architecture permet une supervision centralisée et une gestion efficace des incidents de sécurité.
+
+**Architecture de communication Wazuh**
+
+Les communications entre les différents composants utilisent les flux suivants :
+
+* Agent vers Manager : TCP 1514 (Transmission des logs)
+* Agent vers Manager : TCP 1515 (Enrôlement des agents)
+* Dashboard vers Indexer : HTTPS 443
+
+Ces communications sont sécurisées via TLS afin de garantir :
+
+* La confidentialité des données
+* L'intégrité des logs
+* L'authentification des composants
+
+**Mise en place de l'agent Wazuh**
+
+L’agent Wazuh a été installé sur le serveur GLPI afin de superviser les éléments critiques :
+
+* Connexions SSH
+* Services système
+* Fichiers sensibles
+* Activité utilisateur
+
+Cette configuration permet une supervision complète du serveur et une détection rapide des anomalies.
 
 ### 6.2 Déploiement du socle de sécurité
 
@@ -729,6 +766,30 @@ Afin de confirmer la bonne intégration du serveur dans le SIEM, une vérificati
 
 ![alt text](../Images/Dashboard_wazuh.png)
 
+**Sécurisation des communications**
+
+Les communications entre les agents et le serveur Wazuh sont sécurisées via TLS.
+
+Cette sécurisation permet :
+
+* Confidentialité des données
+* Intégrité des journaux
+* Authentification des composants
+
+Cette configuration permet de garantir la fiabilité de la supervision.
+
+Isolation du serveur de supervision
+
+Le serveur Wazuh est isolé dans un VLAN dédié afin de renforcer la sécurité globale.
+
+Cette segmentation permet :
+
+* Limitation de l'exposition réseau
+* Protection contre les attaques latérales
+* Sécurisation du socle de supervision
+
+Cette architecture renforce la sécurité globale de l'infrastructure.
+
 ### 6.4 Configuration et validation de Wazuh SIEM
 
 Afin de valider le bon fonctionnement de la chaîne de supervision et la pertinence des règles de sécurité déployées, plusieurs scénarios d'incidents ont été simulés sur le serveur GLPI. L'objectif est de démontrer la capacité du SIEM Wazuh à détecter, indexer et alerter en temps réel lors de comportements suspects.
@@ -747,7 +808,7 @@ Pour valider cette fonctionnalité, une modification manuelle a été effectuée
 
 La preuve technique ci-dessous est extraite du journal d'alerte. Elle est particulièrement probante car elle affiche la comparaison des empreintes cryptographiques (hashes MD5 et SHA256) avant ("before") et après ("after") la modification, garantissant une traçabilité totale de l'intégrité du fichier.
 
-![alt text](<../Images/Extrait_du_journal_d'alerte_Wazuh_(FIM - Niveau 7).png>)
+![alt text](../Images/Test_F.I.M.png)
 
 #### 6.4.3 Réponse Active (IPS - Active Response)
 
@@ -783,32 +844,60 @@ Phase de libération (08:29:49) : L'accès est rétabli automatiquement après 3
 
 **Conclusion technique :** L'implémentation de l'Active Response permet de sécuriser les services critiques (comme GLPI) contre les scans automatisés et les tentatives d'intrusion répétées, assurant une résilience accrue de l'infrastructure périmétrique.
 
-### 6.5 Mise en place d'une protection active avec Fail2Ban
+### 6.5 — Mise en place de Fail2ban
 
-Afin de renforcer la posture de sécurité de notre infrastructure en appliquant le principe de défense en profondeur, la solution logicielle Fail2Ban a été déployée sur le serveur GLPI. Bien que le SIEM Wazuh assure une surveillance globale, Fail2Ban offre une protection locale, granulaire et extrêmement réactive contre les attaques par force brute ciblant spécifiquement le service d'accès à distance (SSH).
+Afin de renforcer la sécurité du serveur, une protection supplémentaire a été mise en place à l’aide de Fail2ban.
 
-#### 6.5.1 Configuration de la prison SSH
+Fail2ban permet de bloquer automatiquement les adresses IP réalisant des tentatives d’accès non autorisées, notamment sur le service SSH.
 
-La configuration a été réalisée en respectant les bonnes pratiques d'administration système : la définition des paramètres personnalisés s'effectue dans un fichier de surcharge `jail.local` afin de préserver la configuration par défaut lors des mises à jour.
+#### 6.5.1 Objectifs de Fail2ban
 
-Les paramètres de sécurité stricts suivants ont été appliqués pour la prison (jail) SSH :
-* **Filtre d'analyse :** Surveillance en temps réel des journaux d'authentification (`/var/log/auth.log`).
-* **Seuil de tolérance (`maxretry`) :** Limité à 3 tentatives d'authentification échouées.
-* **Fenêtre d'analyse (`findtime`) :** 10 minutes (600 secondes).
-* **Durée de la sanction (`bantime`) :** Bannissement de l'adresse IP via le pare-feu local pendant 30 minutes (1800 secondes).
+La mise en place de Fail2ban permet :
+
+* Protection contre les attaques brute force
+* Blocage automatique des adresses IP malveillantes
+* Renforcement de la sécurité SSH
+* Réduction des tentatives d'intrusion
+
+### 6.5.2 Défense en profondeur
+
+Bien que Wazuh dispose d’une fonctionnalité Active Response permettant le blocage automatique des adresses IP, l’ajout de Fail2ban permet de renforcer la stratégie de défense en profondeur.
+
+Wazuh assure :
+
+* Supervision centralisée
+* Corrélation des événements
+* Analyse des incidents
+
+Fail2ban assure :
+
+* Protection locale rapide
+* Blocage immédiat des attaques
+* Sécurisation du service SSH
+
+L'utilisation conjointe de Wazuh et Fail2ban permet d’améliorer la sécurité globale de l’infrastructure.
+
+### 6.5.3 Configuration Fail2ban
+
+Fail2ban a été configuré pour protéger le service SSH avec les paramètres suivants :
+
+* maxretry : 3 tentatives
+* findtime : 10 minutes
+* bantime : 30 minutes
+
+Cette configuration permet de bloquer rapidement les tentatives de brute force.
 
 ![alt text](../Images/fail2ban_config.png)
 
-#### 6.5.2 Validation et preuve d'efficacité
+#### 6.5.4 Test de validation
 
-Pour valider l'opérationnalité de cette mesure défensive, une série de tentatives de connexion avec des identifiants volontairement erronés a été effectuée depuis une machine du réseau (IP : 10.50.99.102).
+Afin de valider la configuration, plusieurs tentatives de connexion SSH incorrectes ont été réalisées.
 
-Dès la troisième tentative infructueuse, Fail2Ban a intercepté l'activité anormale et mis à jour dynamiquement la configuration d'iptables pour rejeter tout trafic en provenance de cette source. L'interrogation du statut du service via la commande `fail2ban-client status sshd` fournit la preuve technique de l'exécution de la sanction.
+Après plusieurs tentatives échouées, l’adresse IP a été automatiquement bloquée par Fail2ban, confirmant le bon fonctionnement de la protection.
+
+Cette configuration permet de renforcer la sécurité du serveur face aux attaques automatisées.
 
 ![alt text](../Images/preuve_fail2ban.png)
-
-L'infrastructure dispose désormais d'un mécanisme de réponse autonome et immédiat contre les campagnes d'énumération d'identifiants, validant ainsi la capacité à sécuriser l'accès aux ressources systèmes critiques.
-
 
 ## 7. Les relations avec les principaux acteurs du projet
 
