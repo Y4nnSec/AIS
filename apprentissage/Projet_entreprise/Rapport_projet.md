@@ -259,25 +259,27 @@ L'infrastructure repose sur une Machine Virtuelle (VM) équipée du système d'e
 
 **Infrastructure Cloud privé**
 
-Une solution de cloud privé basée sur Nextcloud était déjà en place au sein de l'infrastructure ARCHE Agglo. 
+Une solution de cloud privé basée sur Nextcloud était déjà déployée au sein de l’infrastructure interne d’ARCHE Agglo.
 
-Dans le cadre de ce projet, cette plateforme a été intégrée à l'architecture globale afin de renforcer la continuité de service et la stratégie de sauvegarde hors site.
+Cette solution est hébergée sur l’infrastructure virtualisée de la collectivité, permettant de garantir la souveraineté des données et la maîtrise complète de l’environnement technique.
 
-Le serveur Nextcloud, hébergé sur l'infrastructure virtualisée Proxmox, permet :
+Dans le cadre de ce projet, cette solution a été intégrée à l’architecture globale afin de renforcer la continuité de service et la stratégie de sauvegarde hors site.
 
-- Le stockage centralisé des sauvegardes
-- Le partage sécurisé des fichiers
-- L'accès distant sécurisé pour les administrateurs
-- La mise en œuvre d'une sauvegarde hors site dans le cadre du PRA
+Le serveur Nextcloud permet :
 
-**Caractéristiques techniques :**
+* Le stockage centralisé des sauvegardes  
+* Le partage sécurisé des fichiers  
+* L'accès distant sécurisé pour les administrateurs  
+* Le support d'une sauvegarde hors site dans le cadre du PRA  
 
-- **Serveur :** SRV-MVS-NEXTCLOUD-01  
-- **Hébergement :** Proxmox  
-- **Accès sécurisé :** HTTPS  
-- **Utilisation :** Sauvegarde hors site et partage sécurisé  
+Caractéristiques techniques :
 
-L'intégration de cette solution existante permet d'introduire une architecture hybride combinant infrastructure locale et cloud privé, renforçant la résilience globale du système d'information.
+* Serveur : SRV-MVS-NEXTCLOUD-01  
+* Hébergement : Infrastructure interne ARCHE Agglo  
+* Accès sécurisé : HTTPS  
+* Utilisation : Sauvegarde hors site et partage sécurisé  
+
+L'intégration de cette solution existante permet de mettre en évidence une architecture hybride combinant infrastructure locale et cloud privé interne, renforçant ainsi la résilience globale du système d'information.
 
 ### 4.3. Tableau comparatif des solutions
 
