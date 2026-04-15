@@ -242,7 +242,7 @@ Avant tout déploiement technique, l'analyse des besoins et des risques a permis
 * **Disponibilité :** Garantir un accès constant au service de gestion de parc et au helpdesk (mesures de réduction des risques : sauvegardes régulières, snapshots VM).
 * **Intégrité :** S'assurer que les données d'inventaire et les bases de données (MariaDB) ne soient pas corrompues ou perdues.
 * **Sécurité et Confidentialité :** Protéger l'application contre les failles (MCO régulier, flux HTTPS) et sécuriser l'authentification (LDAPS).
-* **Évolutivité :** Prévoir une architecture capable d'absorber une future charge de production (ajout de RAM/CPU) et de s'intégrer à terme avec un système SSO (OpenID Connect).
+* **Évolutivité :** Prévoir une architecture capable d'absorber une future charge de production (ajout de RAM/CPU), d'intégrer à terme un système SSO (OpenID Connect) et d'évoluer vers une architecture hybride grâce à l'intégration d'un cloud privé Nextcloud.
 
 Maintenabilité : Permettre une restauration rapide du service grâce aux sauvegardes et snapshots.
 
@@ -253,9 +253,31 @@ L'infrastructure repose sur une Machine Virtuelle (VM) équipée du système d'e
 
 #### 4.2.1. Localisation des services
 
-* **Modèle de déploiement :** sur site.
-* **Hébergement :** La machine virtuelle est hébergée sur l'infrastructure virtualisée existante d'ARCHE Agglo, gérée par l'hyperviseur **Proxmox**.
-* **PRA / Sauvegarde :** La stratégie de sauvegarde respecte la **règle 3-2-1** (3 copies, 2 supports différents dont un NAS local, 1 copie hors site dans le Cloud) automatisée via Veeam Backup.
+* **Modèle de déploiement :** sur site.  
+* **Hébergement :** La machine virtuelle est hébergée sur l'infrastructure virtualisée existante d'ARCHE Agglo, gérée par l'hyperviseur **Proxmox**.  
+* **PRA / Sauvegarde :** La stratégie de sauvegarde respecte la **règle 3-2-1** (3 copies, 2 supports différents dont un NAS local, 1 copie hors site dans le Cloud) automatisée via **Veeam Backup**.
+
+**Infrastructure Cloud privé**
+
+Une solution de cloud privé basée sur Nextcloud était déjà en place au sein de l'infrastructure ARCHE Agglo. 
+
+Dans le cadre de ce projet, cette plateforme a été intégrée à l'architecture globale afin de renforcer la continuité de service et la stratégie de sauvegarde hors site.
+
+Le serveur Nextcloud, hébergé sur l'infrastructure virtualisée Proxmox, permet :
+
+- Le stockage centralisé des sauvegardes
+- Le partage sécurisé des fichiers
+- L'accès distant sécurisé pour les administrateurs
+- La mise en œuvre d'une sauvegarde hors site dans le cadre du PRA
+
+**Caractéristiques techniques :**
+
+- **Serveur :** SRV-MVS-NEXTCLOUD-01  
+- **Hébergement :** Proxmox  
+- **Accès sécurisé :** HTTPS  
+- **Utilisation :** Sauvegarde hors site et partage sécurisé  
+
+L'intégration de cette solution existante permet d'introduire une architecture hybride combinant infrastructure locale et cloud privé, renforçant la résilience globale du système d'information.
 
 ### 4.3. Tableau comparatif des solutions
 
