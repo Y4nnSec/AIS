@@ -959,6 +959,121 @@ D'un point de vue professionnel, ce projet valide pleinement les compétences vi
 La maquette ayant fait ses preuves de stabilité et de sécurité, la prochaine étape logique sera la migration de cette configuration vers l'environnement de production. À plus long terme, comme identifié lors de l'étude d'architecture, l'implémentation d'un système d'authentification unique (SSO) basé sur le protocole OpenID Connect constituera une évolution majeure. Cela permettra de centraliser la gestion des identités tout en offrant une expérience utilisateur simplifiée et plus sécurisée aux agents de la collectivité.
 
 
+## Glossaire
+
+### A
+
+**Architecture hybride**
+
+Infrastructure combinant plusieurs environnements, par exemple une infrastructure locale et un cloud privé.
+
+### C
+
+**Cloud privé**
+
+Infrastructure cloud dédiée à une organisation, hébergée en interne ou chez un prestataire privé.
+
+**Continuité de service**
+
+Capacité d’un système informatique à rester opérationnel malgré un incident.
+
+### D
+
+**Debian**
+
+Distribution Linux utilisée pour héberger les serveurs du projet.
+
+**Durcissement (Hardening)**
+
+Ensemble des actions visant à renforcer la sécurité d’un système informatique.
+
+### F
+
+**Fail2Ban**
+
+Outil de sécurité permettant de bloquer automatiquement les adresses IP effectuant des tentatives de connexion suspectes.
+
+### G
+
+**GLPI**
+
+Solution open source de gestion de parc informatique et de gestion des tickets.
+
+### H
+
+**HTTPS**
+
+Protocole sécurisé permettant le chiffrement des communications web.
+
+### I
+
+**IDS (Intrusion Detection System)**
+
+Système permettant de détecter des tentatives d'intrusion sur un réseau ou un système.
+
+**Infrastructure virtualisée**
+
+Environnement informatique utilisant des machines virtuelles pour exécuter plusieurs systèmes sur un même serveur physique.
+
+### M
+
+**Machine Virtuelle (VM)**
+
+Ordinateur virtuel fonctionnant sur un hyperviseur.
+
+### N
+
+**Nextcloud**
+
+Solution de cloud privé permettant le stockage et le partage sécurisé de fichiers.
+
+### P
+
+**PRA (Plan de Reprise d’Activité)**
+
+Procédure permettant de restaurer les services informatiques après un incident majeur.
+
+**Proxmox**
+
+Solution de virtualisation open source permettant la gestion de machines virtuelles.
+
+### R
+
+**Réseau Local (LAN)**
+
+Réseau informatique interne d'une organisation.
+
+**RPO (Recovery Point Objective)**
+
+Objectif de point de reprise. Il définit la quantité maximale de données pouvant être perdues en cas d'incident.
+
+**RTO (Recovery Time Objective)**
+
+Objectif de temps de reprise. Il définit le temps maximal acceptable pour restaurer un service après une interruption.
+
+### S
+
+**SI (Système d’Information)**
+
+Ensemble des ressources informatiques permettant le traitement et la gestion des informations.
+
+**Supervision**
+
+Surveillance continue des systèmes informatiques afin de détecter les anomalies.
+
+### V
+
+**Virtualisation**
+
+Technologie permettant d'exécuter plusieurs systèmes d'exploitation sur un même serveur physique.
+
+### W
+
+**Wazuh**
+
+Solution open source de supervision de sécurité et de détection d'intrusion.
+
+
 ## 9. Annexes
 
 * **Annexe 1 :** Document d'Architecture Technique (DAT) GLPI.
