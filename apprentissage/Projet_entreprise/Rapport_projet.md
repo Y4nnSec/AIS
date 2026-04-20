@@ -11,7 +11,7 @@ Alternant Administrateur d’Infrastructures Sécurisées<br><br>
 </p>
 
 <p align="center">
-  <img src="https://github.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_simplon.png" alt="Logo Simplon" width="140">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Simplon.png" alt="Logo Simplon" width="320">
 </p>
 
 <p align="center">
@@ -20,94 +20,135 @@ GLPI • Supervision • Fail2ban • Wazuh
 </p>
 
 
-# Dossier projet AIS
+## Présentation du projet
 
-**Auteur :** Yann (Administrateur Infrastructure Sécurisée) 
+Bienvenue sur le dépôt de mon projet de certification pour le titre d'**Administrateur d'Infrastructures Sécurisées (AIS)**. 
 
-**Projet :** Décembre 2025 à Avril 2026
+Réalisé au sein de la collectivité territoriale **ARCHE Agglo**, ce projet consiste à concevoir, déployer et sécuriser de bout en bout un environnement de pré-production pour la solution de gestion de parc **GLPI 11**. 
+
+L'enjeu principal était d'automatiser la remontée d'inventaire multi-sites de la collectivité tout en garantissant un haut niveau de sécurité (défense en profondeur), sans impacter l'infrastructure de production existante.
+
+### Objectifs réalisés
+* **Déploiement maîtrisé :** Mise en place d'une stack LAMP optimisée et cloisonnée sous Debian 13.
+* **Automatisation de l'inventaire :** Découverte réseau et remontée via le protocole SNMPv3 (chiffré et authentifié).
+* **Défense en profondeur :** Sécurisation des flux (HTTPS/LDAPS), durcissement système (UFW, Fail2Ban) et mise en place d'une réponse active.
+* **Supervision proactive :** Intégration du SIEM Wazuh pour la détection d'intrusions et le contrôle d'intégrité (FIM).
+* **Continuité de service :** Stratégie de sauvegarde PRA de type 3-2-1 (Proxmox, Veeam, Nextcloud).
+
+
+### Environnement Technique
+
+#### **Infrastructure & Virtualisation**
+![Proxmox](https://img.shields.io/badge/Proxmox-E57020?style=for-the-badge&logo=proxmox&logoColor=white)
+![Debian](https://img.shields.io/badge/Debian_13-A81D33?style=for-the-badge&logo=debian&logoColor=white)
+![Veeam](https://img.shields.io/badge/Veeam-00B336?style=for-the-badge&logo=veeam&logoColor=white)
+
+#### **Gestion & Applicatif**
+![GLPI](https://img.shields.io/badge/GLPI_11-21A197?style=for-the-badge&logo=glpi&logoColor=white)
+![Apache](https://img.shields.io/badge/Apache-D22128?style=for-the-badge&logo=apache&logoColor=white)
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP_8.4-777BB4?style=for-the-badge&logo=php&logoColor=white)
+
+#### **Cybersécurité & Supervision**
+![Wazuh](https://img.shields.io/badge/Wazuh-00A9E0?style=for-the-badge&logo=wazuh&logoColor=white)
+![Fail2Ban](https://img.shields.io/badge/Fail2Ban-000000?style=for-the-badge&logo=linux&logoColor=white)
+![Nextcloud](https://img.shields.io/badge/Nextcloud-0082C9?style=for-the-badge&logo=nextcloud&logoColor=white)
+![SSH](https://img.shields.io/badge/SSH_Keys-000000?style=for-the-badge&logo=openssh&logoColor=white)
+
+#### **Réseau**
+![SNMPv3](https://img.shields.io/badge/SNMPv3-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![VLAN](https://img.shields.io/badge/Segmentation_VLAN-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)
+
 
 ![alt text](../Images/Plan_Arche_Agglo.png)
 
 ## Table des matières
 
-- [Dossier projet AIS](#dossier-projet-ais)
-  - [Table des matières](#table-des-matières)
-  - [1. Liste des compétences mises en œuvre dans le cadre du projet](#1-liste-des-compétences-mises-en-œuvre-dans-le-cadre-du-projet)
-    - [1.1. Mes missions au quotidien](#11-mes-missions-au-quotidien)
-  - [2. Cahier des charges ou expression des besoins du projet](#2-cahier-des-charges-ou-expression-des-besoins-du-projet)
-    - [2.1. Présentation de l’entreprise](#21-présentation-de-lentreprise)
-      - [2.1.1. Organigramme](#211-organigramme)
-      - [2.1.2. Implantation de l’entreprise](#212-implantation-de-lentreprise)
-    - [2.2. Contexte](#22-contexte)
-    - [2.3. Objectif](#23-objectif)
-    - [2.4. La mission](#24-la-mission)
-    - [2.5. Expression des besoins](#25-expression-des-besoins)
-  - [3. Gestion de projet](#3-gestion-de-projet)
-    - [3.1. Planification et suivi](#31-planification-et-suivi)
-    - [3.2. Macro-planning](#32-macro-planning)
-    - [3.3. Environnement humain](#33-environnement-humain)
-      - [3.3.1. Les acteurs du projet](#331-les-acteurs-du-projet)
-  - [4. Environnement technique](#4-environnement-technique)
-    - [4.1. Objectifs de qualité](#41-objectifs-de-qualité)
-    - [4.2. Choix des solutions](#42-choix-des-solutions)
-      - [4.2.1. Localisation des services](#421-localisation-des-services)
-    - [4.3. Tableau comparatif des solutions](#43-tableau-comparatif-des-solutions)
-    - [4.4. Proposition de solution](#44-proposition-de-solution)
-      - [A. Architecture Réseau Globale](#a-architecture-réseau-globale)
-      - [B. Plan d'adressage cible et Segmentation (VLAN)](#b-plan-dadressage-cible-et-segmentation-vlan)
-      - [C. Les fonctionnalités clés de GLPI exploitées](#c-les-fonctionnalités-clés-de-glpi-exploitées)
-      - [D. Focus technique : La différence entre Découverte et Inventaire réseau](#d-focus-technique--la-différence-entre-découverte-et-inventaire-réseau)
-    - [4.5. Solution retenue et détails techniques](#45-solution-retenue-et-détails-techniques)
-      - [A. Ressources et Partitionnement (Proxmox)](#a-ressources-et-partitionnement-proxmox)
-      - [B. Stack applicative logicielle (L.A.M.P)](#b-stack-applicative-logicielle-lamp)
-      - [C. Espace d'adressage et Filtrage local (UFW)](#c-espace-dadressage-et-filtrage-local-ufw)
-      - [D. Cartographie des Flux Applicatifs et Sécurité](#d-cartographie-des-flux-applicatifs-et-sécurité)
-    - [4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)](#46-sécurisation-de-linfrastructure-durcissement-os-et-flux)
-    - [4.7 Analyse des risques](#47-analyse-des-risques)
-    - [4.8 Supervision et exploitation](#48-supervision-et-exploitation)
-      - [4.8.1 Déploiement automatisé des agents GLPI](#481-déploiement-automatisé-des-agents-glpi)
-      - [4.8.2 Gestion des mises à jour des agents GLPI](#482-gestion-des-mises-à-jour-des-agents-glpi)
-      - [4.8.3 Exploitation des fonctionnalités ITSM](#483-exploitation-des-fonctionnalités-itsm)
-    - [4.9 Continuité de service](#49-continuité-de-service)
-    - [4.10 Justification des choix de sécurité et évolutions](#410-justification-des-choix-de-sécurité-et-évolutions)
-  - [5. L’organisation de la mise en œuvre](#5-lorganisation-de-la-mise-en-œuvre)
-    - [5.1 Revue de code et configuration](#51-revue-de-code-et-configuration)
-      - [A. Installation du socle applicatif et liaison PHP-FPM\*\*](#a-installation-du-socle-applicatif-et-liaison-php-fpm)
-      - [B. Déploiement de l'agent GLPI sous Debian](#b-déploiement-de-lagent-glpi-sous-debian)
-      - [C. Installation](#c-installation)
-    - [5.2. Schéma détaillé](#52-schéma-détaillé)
-    - [5.3. Diagramme de Séquence du Protocole SNMP](#53-diagramme-de-séquence-du-protocole-snmp)
-  - [6. Mise en place d'une solution de supervision et de détection d'intrusion](#6-mise-en-place-dune-solution-de-supervision-et-de-détection-dintrusion)
-    - [6.1 Mise en place de la supervision avec Wazuh](#61-mise-en-place-de-la-supervision-avec-wazuh)
-    - [6.2 Déploiement du socle de sécurité](#62-déploiement-du-socle-de-sécurité)
-    - [6.3 Enrôlement des agents (Surveillance du serveur GLPI)](#63-enrôlement-des-agents-surveillance-du-serveur-glpi)
-    - [6.4 Configuration et validation de Wazuh SIEM](#64-configuration-et-validation-de-wazuh-siem)
-      - [6.4.1 Validation de la détection de Brute Force SSH](#641-validation-de-la-détection-de-brute-force-ssh)
-      - [6.4.2 Validation du File Integrity Monitoring (FIM)](#642-validation-du-file-integrity-monitoring-fim)
-      - [6.4.3 Réponse Active (IPS - Active Response)](#643-réponse-active-ips---active-response)
-    - [6.5 — Mise en place de Fail2ban](#65--mise-en-place-de-fail2ban)
-      - [6.5.1 Objectifs de Fail2ban](#651-objectifs-de-fail2ban)
-    - [6.5.2 Défense en profondeur](#652-défense-en-profondeur)
-    - [6.5.3 Configuration Fail2ban](#653-configuration-fail2ban)
-      - [6.5.4 Test de validation](#654-test-de-validation)
-  - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
-  - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
-  - [Glossaire](#glossaire)
-    - [A](#a)
-    - [C](#c)
-    - [D](#d)
-    - [F](#f)
-    - [G](#g)
-    - [H](#h)
-    - [I](#i)
-    - [M](#m)
-    - [N](#n)
-    - [P](#p)
-    - [R](#r)
-    - [S](#s)
-    - [V](#v)
-    - [W](#w)
-  - [9. Annexes](#9-annexes)
+- [Présentation du projet](#présentation-du-projet)
+  - [Objectifs réalisés](#objectifs-réalisés)
+  - [Environnement Technique](#environnement-technique)
+    - [**Infrastructure \& Virtualisation**](#infrastructure--virtualisation)
+    - [**Gestion \& Applicatif**](#gestion--applicatif)
+    - [**Cybersécurité \& Supervision**](#cybersécurité--supervision)
+    - [**Réseau**](#réseau)
+- [Table des matières](#table-des-matières)
+- [1. Liste des compétences mises en œuvre dans le cadre du projet](#1-liste-des-compétences-mises-en-œuvre-dans-le-cadre-du-projet)
+  - [1.1. Mes missions au quotidien](#11-mes-missions-au-quotidien)
+- [2. Cahier des charges ou expression des besoins du projet](#2-cahier-des-charges-ou-expression-des-besoins-du-projet)
+  - [2.1. Présentation de l’entreprise](#21-présentation-de-lentreprise)
+    - [2.1.1. Organigramme](#211-organigramme)
+    - [2.1.2. Implantation de l’entreprise](#212-implantation-de-lentreprise)
+  - [2.2. Contexte](#22-contexte)
+  - [2.3. Objectif](#23-objectif)
+  - [2.4. La mission](#24-la-mission)
+  - [2.5. Expression des besoins](#25-expression-des-besoins)
+- [3. Gestion de projet](#3-gestion-de-projet)
+  - [3.1. Planification et suivi](#31-planification-et-suivi)
+  - [3.2. Macro-planning](#32-macro-planning)
+  - [3.3 Work Breakdown Structure (WBS)](#33-work-breakdown-structure-wbs)
+  - [3.4. Environnement humain](#34-environnement-humain)
+    - [3.3.1. Les acteurs du projet](#331-les-acteurs-du-projet)
+- [4. Environnement technique](#4-environnement-technique)
+  - [4.1. Objectifs de qualité](#41-objectifs-de-qualité)
+  - [4.2. Choix des solutions](#42-choix-des-solutions)
+    - [4.2.1. Localisation des services](#421-localisation-des-services)
+  - [4.3. Tableau comparatif des solutions](#43-tableau-comparatif-des-solutions)
+  - [4.4. Proposition de solution](#44-proposition-de-solution)
+    - [A. Architecture Réseau Globale](#a-architecture-réseau-globale)
+    - [B. Plan d'adressage cible et Segmentation (VLAN)](#b-plan-dadressage-cible-et-segmentation-vlan)
+    - [C. Les fonctionnalités clés de GLPI exploitées](#c-les-fonctionnalités-clés-de-glpi-exploitées)
+    - [D. Focus technique : La différence entre Découverte et Inventaire réseau](#d-focus-technique--la-différence-entre-découverte-et-inventaire-réseau)
+  - [4.5. Solution retenue et détails techniques](#45-solution-retenue-et-détails-techniques)
+    - [A. Ressources et Partitionnement (Proxmox)](#a-ressources-et-partitionnement-proxmox)
+    - [B. Stack applicative logicielle (L.A.M.P)](#b-stack-applicative-logicielle-lamp)
+    - [C. Espace d'adressage et Filtrage local (UFW)](#c-espace-dadressage-et-filtrage-local-ufw)
+    - [D. Cartographie des Flux Applicatifs et Sécurité](#d-cartographie-des-flux-applicatifs-et-sécurité)
+  - [4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)](#46-sécurisation-de-linfrastructure-durcissement-os-et-flux)
+  - [4.7 Analyse des risques](#47-analyse-des-risques)
+  - [4.8 Supervision et exploitation](#48-supervision-et-exploitation)
+    - [4.8.1 Déploiement automatisé des agents GLPI](#481-déploiement-automatisé-des-agents-glpi)
+    - [4.8.2 Gestion des mises à jour des agents GLPI](#482-gestion-des-mises-à-jour-des-agents-glpi)
+    - [4.8.3 Exploitation des fonctionnalités ITSM](#483-exploitation-des-fonctionnalités-itsm)
+  - [4.9 Continuité de service](#49-continuité-de-service)
+  - [4.10 Justification des choix de sécurité et évolutions](#410-justification-des-choix-de-sécurité-et-évolutions)
+- [5. L’organisation de la mise en œuvre](#5-lorganisation-de-la-mise-en-œuvre)
+  - [5.1 Revue de code et configuration](#51-revue-de-code-et-configuration)
+    - [A. Installation du socle applicatif et liaison PHP-FPM\*\*](#a-installation-du-socle-applicatif-et-liaison-php-fpm)
+    - [B. Déploiement de l'agent GLPI sous Debian](#b-déploiement-de-lagent-glpi-sous-debian)
+    - [C. Installation](#c-installation)
+  - [5.2. Schéma détaillé](#52-schéma-détaillé)
+  - [5.3. Diagramme de Séquence du Protocole SNMP](#53-diagramme-de-séquence-du-protocole-snmp)
+- [6. Mise en place d'une solution de supervision et de détection d'intrusion](#6-mise-en-place-dune-solution-de-supervision-et-de-détection-dintrusion)
+  - [6.1 Mise en place de la supervision avec Wazuh](#61-mise-en-place-de-la-supervision-avec-wazuh)
+  - [6.2 Déploiement du socle de sécurité](#62-déploiement-du-socle-de-sécurité)
+  - [6.3 Enrôlement des agents (Surveillance du serveur GLPI)](#63-enrôlement-des-agents-surveillance-du-serveur-glpi)
+  - [6.4 Configuration et validation de Wazuh SIEM](#64-configuration-et-validation-de-wazuh-siem)
+    - [6.4.1 Validation de la détection de Brute Force SSH](#641-validation-de-la-détection-de-brute-force-ssh)
+    - [6.4.2 Validation du File Integrity Monitoring (FIM)](#642-validation-du-file-integrity-monitoring-fim)
+    - [6.4.3 Réponse Active (IPS - Active Response)](#643-réponse-active-ips---active-response)
+  - [6.5 — Mise en place de Fail2ban](#65--mise-en-place-de-fail2ban)
+    - [6.5.1 Objectifs de Fail2ban](#651-objectifs-de-fail2ban)
+  - [6.5.2 Défense en profondeur](#652-défense-en-profondeur)
+  - [6.5.3 Configuration Fail2ban](#653-configuration-fail2ban)
+    - [6.5.4 Test de validation](#654-test-de-validation)
+- [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
+- [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
+- [Glossaire](#glossaire)
+  - [A](#a)
+  - [C](#c)
+  - [D](#d)
+  - [F](#f)
+  - [G](#g)
+  - [H](#h)
+  - [I](#i)
+  - [M](#m)
+  - [N](#n)
+  - [P](#p)
+  - [R](#r)
+  - [S](#s)
+  - [V](#v)
+  - [W](#w)
+- [9. Annexes](#9-annexes)
 
 
 ## 1. Liste des compétences mises en œuvre dans le cadre du projet
@@ -252,7 +293,83 @@ Le projet s'est déroulé en plusieurs phases distinctes, allant de l'expression
 | **4. Tests et Validation (Inventaire)** | **23 au 26 Mars 2026**            | Déploiement d'agents de test, configuration de l'inventaire SNMP, validation des remontées d'informations.  | Remontée des équipements dans la maquette.                   | **Jalon 4 :** Réussite du premier scan SNMP et intégration en base |
 | **5. Documentation et Clôture**         | **7 au 23 Avril 2026**            | Rédaction des procédures d'installation, de déploiement et d'exploitation pour l'équipe technique.          | Procédures documentées sur GitHub.                           | **Jalon 5 :** Recette finale et livraison des livrables à l'équipe |
 
-### 3.3. Environnement humain
+### 3.3 Work Breakdown Structure (WBS)
+
+1. Analyse et préparation
+  
+   1.1 Analyse du besoin
+   
+   1.2 Étude de l'existant
+   
+   1.3 Identification des contraintes
+   
+   1.4 Analyse des risques
+
+2. Conception
+  
+   2.1 Définition de l'architecture
+  
+   2.2 Choix des solutions techniques
+  
+   2.3 Conception du schéma d'infrastructure
+  
+   2.4 Définition de la stratégie de sauvegarde
+
+3. Déploiement
+  
+   3.1 Création machine virtuelle Proxmox
+  
+   3.2 Installation Debian 13
+  
+   3.3 Installation Stack LAMP
+  
+   3.4 Installation et configuration GLPI
+
+4. Sécurisation
+  
+   4.1 Configuration pare-feu UFW
+  
+   4.2 Installation Fail2ban
+  
+   4.3 Sécurisation accès SSH
+  
+   4.4 Durcissement système
+
+5. Supervision
+   
+   5.1 Installation Wazuh
+   
+   5.2 Déploiement des agents
+   
+   5.3 Configuration des alertes
+
+6. Sauvegarde et continuité
+   
+   6.1 Mise en place sauvegarde Proxmox
+   
+   6.2 Configuration Veeam
+   
+   6.3 Intégration Nextcloud
+   
+   6.4 Tests de restauration
+
+7. Validation
+   
+   7.1 Tests fonctionnels
+   
+   7.2 Tests sécurité
+   
+   7.3 Validation infrastructure
+
+8. Documentation
+   
+   8.1 Documentation technique
+   
+   8.2 Rédaction du rapport
+   
+   8.3 Préparation présentation orale
+
+### 3.4. Environnement humain
 
 #### 3.3.1. Les acteurs du projet
 
