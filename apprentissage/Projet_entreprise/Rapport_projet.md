@@ -1,5 +1,23 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Arche_Agglo.png" alt="Logo Arche Agglo" width="600">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Arche_Agglo.png" alt="Logo Arche Agglo" width="320">
+</p>
+
+<h1 align="center">Projet GLPI </h1>
+
+<p align="center">
+<strong>Yann ESCRIVA</strong><br>
+Alternant Administrateur d’Infrastructures Sécurisées<br><br>
+<i>13/10/2025 - 16/10/2026</i>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Simplon" alt="Logo Simplon" width="140">
+</p>
+---
+
+<p align="center">
+<b>Projet de déploiement et sécurisation d’une infrastructure SI</b><br>
+GLPI • Supervision • Fail2ban • Wazuh
 </p>
 
 
