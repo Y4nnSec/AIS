@@ -95,6 +95,26 @@ Afin de dimensionner l'environnement de test de manière réaliste et représent
       <td style="background-color:#2a9d8f; text-align:center;">Faible</td>
       <td>Mises à jour régulières, HTTPS</td>
     </tr>
+    <tr>
+<td>Attaque brute force SSH</td>
+<td style="background-color:#e63946; color:white; text-align:center;">Élevé</td>
+<td style="background-color:#f4a261; text-align:center;">Moyen</td>
+<td>Fail2ban, durcissement SSH</td>
+</tr>
+
+<tr>
+<td>Perte de machine virtuelle</td>
+<td style="background-color:#e63946; color:white; text-align:center;">Élevé</td>
+<td style="background-color:#2a9d8f; text-align:center;">Faible</td>
+<td>Snapshots Proxmox, sauvegardes</td>
+</tr>
+
+<tr>
+<td>Accès non autorisé</td>
+<td style="background-color:#e63946; color:white; text-align:center;">Élevé</td>
+<td style="background-color:#2a9d8f; text-align:center;">Faible</td>
+<td>Gestion des droits, authentification LDAP</td>
+</tr>
   </tbody>
 </table>
 

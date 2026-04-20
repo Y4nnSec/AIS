@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Arche_Agglo.png" alt="Logo Arche Agglo" width="400">
 </p>
 
 
@@ -75,6 +75,21 @@
       - [6.5.4 Test de validation](#654-test-de-validation)
   - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
   - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
+  - [Glossaire](#glossaire)
+    - [A](#a)
+    - [C](#c)
+    - [D](#d)
+    - [F](#f)
+    - [G](#g)
+    - [H](#h)
+    - [I](#i)
+    - [M](#m)
+    - [N](#n)
+    - [P](#p)
+    - [R](#r)
+    - [S](#s)
+    - [V](#v)
+    - [W](#w)
   - [9. Annexes](#9-annexes)
 
 
@@ -395,6 +410,10 @@ Dans le cadre du déploiement de la maquette GLPI, une analyse des risques a ét
 | Saturation disque                   | Indisponibilité du service                             | Faible      | Supervision du stockage                                             |
 | Vulnérabilités applicatives         | Compromission GLPI                                     | Faible      | Mises à jour automatiques                                           |
 | Accès SSH non maîtrisé              | Compromission serveur                                  | Faible      | Authentification par clé + Fail2ban                                 |
+
+
+
+
 
 ### 4.8 Supervision et exploitation
 
