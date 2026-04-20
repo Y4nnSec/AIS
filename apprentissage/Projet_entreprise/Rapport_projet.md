@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Arche_Agglo.png" alt="Logo Arche Agglo" width="400">
+  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Arche_Agglo.png" alt="Logo Arche Agglo" width="600">
 </p>
 
 
