@@ -11,7 +11,7 @@ Alternant Administrateur d’Infrastructures Sécurisées<br><br>
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Simplon.png" alt="Logo Simplon" width="140">
+  <img src="https://github.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_simplon.png" alt="Logo Simplon" width="140">
 </p>
 
 <p align="center">
