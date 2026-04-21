@@ -87,7 +87,22 @@ L'enjeu principal était d'automatiser la remontée d'inventaire multi-sites de 
   - [3.2. Macro-planning](#32-macro-planning)
   - [3.3 Work Breakdown Structure (WBS)](#33-work-breakdown-structure-wbs)
   - [3.4. Environnement humain](#34-environnement-humain)
-    - [3.3.1. Les acteurs du projet](#331-les-acteurs-du-projet)
+    - [3.4.1. Les acteurs du projet](#341-les-acteurs-du-projet)
+  - [3.5. Matrice RACI](#35-matrice-raci)
+    - [Légende](#légende)
+  - [3.6. Indicateurs de réussite](#36-indicateurs-de-réussite)
+    - [Critères de validation](#critères-de-validation)
+  - [3.7. Contraintes du projet](#37-contraintes-du-projet)
+    - [Contraintes techniques](#contraintes-techniques)
+    - [Contraintes organisationnelles](#contraintes-organisationnelles)
+    - [Contraintes de sécurité](#contraintes-de-sécurité)
+    - [Contraintes de production](#contraintes-de-production)
+    - [Contraintes temporelles](#contraintes-temporelles)
+  - [3.8. Périmètre du projet](#38-périmètre-du-projet)
+    - [Périmètre inclus](#périmètre-inclus)
+    - [Périmètre exclu](#périmètre-exclu)
+    - [Environnement du projet](#environnement-du-projet)
+    - [Livrables du projet](#livrables-du-projet)
 - [4. Environnement technique](#4-environnement-technique)
   - [4.1. Objectifs de qualité](#41-objectifs-de-qualité)
   - [4.2. Choix des solutions](#42-choix-des-solutions)
@@ -371,17 +386,161 @@ Le projet s'est déroulé en plusieurs phases distinctes, allant de l'expression
 
 ### 3.4. Environnement humain
 
-#### 3.3.1. Les acteurs du projet
+#### 3.4.1. Les acteurs du projet
 
 La réussite de ce projet repose sur la collaboration de plusieurs acteurs au sein du service informatique d'ARCHE Agglo :
 
 * **Moi-même (Alternant Administrateur d'Infrastructures Sécurisées) - *Chef de projet*** : 
   En charge de l'analyse, de la conception (DAT), du déploiement technique de la maquette, de la réalisation des tests d'inventaire et de la rédaction de la documentation.
+  
 * **Mon Tuteur en entreprise / Chef du SI** : 
   Il valide l'architecture proposée, alloue les ressources matérielles nécessaires (accès à l'hyperviseur Proxmox, attribution des adresses IP) et s'assure de l'alignement du projet avec la stratégie informatique de la collectivité.
+  
 * **L'équipe technique (Techniciens Support et Réseau) - *Utilisateurs finaux*** : 
   Consultés lors de la phase d'expression des besoins, ils sont les futurs utilisateurs de la procédure d'exploitation et interviennent pour valider que les informations remontées par la maquette de test sont pertinentes pour leur travail quotidien.
 
+### 3.5. Matrice RACI
+
+La matrice RACI permet de définir clairement les rôles et responsabilités des différents acteurs du projet.
+
+| Activités du projet | Alternant AIS | Tuteur / Chef du SI | Équipe technique |
+|---------------------|-------------------------------|---------------------|------------------|
+| Analyse du besoin | R | A | C |
+| Rédaction du DAT | R | A | C |
+| Conception de l'architecture | R | A | C |
+| Création de la VM Debian | R | C | I |
+| Installation GLPI | R | C | I |
+| Configuration MariaDB | R | C | I |
+| Mise en place SNMP | R | C | C |
+| Configuration sécurité (UFW, Fail2ban) | R | C | I |
+| Déploiement Wazuh | R | C | I |
+| Tests techniques | R | A | C |
+| Validation fonctionnelle | R | A | C |
+| Documentation | R | C | I |
+| Présentation du projet | R | A | I |
+
+#### Légende
+
+* **R (Responsible)** : Responsable de la réalisation  
+* **A (Accountable)** : Valide et prend les décisions  
+* **C (Consulted)** : Consulté pour expertise  
+* **I (Informed)** : Informé de l'avancement
+
+### 3.6. Indicateurs de réussite
+
+Afin de mesurer l'efficacité et la réussite du projet, plusieurs indicateurs ont été définis.  
+Ces indicateurs permettent de valider que l'infrastructure mise en place répond aux objectifs fonctionnels, techniques et de sécurité.
+
+| Objectif | Indicateur de réussite | Méthode de validation |
+|----------|------------------------|------------------------|
+| Disponibilité du service GLPI | Accès à l'interface GLPI sans interruption | Test d'accès via navigateur web |
+| Sécurisation des accès | Accès HTTPS fonctionnel | Vérification certificat SSL |
+| Inventaire automatique | Remontée des postes dans GLPI | Test agent GLPI |
+| Supervision de sécurité | Détection d'événements dans Wazuh | Simulation d'événements |
+| Protection contre attaques | Blocage IP via Fail2ban | Test tentative brute force SSH |
+| Collecte SNMP | Remontée des équipements réseau | Test interrogation SNMP |
+| Sauvegarde fonctionnelle | Sauvegarde automatisée opérationnelle | Vérification sauvegarde Veeam |
+| Restaurabilité du service | Restauration VM fonctionnelle | Test snapshot Proxmox |
+| Performance système | Temps de réponse acceptable | Test utilisation GLPI |
+| Documentation complète | Procédures disponibles | Vérification dossier documentaire |
+
+#### Critères de validation
+
+Le projet est considéré comme réussi si :
+
+* Le service GLPI est accessible en HTTPS
+* L'inventaire automatique fonctionne correctement
+* La supervision Wazuh détecte les événements de sécurité
+* La protection Fail2ban bloque les tentatives malveillantes
+* Les sauvegardes sont fonctionnelles et restaurables
+* La documentation technique est complète et exploitable
+
+### 3.7. Contraintes du projet
+
+La mise en œuvre du projet s'inscrit dans un environnement technique et organisationnel comportant plusieurs contraintes à prendre en compte.
+
+#### Contraintes techniques
+
+* Utilisation de l'infrastructure virtualisée existante (Proxmox)
+* Ressources matérielles limitées pour la machine virtuelle de test
+* Compatibilité avec l'environnement réseau existant
+* Respect des politiques de sécurité de la collectivité
+* Intégration avec les outils déjà en place (Nextcloud, supervision existante)
+
+#### Contraintes organisationnelles
+
+* Projet réalisé dans le cadre d'une alternance avec un temps limité
+* Disponibilité limitée des équipes techniques pour les validations
+* Validation obligatoire par le tuteur avant certaines étapes critiques
+* Respect du calendrier de formation et des périodes en entreprise
+
+#### Contraintes de sécurité
+
+* Respect des bonnes pratiques de cybersécurité
+* Isolation de l'environnement de test
+* Limitation des droits d'accès à l'infrastructure
+* Protection des données de test
+
+#### Contraintes de production
+
+* Aucun impact sur l'infrastructure de production existante
+* Déploiement dans un environnement de test isolé
+* Préservation de la continuité des services existants
+
+#### Contraintes temporelles
+
+* Projet à réaliser sur la durée de l'alternance
+* Respect des jalons définis dans le macro planning
+* Livraison du projet dans les délais pédagogiques
+
+### 3.8. Périmètre du projet
+
+Afin de cadrer précisément le projet, il est nécessaire de définir clairement les éléments inclus et exclus du périmètre.
+
+#### Périmètre inclus
+
+Le projet comprend les éléments suivants :
+
+* Mise en place d'une machine virtuelle sous Proxmox
+* Installation et configuration de GLPI
+* Mise en place de l'inventaire automatique via agent GLPI
+* Configuration du protocole SNMP pour la supervision
+* Intégration de la supervision de sécurité avec Wazuh
+* Mise en place de Fail2ban pour la protection contre les attaques
+* Sécurisation de l'accès au service via HTTPS
+* Réalisation des tests de fonctionnement
+* Rédaction de la documentation technique (DAT)
+* Élaboration des procédures d'exploitation
+
+#### Périmètre exclu
+
+Les éléments suivants ne font pas partie du projet :
+
+* Déploiement en production sur l'ensemble du parc informatique
+* Migration complète des équipements existants
+* Formation complète des utilisateurs finaux
+* Intégration avec l'ensemble du système d'information existant
+* Supervision complète de tous les équipements réseau de la collectivité
+* Mise en place d'une haute disponibilité
+
+#### Environnement du projet
+
+Le projet est réalisé dans :
+
+* Un environnement virtualisé sous Proxmox
+* Une infrastructure de test isolée
+* Un réseau interne dédié à la maquette
+* Une machine virtuelle dédiée au projet
+
+#### Livrables du projet
+
+Les livrables attendus sont :
+
+* Maquette fonctionnelle GLPI sécurisée
+* Documentation d'architecture technique
+* Procédures d'installation et d'exploitation
+* Rapport de projet
+* Résultats des tests de validation
 
 ## 4. Environnement technique
 
