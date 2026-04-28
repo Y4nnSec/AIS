@@ -72,3 +72,15 @@ Dans « CyberChef » utilisez les recettes « AES Encrypt » et « AES Decrypt �
 
 
 **Transmission d’un message chiffré à votre binôme**
+
+* Générer une clé adéquate 
+* Chiffrez le nom de votre équipe de sport préférée avec les paramètres suivants 
+  * Key : « la clé que vous avez généré » 
+  * IV :  
+  * Mode : ECB 
+  * Input : mode Raw 
+  * Output : Hex 
+ * Transmettre le texte chiffré à votre binôme 
+* Transmettre la clé à votre binôme par un autre canal 
+  * Au sein de votre binôme, déchiffrez le message pour découvrir vos équipes de sport préférées respectives 
+
