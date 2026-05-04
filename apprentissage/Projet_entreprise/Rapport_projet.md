@@ -20,58 +20,34 @@ GLPI • Supervision • Fail2ban • Wazuh
 </p>
 
 
-## Présentation du projet
+## Remerciements
 
-Bienvenue sur le dépôt de mon projet de certification pour le titre d'**Administrateur d'Infrastructures Sécurisées (AIS)**. 
+Je tiens à remercier l’ensemble des personnes ayant contribué à la réalisation de ce projet.
 
-Réalisé au sein de la collectivité territoriale **ARCHE Agglo**, ce projet consiste à concevoir, déployer et sécuriser de bout en bout un environnement de pré-production pour la solution de gestion de parc **GLPI 11**. 
+Je remercie particulièrement mes formateurs, notamment **Yanis AFENDOU** et **Rémi BRUSSE**, pour leur accompagnement, leur pédagogie et les compétences techniques transmises tout au long de ma formation.
 
-L'enjeu principal était d'automatiser la remontée d'inventaire multi-sites de la collectivité tout en garantissant un haut niveau de sécurité (défense en profondeur), sans impacter l'infrastructure de production existante.
+Je remercie également **Christine CAVARETTA** pour son suivi et son accompagnement dans le cadre du parcours de formation.
 
-### Objectifs réalisés
-* **Déploiement maîtrisé :** Mise en place d'une stack LAMP optimisée et cloisonnée sous Debian 13.
-* **Automatisation de l'inventaire :** Découverte réseau et remontée via le protocole SNMPv3 (chiffré et authentifié).
-* **Défense en profondeur :** Sécurisation des flux (HTTPS/LDAPS), durcissement système (UFW, Fail2Ban) et mise en place d'une réponse active.
-* **Supervision proactive :** Intégration du SIEM Wazuh pour la détection d'intrusions et le contrôle d'intégrité (FIM).
-* **Continuité de service :** Stratégie de sauvegarde PRA de type 3-2-1 (Proxmox, Veeam, Nextcloud).
+Je tiens à exprimer ma reconnaissance envers mon environnement professionnel, qui m’a permis d’évoluer dans un contexte technique exigeant et formateur, favorisant le développement de mes compétences en administration systèmes et réseaux.
 
+Enfin, je remercie l’ensemble des collaborateurs avec qui j’ai pu échanger et travailler, pour leur disponibilité et leur contribution aux différentes phases du projet.
+Je tiens également à remercier ARCHE Agglo pour m’avoir accueilli au sein de son environnement informatique et m’avoir permis de réaliser ce projet dans des conditions professionnelles réelles.
 
-### Environnement Technique
+Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’information, pour sa confiance, son accompagnement et les moyens mis à disposition tout au long du projet.
 
-#### **Infrastructure & Virtualisation**
-![Proxmox](https://img.shields.io/badge/Proxmox-E57020?style=for-the-badge&logo=proxmox&logoColor=white)
-![Debian](https://img.shields.io/badge/Debian_13-A81D33?style=for-the-badge&logo=debian&logoColor=white)
-![Veeam](https://img.shields.io/badge/Veeam-00B336?style=for-the-badge&logo=veeam&logoColor=white)
-
-#### **Gestion & Applicatif**
-![GLPI](https://img.shields.io/badge/GLPI_11-21A197?style=for-the-badge&logo=glpi&logoColor=white)
-![Apache](https://img.shields.io/badge/Apache-D22128?style=for-the-badge&logo=apache&logoColor=white)
-![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP_8.4-777BB4?style=for-the-badge&logo=php&logoColor=white)
-
-#### **Cybersécurité & Supervision**
-![Wazuh](https://img.shields.io/badge/Wazuh-00A9E0?style=for-the-badge&logo=wazuh&logoColor=white)
-![Fail2Ban](https://img.shields.io/badge/Fail2Ban-000000?style=for-the-badge&logo=linux&logoColor=white)
-![Nextcloud](https://img.shields.io/badge/Nextcloud-0082C9?style=for-the-badge&logo=nextcloud&logoColor=white)
-![SSH](https://img.shields.io/badge/SSH_Keys-000000?style=for-the-badge&logo=openssh&logoColor=white)
-
-#### **Réseau**
-![SNMPv3](https://img.shields.io/badge/SNMPv3-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
-![VLAN](https://img.shields.io/badge/Segmentation_VLAN-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)
-
-
-![alt text](../Images/Plan_Arche_Agglo.png)
+À toutes et à tous, je renouvelle mes remerciements.
 
 ## Table des matières
 
-- [Présentation du projet](#présentation-du-projet)
-  - [Objectifs réalisés](#objectifs-réalisés)
-  - [Environnement Technique](#environnement-technique)
-    - [**Infrastructure \& Virtualisation**](#infrastructure--virtualisation)
-    - [**Gestion \& Applicatif**](#gestion--applicatif)
-    - [**Cybersécurité \& Supervision**](#cybersécurité--supervision)
-    - [**Réseau**](#réseau)
+- [Remerciements](#remerciements)
 - [Table des matières](#table-des-matières)
+- [Introduction](#introduction)
+- [Présentation du candidat](#présentation-du-candidat)
+- [Contexte organisationnel](#contexte-organisationnel)
+- [Enjeux du projet](#enjeux-du-projet)
+- [Problématique](#problématique)
+  - [Objectifs réalisés](#objectifs-réalisés)
+- [Environnement Technique](#environnement-technique)
 - [1. Liste des compétences mises en œuvre dans le cadre du projet](#1-liste-des-compétences-mises-en-œuvre-dans-le-cadre-du-projet)
   - [1.1. Mes missions au quotidien](#11-mes-missions-au-quotidien)
 - [2. Cahier des charges ou expression des besoins du projet](#2-cahier-des-charges-ou-expression-des-besoins-du-projet)
@@ -148,6 +124,7 @@ L'enjeu principal était d'automatiser la remontée d'inventaire multi-sites de 
     - [6.5.4 Test de validation](#654-test-de-validation)
 - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
 - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
+  - [Objectifs réalisés](#objectifs-réalisés-1)
 - [Glossaire](#glossaire)
   - [A](#a)
   - [C](#c)
@@ -164,6 +141,88 @@ L'enjeu principal était d'automatiser la remontée d'inventaire multi-sites de 
   - [V](#v)
   - [W](#w)
 - [9. Annexes](#9-annexes)
+
+
+## Introduction
+
+Dans le cadre de ma formation au titre professionnel Administrateur d’Infrastructures Sécurisées, j’ai été amené à travailler sur des problématiques liées à la gestion, la sécurisation et la supervision des systèmes d’information.
+
+Au sein d’ARCHE Agglo, le système d’information repose sur une organisation multi-sites interconnectée, nécessitant des outils fiables pour assurer la gestion du parc informatique, la sécurité des systèmes et la supervision des infrastructures.
+
+Cependant, plusieurs limites ont été identifiées :
+* absence d’inventaire automatisé
+* manque de visibilité sur le parc informatique
+* absence de supervision centralisée
+* niveau de sécurité perfectible
+
+Dans ce contexte, ce projet a pour objectif de concevoir et de déployer une solution permettant :
+* l’automatisation de l’inventaire (GLPI + SNMP)
+* la mise en place d’une supervision sécurité (Wazuh)
+* le renforcement de la sécurité des systèmes
+
+Ce projet s’inscrit dans une démarche globale d’amélioration du système d’information, en apportant une meilleure visibilité, une sécurité renforcée et une base évolutive pour les futurs besoins.
+
+## Présentation du candidat
+
+Dans le cadre de ma formation AIS, j’effectue mon alternance au sein d’ARCHE Agglo.
+
+Mon parcours m’a permis de développer des compétences en administration systèmes et réseaux, notamment sur des environnements Linux, la virtualisation et la cybersécurité.
+
+Au cours de ma formation, j’ai travaillé sur :
+* l’administration Linux (Debian)
+* la virtualisation avec Proxmox
+* la supervision (Wazuh)
+* la sécurisation des accès (SSH, Fail2ban, UFW)
+* l’inventaire automatisé (GLPI, SNMP)
+
+Ce projet s’inscrit dans la continuité de cette montée en compétences et constitue une mise en application concrète des compétences attendues pour le métier d’administrateur d’infrastructures sécurisées.
+
+## Contexte organisationnel
+
+ARCHE Agglo est une communauté de communes située entre l’Ardèche et la Drôme, regroupant plusieurs communes et disposant d’un système d’information réparti sur plusieurs sites.
+
+Cette organisation multi-sites repose sur une interconnexion réseau de type MPLS, permettant de centraliser les services informatiques tout en desservant les différents sites distants.
+
+Les enjeux principaux sont :
+* la centralisation des services IT
+* la gestion du parc informatique multi-sites
+* la sécurisation des accès et des données
+* la supervision globale de l’infrastructure
+
+## Enjeux du projet
+
+Dans ce contexte, plusieurs enjeux ont été identifiés :
+
+* Améliorer la visibilité sur le parc informatique
+* Automatiser l’inventaire des équipements
+* Mettre en place une supervision de sécurité efficace
+* Renforcer la sécurité des systèmes et des accès
+* Fiabiliser la gestion des incidents
+
+Ces enjeux sont essentiels pour garantir la disponibilité, l’intégrité et la confidentialité du système d’information.
+
+## Problématique
+
+Comment mettre en place une solution permettant de centraliser l’inventaire, améliorer la supervision et renforcer la sécurité du système d’information dans un environnement multi-sites, tout en garantissant la fiabilité et la maintenabilité de l’infrastructure ?
+
+### Objectifs réalisés
+* **Déploiement maîtrisé :** Mise en place d'une stack LAMP optimisée et cloisonnée sous Debian 13.
+* **Automatisation de l'inventaire :** Découverte réseau et remontée via le protocole SNMPv3 (chiffré et authentifié).
+* **Défense en profondeur :** Sécurisation des flux (HTTPS/LDAPS), durcissement système (UFW, Fail2Ban) et mise en place d'une réponse active.
+* **Supervision proactive :** Intégration du SIEM Wazuh pour la détection d'intrusions et le contrôle d'intégrité (FIM).
+* **Continuité de service :** Stratégie de sauvegarde PRA de type 3-2-1 (Proxmox, Veeam, Nextcloud).
+
+## Environnement Technique
+
+| Domaine | Technologies |
+|--------|-------------|
+| Virtualisation | Proxmox |
+| OS | Debian 13 |
+| Supervision | Wazuh |
+| Sauvegarde | Veeam, Nextcloud |
+| Réseau | SNMPv3, VLAN |
+
+![alt text](../Images/Shéma_global_Arche_Agglo.png)
 
 
 ## 1. Liste des compétences mises en œuvre dans le cadre du projet
@@ -1265,6 +1324,13 @@ D'un point de vue professionnel, ce projet valide pleinement les compétences vi
 * déployer une solution sécurisée,
 * superviser un environnement,
 * maintenir la sécurité dans le temps grâce à des mécanismes de sauvegarde et de résilience.
+
+### Objectifs réalisés
+* **Déploiement maîtrisé :** Mise en place d'une stack LAMP optimisée et cloisonnée sous Debian 13.
+* **Automatisation de l'inventaire :** Découverte réseau et remontée via le protocole SNMPv3 (chiffré et authentifié).
+* **Défense en profondeur :** Sécurisation des flux (HTTPS/LDAPS), durcissement système (UFW, Fail2Ban) et mise en place d'une réponse active.
+* **Supervision proactive :** Intégration du SIEM Wazuh pour la détection d'intrusions et le contrôle d'intégrité (FIM).
+* **Continuité de service :** Stratégie de sauvegarde PRA de type 3-2-1 (Proxmox, Veeam, Nextcloud).
 
 **Perspectives et évolutions :**
 
