@@ -422,10 +422,10 @@ Vous allez déployer 3 conteneurs LXC sur Proxmox. Ces conteneurs seront connect
 
 Dans ce guide, le segment réseau d'exemple utilisé est `192.168.1.0/24`
 
-*   **CT 1 (DNS)** : IP `192.168.1.10`
-*   **CT 2 (PKI)** : IP `192.168.1.20`
-*   **CT 3 (WEB)** : IP `192.168.1.30`
-*   **VM 1 (Client)** : IP `192.168.1.11`
+*   **dns-yann** : IP `192.168.1.10`
+*   **pki-yann** : IP `192.168.1.20`
+*   **web-yann** : IP `192.168.1.30`
+*   **client-yann** : IP `192.168.1.11`
 
 ### Étape 1 : Création des Conteneurs LXC sur Proxmox
 
@@ -475,7 +475,7 @@ Comme vu su la capture ci dessous, lors du 1er test en HTTPS, la connexion écho
   
 Mettre un vrai certificat valide
 
-### 1. Obtenir et déployer le certificat SSL avec Certbot
+#### E. Obtenir et déployer le certificat SSL avec Certbot
 
 **Toujours sur le serveur WEB :**
 Lancez Certbot en lui indiquant l'URL ACME de votre PKI interne :
@@ -490,7 +490,7 @@ certbot --apache --server https://pki.simplon.local:8443/acme/acme/directory
    
 ![alt text](Images/TP5.7.png)
 
-### 2. Test HTTPS et Validation Client
+#### F. Test HTTPS et Validation Client
 
 1.  Lancez une nouvelle capture Wireshark.
 2.  Allez sur `https://web.simplon.local/`.
