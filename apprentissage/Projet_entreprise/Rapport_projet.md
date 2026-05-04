@@ -26,12 +26,12 @@ Je tiens à remercier l’ensemble des personnes ayant contribué à la réalisa
 
 Je remercie particulièrement mes formateurs, notamment **Yanis AFENDOU** et **Rémi BRUSSE**, pour leur accompagnement, leur pédagogie et les compétences techniques transmises tout au long de ma formation.
 
-Je remercie également **Christine CAVARETTA** pour son suivi et son accompagnement dans le cadre du parcours de formation.
+Je remercie également **Christine CAVARETTA** pour son suivi et son accompagnement dans le cadre de mon parcours de formation.
 
 Je tiens à exprimer ma reconnaissance envers mon environnement professionnel, qui m’a permis d’évoluer dans un contexte technique exigeant et formateur, favorisant le développement de mes compétences en administration systèmes et réseaux.
 
-Enfin, je remercie l’ensemble des collaborateurs avec qui j’ai pu échanger et travailler, pour leur disponibilité et leur contribution aux différentes phases du projet.
-Je tiens également à remercier ARCHE Agglo pour m’avoir accueilli au sein de son environnement informatique et m’avoir permis de réaliser ce projet dans des conditions professionnelles réelles.
+Enfin, je remercie l’ensemble des collaborateurs avec lesquels j’ai pu échanger et travailler, pour leur disponibilité et leur contribution aux différentes phases du projet.
+Je tiens également à remercier ARCHE Agglo pour m’avoir accueilli au sein de son service informatique et m’avoir permis de réaliser ce projet dans des conditions professionnelles réelles.
 
 Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’information, pour sa confiance, son accompagnement et les moyens mis à disposition tout au long du projet.
 
@@ -43,7 +43,7 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
 - [Table des matières](#table-des-matières)
 - [Introduction](#introduction)
 - [Présentation du candidat](#présentation-du-candidat)
-- [Contexte organisationnel](#contexte-organisationnel)
+- [Présentation de l'entreprise](#présentation-de-lentreprise)
 - [Enjeux du projet](#enjeux-du-projet)
 - [Problématique](#problématique)
   - [Objectifs réalisés](#objectifs-réalisés)
@@ -177,7 +177,7 @@ Au cours de ma formation, j’ai travaillé sur :
 
 Ce projet s’inscrit dans la continuité de cette montée en compétences et constitue une mise en application concrète des compétences attendues pour le métier d’administrateur d’infrastructures sécurisées.
 
-## Contexte organisationnel
+## Présentation de l'entreprise
 
 ARCHE Agglo est une communauté de communes située entre l’Ardèche et la Drôme, regroupant plusieurs communes et disposant d’un système d’information réparti sur plusieurs sites.
 
@@ -231,9 +231,9 @@ Ce projet de déploiement d'un environnement GLPI de test m'a permis de mobilise
 
 | Compétences visées par le titre AIS                                              | Actions réalisées dans le cadre du projet GLPI de test                                                                                                                            |
 | :------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Administrer et sécuriser les infrastructures systèmes**                        | Installation, durcissement et sécurisation d'une machine virtuelle Linux/LAMP pour héberger le l'outil open source GLPI dans un environnement isolé.                              |
-| **Gérer le patrimoine informatique et les réseaux**                              | Configuration du protocole SNMP pour la découverte réseau et test de déploiement automatisé d'agents d'inventaire sur les postes cibles.                                          |
-| **Participer à l'élaboration et à la mise en œuvre de la politique de sécurité** | Lutte contre le *Shadow IT* via la découverte réseau et cartographie des équipements actifs pour identifier les vulnérabilités du parc (systèmes obsolètes, failles matérielles). |
+| **Administrer et sécuriser les infrastructures**                        | Installation, durcissement et sécurisation d'une machine virtuelle Linux/LAMP pour héberger le l'outil open source GLPI dans un environnement isolé.                              |
+| **Concevoir et mettre en oeuvre une solution en réponse à un besoin d’évolution**                              | Configuration du protocole SNMP pour la découverte réseau et test de déploiement automatisé d'agents d'inventaire sur les postes cibles.                                          |
+| **Participer à la gestion de la cybersécurité** | Lutte contre le *Shadow IT* via la découverte réseau et cartographie des équipements actifs pour identifier les vulnérabilités du parc (systèmes obsolètes, failles matérielles). |
 
 Ce projet s’inscrit pleinement dans les compétences attendues du titre professionnel d’Administrateur d’Infrastructures Sécurisées.
 
@@ -357,6 +357,30 @@ Bien que l’ensemble des tâches soit aujourd’hui achevé, cette structuratio
 
 ### 3.2. Macro-planning
 
+```mermaid
+gantt
+    title Diagramme de Gantt (Décembre 2025 - Avril 2026)
+    dateFormat  YYYY-MM-DD
+    axisFormat  %m/%Y
+    tickInterval 1month
+
+    section Phase 1
+    Début du projet   :milestone, 2025-12-01, 0d
+    Architecture      :2025-12-08, 2025-12-22
+
+    section Phase 2
+    Infrastructure    :2026-01-19, 2026-01-29
+
+    section Phase 3
+    Déploiement GLPI  :2026-01-30, 2026-02-20
+
+    section Phase 4
+    Tests & Recette   :2026-03-23, 2026-03-26
+
+    section Phase 5
+    Documentation     :2026-04-07, 2026-04-23
+```
+
 Le projet s'est déroulé en plusieurs phases distinctes, allant de l'expression du besoin jusqu'à la livraison de la documentation. Afin de sécuriser l'avancement, des jalons de validation ont été définis avec la DSI à la fin de chaque étape clé :
 
 | Phase                                   | Période                           | Description des tâches                                                                                      | Livrables associés                                           | Jalons (Points de validation)                                      |
@@ -369,79 +393,12 @@ Le projet s'est déroulé en plusieurs phases distinctes, allant de l'expression
 
 ### 3.3 Work Breakdown Structure (WBS)
 
-1. Analyse et préparation
-  
-   1.1 Analyse du besoin
-   
-   1.2 Étude de l'existant
-   
-   1.3 Identification des contraintes
-   
-   1.4 Analyse des risques
-
-2. Conception
-  
-   2.1 Définition de l'architecture
-  
-   2.2 Choix des solutions techniques
-  
-   2.3 Conception du schéma d'infrastructure
-  
-   2.4 Définition de la stratégie de sauvegarde
-
-3. Déploiement
-  
-   3.1 Création machine virtuelle Proxmox
-  
-   3.2 Installation Debian 13
-  
-   3.3 Installation Stack LAMP
-  
-   3.4 Installation et configuration GLPI
-
-4. Sécurisation
-  
-   4.1 Configuration pare-feu UFW
-  
-   4.2 Installation Fail2ban
-  
-   4.3 Sécurisation accès SSH
-  
-   4.4 Durcissement système
-
-5. Supervision
-   
-   5.1 Installation Wazuh
-   
-   5.2 Déploiement des agents
-   
-   5.3 Configuration des alertes
-
-6. Sauvegarde et continuité
-   
-   6.1 Mise en place sauvegarde Proxmox
-   
-   6.2 Configuration Veeam
-   
-   6.3 Intégration Nextcloud
-   
-   6.4 Tests de restauration
-
-7. Validation
-   
-   7.1 Tests fonctionnels
-   
-   7.2 Tests sécurité
-   
-   7.3 Validation infrastructure
-
-8. Documentation
-   
-   8.1 Documentation technique
-   
-   8.2 Rédaction du rapport
-   
-   8.3 Préparation présentation orale
+| 1. Analyse & prépa | 2. Conception | 3. Déploiement | 4. Sécurisation | 5. Supervision | 6. Sauvegarde | 7. Validation | 8. Documentation |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1.1 Analyse du besoin | 2.1 Définition de l'architecture | 3.1 Création VM Proxmox | 4.1 Configuration pare-feu UFW | 5.1 Installation Wazuh | 6.1 Mise en place sauvegarde Proxmox | 7.1 Tests fonctionnels | 8.1 Documentation technique |
+| 1.2 Étude de l'existant | 2.2 Choix des solutions techniques | 3.2 Installation Debian 13 | 4.2 Installation Fail2ban | 5.2 Déploiement des agents | 6.2 Configuration Veeam | 7.2 Tests sécurité | 8.2 Rédaction du rapport |
+| 1.3 Identification des contraintes | 2.3 Conception du schéma d'infrastructure | 3.3 Installation Stack LAMP | 4.3 Sécurisation accès SSH | 5.3 Configuration des alertes | 6.3 Intégration Nextcloud | 7.3 Validation infrastructure | 8.3 Préparation présentation orale |
+| 1.4 Analyse des risques | 2.4 Définition de la stratégie de sauvegarde | 3.4 Installation et configuration GLPI | 4.4 Durcissement système | | 6.4 Tests de restauration | | |
 
 ### 3.4. Environnement humain
 
