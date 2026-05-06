@@ -103,16 +103,23 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
   - [4.9 Continuité de service](#49-continuité-de-service)
   - [4.10 Justification des choix de sécurité et évolutions](#410-justification-des-choix-de-sécurité-et-évolutions)
 - [5. L’organisation de la mise en œuvre](#5-lorganisation-de-la-mise-en-œuvre)
-  - [5.1 Revue de code et configuration](#51-revue-de-code-et-configuration)
-    - [A. Installation du socle applicatif et liaison PHP-FPM\*\*](#a-installation-du-socle-applicatif-et-liaison-php-fpm)
+  - [5.1 Déploiement technique et configuration du service](#51-déploiement-technique-et-configuration-du-service)
+    - [A. Installation du socle applicatif et liaison PHP-FPM](#a-installation-du-socle-applicatif-et-liaison-php-fpm)
     - [B. Déploiement de l'agent GLPI sous Debian](#b-déploiement-de-lagent-glpi-sous-debian)
     - [C. Installation](#c-installation)
   - [5.2. Schéma détaillé](#52-schéma-détaillé)
   - [5.3. Diagramme de Séquence du Protocole SNMP](#53-diagramme-de-séquence-du-protocole-snmp)
+  - [5.4 Politique de sécurité mise en œuvre](#54-politique-de-sécurité-mise-en-œuvre)
+    - [Intégration dans la politique de sécurité du SI](#intégration-dans-la-politique-de-sécurité-du-si)
+    - [Objectifs de sécurité](#objectifs-de-sécurité)
+    - [Analyse des risques (synthèse)](#analyse-des-risques-synthèse)
+    - [Mesures mises en œuvre](#mesures-mises-en-œuvre)
+    - [Approche globale](#approche-globale)
+    - [Amélioration continue](#amélioration-continue)
 - [6. Mise en place d'une solution de supervision et de détection d'intrusion](#6-mise-en-place-dune-solution-de-supervision-et-de-détection-dintrusion)
   - [6.1 Mise en place de la supervision avec Wazuh](#61-mise-en-place-de-la-supervision-avec-wazuh)
   - [6.2 Déploiement du socle de sécurité](#62-déploiement-du-socle-de-sécurité)
-  - [6.3 Enrôlement des agents (Surveillance du serveur GLPI)](#63-enrôlement-des-agents-surveillance-du-serveur-glpi)
+  - [6.3 Enrôlement des agents (serveur GLPI)](#63-enrôlement-des-agents-serveur-glpi)
   - [6.4 Configuration et validation de Wazuh SIEM](#64-configuration-et-validation-de-wazuh-siem)
     - [6.4.1 Validation de la détection de Brute Force SSH](#641-validation-de-la-détection-de-brute-force-ssh)
     - [6.4.2 Validation du File Integrity Monitoring (FIM)](#642-validation-du-file-integrity-monitoring-fim)
@@ -161,6 +168,8 @@ Dans ce contexte, ce projet a pour objectif de concevoir et de déployer une sol
 * le renforcement de la sécurité des systèmes
 
 Ce projet s’inscrit dans une démarche globale d’amélioration du système d’information, en apportant une meilleure visibilité, une sécurité renforcée et une base évolutive pour les futurs besoins.
+ 
+Cependant, l'absence de visibilité sur le parc informatique et le manque de supervision centralisée représentent un risque opérationnel et de sécurité pour la collectivité. Dans un contexte où les cybermenaces sont en constante augmentation, il devient essentiel de disposer d’outils permettant une gestion proactive et sécurisée du système d’information.
 
 ## Présentation du candidat
 
@@ -203,7 +212,7 @@ Ces enjeux sont essentiels pour garantir la disponibilité, l’intégrité et l
 
 ## Problématique
 
-Comment mettre en place une solution permettant de centraliser l’inventaire, améliorer la supervision et renforcer la sécurité du système d’information dans un environnement multi-sites, tout en garantissant la fiabilité et la maintenabilité de l’infrastructure ?
+Comment mettre en place une solution centralisée permettant d’assurer un inventaire fiable, une supervision efficace et un renforcement de la sécurité, dans un environnement multi-sites contraint, sans impacter l’infrastructure de production existante ?
 
 ### Objectifs réalisés
 * **Déploiement maîtrisé :** Mise en place d'une stack LAMP optimisée et cloisonnée sous Debian 13.
@@ -721,9 +730,6 @@ Dans le cadre du déploiement de la maquette GLPI, une analyse des risques a ét
 | Accès SSH non maîtrisé              | Compromission serveur                                  | Faible      | Authentification par clé + Fail2ban                                 |
 
 
-
-
-
 ### 4.8 Supervision et exploitation
 
 Au-delà de l’identification des risques, la mise en place d’une supervision constitue un élément essentiel pour assurer la disponibilité et la stabilité du service dans le temps.
@@ -927,15 +933,19 @@ Ce choix s’inscrit dans une logique de défense en profondeur, en combinant cl
 
 La mise en œuvre de la maquette GLPI s'est déroulée de manière itérative, en veillant à documenter chaque étape technique. L'organisation s'est découpée en l'installation du socle applicatif, la sécurisation du serveur, et enfin le déploiement de l'agent Linux pour la découverte réseau.
 
-### 5.1 Revue de code et configuration
+### 5.1 Déploiement technique et configuration du service
 
 Pour illustrer le travail technique réalisé, voici des extraits significatifs des configurations et commandes mises en place pour assurer le déploiement de la solution.
 
-#### A. Installation du socle applicatif et liaison PHP-FPM**
+#### A. Installation du socle applicatif et liaison PHP-FPM
 
 L'installation de GLPI a été réalisée sur un serveur Debian 13 en utilisant une stack LAMP comprenant Apache2, MariaDB (version ≥ 10.11) et PHP 8.4-fpm.
 
-L'utilisation de PHP-FPM permet une meilleure gestion des processus et une isolation renforcée des traitements PHP. Le VirtualHost Apache a été configuré pour déléguer l'exécution des scripts via un socket Unix :
+L'utilisation de PHP-FPM permet une meilleure gestion des processus et une isolation renforcée des traitements PHP. 
+
+L'utilisation de PHP-FPM permet également de limiter les risques de saturation du serveur web et d'améliorer l'isolation des processus, réduisant ainsi l'impact potentiel d'une compromission applicative.
+
+Le VirtualHost Apache a été configuré pour déléguer l'exécution des scripts via un socket Unix :
 
 ```apache
 <FilesMatch \.php$>
@@ -945,9 +955,9 @@ L'utilisation de PHP-FPM permet une meilleure gestion des processus et une isola
 
 **Sécurisation des permissions du répertoire web**
 
-Afin d'éviter toute compromission par une faille applicative, les droits sur le répertoire GLPI ont été strictement verrouillés pour que seul l'utilisateur d'Apache (www-data) puisse y accéder, avec des permissions restreintes :
+Afin de limiter les risques de compromission liés à une faille applicative, les droits sur le répertoire GLPI ont été strictement verrouillés afin de restreindre l’accès au seul utilisateur du serveur web (www-data) avec des permissions minimales nécessaires.
 
-```Bash
+```bash
 sudo chown -R www-data:www-data /var/www/html/glpi
 sudo find /var/www/html/glpi -type d -exec chmod 755 {} \;
 sudo find /var/www/html/glpi -type f -exec chmod 644 {} \;
@@ -956,6 +966,10 @@ sudo find /var/www/html/glpi -type f -exec chmod 644 {} \;
 #### B. Déploiement de l'agent GLPI sous Debian
 
 Afin d'assurer la remontée automatique de l'inventaire, l'agent GLPI a été déployé sur un serveur Debian en version 1.15 avec le module réseau.
+
+Le déploiement de cet agent permet d’automatiser l’inventaire du parc informatique tout en limitant les interventions humaines, réduisant ainsi les erreurs et améliorant la fiabilité des données.
+
+Il renforce également la visibilité du système d’information, élément essentiel pour une supervision efficace et une meilleure détection des anomalies.
 
 #### C. Installation
 
@@ -968,13 +982,87 @@ sudo apt install ./glpi-agent_1.15-1_all.deb ./glpi-agent-task-network_1.15-1_al
 
 ### 5.2. Schéma détaillé
 
-L'architecture détaillée du déploiement met en évidence le cloisonnement des services. La machine virtuelle repose sur un hyperviseur Proxmox et interagit avec l'Active Directory ainsi que les équipements réseau.
+L'architecture détaillée du déploiement met en évidence le cloisonnement des services, la segmentation réseau ainsi que la séparation des rôles (supervision, inventaire, authentification).
+
+Cette organisation permet de limiter les surfaces d’attaque et d’améliorer la résilience globale du système d’information.
 
 ### 5.3. Diagramme de Séquence du Protocole SNMP
 
 Ce diagramme de séquence détaille les interactions réseau entre l'agent Linux (équipé du module network) et les équipements lors du processus de découverte SNMP.
 
 ![alt text](<../Images/Diagramme de Séquence du Protocole SNMP.png>)
+
+### 5.4 Politique de sécurité mise en œuvre
+
+Dans le cadre du projet, une approche globale de la sécurité a été adoptée afin de protéger l’infrastructure, les services et les données.
+
+Cette démarche s’inscrit dans une logique de **défense en profondeur**, consistant à multiplier les mécanismes de sécurité afin de réduire les risques d’intrusion et d’exploitation de vulnérabilités.
+
+#### Intégration dans la politique de sécurité du SI
+
+Les mesures mises en œuvre dans ce projet s’inscrivent dans une démarche plus globale de sécurisation du système d’information d’ARCHE Agglo.
+
+Elles respectent les principes fondamentaux de sécurité :
+- Cloisonnement des réseaux (VLAN, segmentation)
+- Principe du moindre privilège
+- Traçabilité des actions (journalisation)
+- Supervision continue
+
+Ce projet constitue ainsi une brique opérationnelle contribuant à l’amélioration de la posture de sécurité globale du SI.
+
+#### Objectifs de sécurité
+
+- Protéger les accès aux systèmes et aux services  
+- Réduire la surface d’exposition aux attaques  
+- Détecter rapidement les comportements anormaux  
+- Garantir l’intégrité et la confidentialité des données  
+
+#### Analyse des risques (synthèse)
+
+Les principaux risques identifiés sont :
+
+- Intrusion via accès non sécurisés
+- Attaques par brute force
+- Absence de visibilité sur les incidents
+- Compromission des données
+
+Les mesures mises en place permettent de réduire significativement ces risques.
+
+#### Mesures mises en œuvre
+
+Plusieurs mécanismes complémentaires ont été déployés :
+
+- **Contrôle des accès**
+  - Sécurisation des connexions SSH (port personnalisé, authentification par clé)
+  - Mise en place de l’authentification centralisée via LDAP (LDAPS)
+
+- **Filtrage réseau**
+  - Configuration d’un pare-feu (UFW) limitant les flux aux services strictement nécessaires
+
+- **Protection contre les attaques**
+  - Déploiement de Fail2ban pour bloquer les tentatives de brute force
+
+- **Supervision et détection**
+  - Intégration de Wazuh pour la collecte des logs, la détection d’intrusion et la remontée d’alertes
+
+#### Approche globale
+
+L’ensemble de ces mesures permet de mettre en œuvre une stratégie cohérente de sécurisation du système d’information, reposant sur plusieurs couches de protection.
+
+Cette approche améliore significativement la résilience du système face aux menaces et facilite la détection des incidents de sécurité.
+
+Cette démarche s’aligne avec les bonnes pratiques de sécurité recommandées par l’ANSSI et s’inspire des standards reconnus tels que la norme ISO 27001.
+
+#### Amélioration continue
+
+La sécurité étant un processus évolutif, les mécanismes mis en place nécessitent un suivi régulier :
+
+- Analyse des alertes Wazuh
+- Mise à jour des systèmes (MCO)
+- Tests de restauration des sauvegardes
+- Ajustement des règles de filtrage
+
+Cette démarche garantit le maintien du niveau de sécurité dans le temps.
 
 
 ## 6. Mise en place d'une solution de supervision et de détection d'intrusion
@@ -983,164 +1071,148 @@ La mise en place d'une infrastructure robuste nécessite une visibilité complè
 
 ### 6.1 Mise en place de la supervision avec Wazuh
 
-Afin de garantir la sécurité de l’infrastructure, une solution de supervision centralisée a été mise en place à l’aide de Wazuh. Cette solution permet de collecter, analyser et corréler les événements de sécurité provenant des différents systèmes.
+Afin d’assurer une visibilité complète sur l’état de sécurité de l’infrastructure, une solution de supervision centralisée a été déployée à l’aide de Wazuh (SIEM/XDR).
 
-La supervision constitue un élément essentiel dans une architecture sécurisée, permettant de détecter rapidement les anomalies et les tentatives d’intrusion.
+L’objectif n’est pas uniquement la collecte de logs, mais la mise en place d’un système de détection et de corrélation d’événements permettant d’identifier rapidement les comportements anormaux sur le serveur GLPI et les systèmes associés.
 
-**Objectifs de la supervision**
+**Objectifs opérationnels**
 
-La mise en place de Wazuh répond aux objectifs suivants :
+* Centralisation des journaux système et applicatifs
+* Détection d'incidents de sécurité en temps réel
+* Surveillance de l'intégrité des systèmes critiques
+* Corrélation des événements multi-sources (SSH, système, fichiers)
+* Support à l’investigation en cas d’incident
 
-* Centralisation des journaux système
-* Détection des tentatives d'intrusion
-* Surveillance de l'intégrité des fichiers
-* Corrélation des événements de sécurité
-* Génération d’alertes en temps réel
+**Architecture retenue**
 
-**Architecture Wazuh**
+La solution repose sur une architecture composée de trois composants principaux côté serveur :
 
-L’architecture Wazuh repose sur plusieurs composants :
+* Wazuh Manager : collecte, analyse et corrélation des événements
+* Wazuh Indexer : stockage et indexation des logs pour recherche et analyse
+* Wazuh Dashboard : interface de visualisation et d’exploitation des alertes
 
-* Wazuh Manager : analyse et corrélation des événements
-* Wazuh Indexer : stockage et indexation des logs
-* Wazuh Dashboard : interface de supervision
-* Wazuh Agent : installé sur les serveurs supervisés
+À cela s’ajoute **une couche distribuée d’agents Wazuh**, déployés sur les systèmes supervisés, chargés de remonter les événements vers le Manager.
 
-Cette architecture permet une supervision centralisée et une gestion efficace des incidents de sécurité.
+**S**écurisation des échanges**
 
-**Architecture de communication Wazuh**
+Les communications entre les différents composants sont sécurisées via TLS, garantissant :
 
-Les communications entre les différents composants utilisent les flux suivants :
+* la confidentialité des données en transit
+* l’intégrité des journaux
+* l’authentification des composants
 
-* Agent vers Manager : TCP 1514 (Transmission des logs)
-* Agent vers Manager : TCP 1515 (Enrôlement des agents)
-* Dashboard vers Indexer : HTTPS 443
+**Périmètre de supervision du serveur GLPI**
 
-Ces communications sont sécurisées via TLS afin de garantir :
+Le serveur GLPI a été intégré à la supervision en raison de sa criticité dans le système d’information (gestion du parc et helpdesk).
 
-* La confidentialité des données
-* L'intégrité des logs
-* L'authentification des composants
+La supervision a été ciblée sur les éléments suivants :
 
-**Mise en place de l'agent Wazuh**
+* les accès SSH (détection de tentatives d’intrusion)
+* l’intégrité des fichiers applicatifs GLPI (détection de modifications non autorisées)
+* les événements système critiques
 
-L’agent Wazuh a été installé sur le serveur GLPI afin de superviser les éléments critiques :
-
-* Connexions SSH
-* Services système
-* Fichiers sensibles
-* Activité utilisateur
-
-Cette configuration permet une supervision complète du serveur et une détection rapide des anomalies.
+Ce périmètre a été défini selon une approche de sécurisation par criticité, en priorisant les services ayant un impact direct sur la disponibilité et la sécurité du SI.
 
 ### 6.2 Déploiement du socle de sécurité
 
-Afin de garantir une installation standardisée et, surtout, d'assurer la génération sans faille des certificats cryptographiques liant les trois composants, le déploiement a été réalisé via l'assistant d'installation automatisé officiel de Wazuh.
-
-Le script d'installation a été exécuté avec l'argument `-a` pour un déploiement autonome:
+Le déploiement du socle Wazuh a été réalisé via le script officiel afin de garantir une installation standardisée et reproductible, incluant la génération automatique des certificats PKI.
 
 ```bash
-curl -sO [https://packages.wazuh.com/4.x/wazuh-install.sh](https://packages.wazuh.com/4.x/wazuh-install.sh)
+curl -sO https://packages.wazuh.com/4.x/wazuh-install.sh
 sudo bash ./wazuh-install.sh -a
 ```
 
-À l'issue de l'installation, un condensé sécurisé (wazuh-install-files.tar) contenant l'ensemble des certificats PKI et des mots de passe générés aléatoirement pour les administrateurs a été archivé en lieu sûr.
+Ce mode d’installation permet :
 
-Validation du socle :
-Une vérification des démons système confirme que le socle de sécurité est pleinement opérationnel et prêt à recevoir les connexions chiffrées (port 1514) des agents de l'infrastructure :
+* la génération automatisée des certificats de chiffrement
+* la réduction des erreurs de configuration manuelle
+* une cohérence entre les composants du cluster
+
+À l’issue de l’installation, les éléments sensibles (certificats et secrets) ont été archivés dans un fichier sécurisé **wazuh-install-files.tar**.
+
+**Validation du déploiement**
+
+Les services ont été vérifiés afin de confirmer le bon fonctionnement du socle :
 
 ```bash
 systemctl is-active wazuh-manager wazuh-indexer wazuh-dashboard
-# Résultat obtenu : active (pour les 3 services)
 ```
+
+Résultat: 
+
+active active active
 
 ![alt text](../Images/wazuh_tout_en_un.png)
 
-### 6.3 Enrôlement des agents (Surveillance du serveur GLPI)
+**Le socle de supervision est opérationnel et prêt à recevoir les agents**.
 
-**Objectif de la supervision**
+### 6.3 Enrôlement des agents (serveur GLPI)
 
-Le serveur GLPI centralisant l'inventaire matériel et les données d'assistance (Helpdesk) de la collectivité, il constitue une cible de choix pour d'éventuels attaquants. Afin d'assurer sa protection (détection d'intrusions, surveillance de l'intégrité des fichiers web, analyse des journaux système), le déploiement de l'agent Wazuh s'est avéré indispensable.
+Le serveur GLPI constitue un actif critique car il centralise :
 
-**Principe de communication sécurisée**
+* l’inventaire du SI
+* les données de support (Helpdesk)
+* les informations d’équipements
 
-L'agent Wazuh est un composant léger qui collecte les événements système et applicatifs pour les transmettre au Manager. Afin de respecter les exigences de confidentialité et d'intégrité, la communication entre l'agent (sur le serveur Debian GLPI) et le Manager (serveur Ubuntu) s'effectue sur le port TCP 1514 de manière intégralement chiffrée (AES) et authentifiée par un échange de clés (Pre-Shared Key).
+Il est donc intégré à la supervision Wazuh afin d’assurer une surveillance continue de son état de sécurité.
 
-**Procédure de déploiement sous Debian 13**
+**Principe**
 
-L'installation de l'agent a été réalisée en ligne de commande via l'ajout du dépôt officiel sécurisé par une clé GPG, garantissant l'intégrité des paquets téléchargés. La variable d'environnement `WAZUH_MANAGER` a été utilisée pour automatiser l'enrôlement de l'agent vers l'adresse IP du socle de sécurité lors de l'installation :
+L’agent Wazuh agit comme un collecteur local qui :
 
-**1. Télécharger et importer la clé de sécurité GPG :**
+* surveille les logs système
+* détecte les anomalies
+* remonte les événements au manager
+
+La communication est :
+
+* chiffrée (AES via TLS)
+* authentifiée (clé partagée)
+* centralisée via le port TCP 1514
+
+**Déploiement de l’agent**
+
+Installation depuis le dépôt officiel sécurisé :
 
 ```bash
 curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | sudo gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import
-```
-
-**2. Appliquer les bonnes permissions sur le fichier de clé :**
-
-```bash
 sudo chmod 644 /usr/share/keyrings/wazuh.gpg
 ```
 
-**3. Ajouter le dépôt officiel de Wazuh aux sources du système :**
+Ajout du dépôt :
 
 ```bash
 echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | sudo tee /etc/apt/sources.list.d/wazuh.list
+sudo apt update
 ```
 
-**4. Mettre à jour la liste des paquets :**
-
-```bash
-sudo apt-get update
-```
-
-**5. Lancer l'installation avec pointage vers le Manager :**
+Installation et enrôlement automatique :
 
 ```bash
 sudo env WAZUH_MANAGER="10.50.99.101" apt-get install wazuh-agent -y
 ```
 
-Une fois l'installation terminée, le démon de l'agent a été activé pour garantir son exécution automatique à chaque redémarrage du serveur :
-
-**6. Activer et démarrer le service de l'agent :**
+Activation du service :
 
 ```bash
-systemctl daemon-reload
 systemctl enable wazuh-agent
 systemctl start wazuh-agent
 ```
-
 ![alt text](../Images/Installation_agent_wazuh_Glpi.png)
 
-**Validation de l'enrôlement**
+**Validation de l’intégration**
 
-Afin de confirmer la bonne intégration du serveur dans le SIEM, une vérification a été effectuée depuis la console d'administration centralisée de Wazuh (Dashboard). L'agent installé sur le serveur glpi-test remonte avec le statut Active, confirmant que le canal de communication chiffré est opérationnel et que les premiers événements de sécurité sont en cours d'indexation.
+L’agent est visible dans le dashboard Wazuh avec le statut :
+
+**Active**
+
+Cela confirme :
+
+* la connexion sécurisée avec le manager
+* la remontée des premiers événements
+* l’intégration correcte dans le SIEM
 
 ![alt text](../Images/Dashboard_wazuh.png)
-
-**Sécurisation des communications**
-
-Les communications entre les agents et le serveur Wazuh sont sécurisées via TLS.
-
-Cette sécurisation permet :
-
-* Confidentialité des données
-* Intégrité des journaux
-* Authentification des composants
-
-Cette configuration permet de garantir la fiabilité de la supervision.
-
-Isolation du serveur de supervision
-
-Le serveur Wazuh est isolé dans un VLAN dédié afin de renforcer la sécurité globale.
-
-Cette segmentation permet :
-
-* Limitation de l'exposition réseau
-* Protection contre les attaques latérales
-* Sécurisation du socle de supervision
-
-Cette architecture renforce la sécurité globale de l'infrastructure.
 
 ### 6.4 Configuration et validation de Wazuh SIEM
 
