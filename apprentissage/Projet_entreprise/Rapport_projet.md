@@ -129,6 +129,7 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
     - [6.5.2 Complémentarité avec Wazuh](#652-complémentarité-avec-wazuh)
     - [6.5.3 Configuration](#653-configuration)
     - [6.5.4 Test de validation](#654-test-de-validation)
+  - [6.6 Conclusion sécurité](#66-conclusion-sécurité)
 - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
 - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
   - [Objectifs réalisés](#objectifs-réalisés-1)
@@ -1333,6 +1334,17 @@ la règle a été appliquée sans intervention humaine
 Protection effective contre brute force automatisé
 
 ![alt text](../Images/preuve_fail2ban.png)
+
+### 6.6 Conclusion sécurité
+
+L’association de Wazuh et Fail2ban permet de mettre en place une architecture de sécurité en couches :
+
+* Wazuh : supervision, détection, corrélation
+* Fail2ban : protection locale immédiate
+* Firewall système : contrôle des flux
+* VLAN isolés : segmentation réseau
+
+Cette approche permet de réduire significativement la surface d’attaque du serveur GLPI tout en assurant une capacité de détection et de réaction en temps réel.
 
 ## 7. Les relations avec les principaux acteurs du projet
 
