@@ -120,14 +120,14 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
   - [6.1 Mise en place de la supervision avec Wazuh](#61-mise-en-place-de-la-supervision-avec-wazuh)
   - [6.2 Déploiement du socle de sécurité](#62-déploiement-du-socle-de-sécurité)
   - [6.3 Enrôlement des agents (serveur GLPI)](#63-enrôlement-des-agents-serveur-glpi)
-  - [6.4 Configuration et validation de Wazuh SIEM](#64-configuration-et-validation-de-wazuh-siem)
-    - [6.4.1 Validation de la détection de Brute Force SSH](#641-validation-de-la-détection-de-brute-force-ssh)
-    - [6.4.2 Validation du File Integrity Monitoring (FIM)](#642-validation-du-file-integrity-monitoring-fim)
-    - [6.4.3 Réponse Active (IPS - Active Response)](#643-réponse-active-ips---active-response)
-  - [6.5 — Mise en place de Fail2ban](#65--mise-en-place-de-fail2ban)
-    - [6.5.1 Objectifs de Fail2ban](#651-objectifs-de-fail2ban)
-  - [6.5.2 Défense en profondeur](#652-défense-en-profondeur)
-  - [6.5.3 Configuration Fail2ban](#653-configuration-fail2ban)
+  - [6.4 Exploitation et validation de la détection](#64-exploitation-et-validation-de-la-détection)
+    - [6.4.1 Détection de brute force SSH](#641-détection-de-brute-force-ssh)
+    - [6.4.2 File Integrity Monitoring (FIM)](#642-file-integrity-monitoring-fim)
+    - [6.4.3 Réponse active (Active Response)](#643-réponse-active-active-response)
+  - [6.5 Mise en place de Fail2ban](#65-mise-en-place-de-fail2ban)
+    - [6.5.1 Rôle de Fail2ban](#651-rôle-de-fail2ban)
+    - [6.5.2 Complémentarité avec Wazuh](#652-complémentarité-avec-wazuh)
+    - [6.5.3 Configuration](#653-configuration)
     - [6.5.4 Test de validation](#654-test-de-validation)
 - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
 - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
@@ -1195,6 +1195,7 @@ sudo env WAZUH_MANAGER="10.50.99.101" apt-get install wazuh-agent -y
 Activation du service :
 
 ```bash
+systemctl daemon-reload
 systemctl enable wazuh-agent
 systemctl start wazuh-agent
 ```
@@ -1214,112 +1215,122 @@ Cela confirme :
 
 ![alt text](../Images/Dashboard_wazuh.png)
 
-### 6.4 Configuration et validation de Wazuh SIEM
+### 6.4 Exploitation et validation de la détection
 
-Afin de valider le bon fonctionnement de la chaîne de supervision et la pertinence des règles de sécurité déployées, plusieurs scénarios d'incidents ont été simulés sur le serveur GLPI. L'objectif est de démontrer la capacité du SIEM Wazuh à détecter, indexer et alerter en temps réel lors de comportements suspects.
+Afin de valider l’efficacité de la supervision, plusieurs scénarios d’attaque contrôlés ont été simulés.
 
-#### 6.4.1 Validation de la détection de Brute Force SSH
+L’objectif est de vérifier la capacité de Wazuh à :
 
-Dans cette partie, nous validons la capacité de Wazuh à identifier une activité anormale sur le protocole SSH. Pour ce faire, nous avons réalisé des tentatives d'authentification manuelles répétées avec des identifiants erronés depuis une machine tierce afin de simuler un début d'attaque par force brute.
+* détecter les comportements suspects
+* générer des alertes exploitables
+* fournir un contexte d’analyse
+
+#### 6.4.1 Détection de brute force SSH
+
+Des tentatives d’authentification SSH avec identifiants incorrects ont été réalisées.
+
+Résultat :
+
+* détection immédiate par les règles Wazuh
+* génération d’alertes de type authentication_failed
+* identification de l’adresse IP source
+
+Validation du comportement IDS attendu
 
 ![alt text](../Images/Test_brute_force.png)
 
-#### 6.4.2 Validation du File Integrity Monitoring (FIM)
+#### 6.4.2 File Integrity Monitoring (FIM)
 
-Le module FIM (File Integrity Monitoring) est un pilier de la surveillance d'infrastructure. Il a été configuré pour surveiller en temps réel les fichiers sensibles du serveur GLPI, notamment /etc/shadow et /etc/passwd.
+Le module FIM a été configuré sur les fichiers critiques du système :
 
-Pour valider cette fonctionnalité, une modification manuelle a été effectuée sur le fichier /etc/shadow. Wazuh a instantanément généré une alerte de Niveau 7 (Rule 550: Integrity checksum changed).
+* /etc/passwd
+* /etc/shadow
+* répertoires système GLPI
 
-La preuve technique ci-dessous est extraite du journal d'alerte. Elle est particulièrement probante car elle affiche la comparaison des empreintes cryptographiques (hashes MD5 et SHA256) avant ("before") et après ("after") la modification, garantissant une traçabilité totale de l'intégrité du fichier.
+**Test réalisé**
+
+Une modification volontaire du fichier /etc/shadow a été effectuée.
+
+Résultat :
+
+* alerte Wazuh niveau élevé
+* calcul automatique des empreintes avant/après (hash SHA256)
+* traçabilité complète de la modification
+
+Le système garantit l’intégrité des fichiers critiques
 
 ![alt text](../Images/Test_F.I.M.png)
 
-#### 6.4.3 Réponse Active (IPS - Active Response)
+#### 6.4.3 Réponse active (Active Response)
 
-L'enjeu ici est de passer d'une détection passive (IDS) à une protection active (IPS). Wazuh est configuré pour interagir directement avec le pare-feu local du serveur GLPI.
+Wazuh a été configuré pour passer d’un rôle de détection (IDS) à un rôle de réponse active (IPS léger).
 
-Mise en œuvre technique :
-Une règle de réponse active a été définie dans le fichier ossec.conf du Manager :
+**Principe**
 
-Déclencheur : Alerte de niveau >= 10.
+Lorsqu’une alerte critique est détectée :
 
-Action : Exécution du script firewall-drop.
+* exécution automatique d’un script firewall-drop
+* blocage de l’IP via iptables
+* durée de blocage définie (180 secondes)
 
-Durée : Bannissement de l'IP source via iptables pendant 180 secondes.
+**Comportement observé**
 
-Preuve d'exécution :
-Le succès de la protection est confirmé par la lecture du journal active-responses.log sur l'agent glpi-test.
+* ajout dynamique de règle firewall
+* blocage immédiat du trafic entrant
+* suppression automatique après expiration
 
-Phase d'ajout (08:26:49) : L'IP est bannie dès la détection de l'attaque.
+**Analyse**
 
-Phase de libération (08:29:49) : L'accès est rétabli automatiquement après 3 minutes.
+Cette fonctionnalité permet :
+
+* une réaction immédiate aux attaques automatisées
+* une réduction du temps d’exposition
+* une limitation des scans et brute force
 
 ![alt text](../Images/detection_wazuh_bruteforce_ssh.png)
-
-**Preuve d'exécution sur l'agent :** Le succès de la mesure de protection est confirmé par la consultation du journal local active-responses.log sur le serveur **glpi-test.**
-
 ![alt text](../Images/validation_active_response_logs_agent.png)
 
-**Analyse du cycle de protection :** 
+Limite : cette fonction ne remplace pas un firewall périmétrique (type Fortinet / pfSense), mais agit comme une couche de défense complémentaire.
 
-1. **Phase d'ajout :** Le Manager ordonne le blocage. On observe l'état Starting du script firewall-drop pour l'IP 8.8.8.8. À cet instant, l'attaquant ne peut plus communiquer avec le serveur.
-2. **Phase de maintien :** L'agent maintient la règle DROP dans iptables.
-3. **Phase de libération :** Conformément au timeout de 180s, le système lance la commande delete, purgeant la règle du pare-feu et rétablissant l'état initial du serveur.
+### 6.5 Mise en place de Fail2ban
 
-**Conclusion technique :** L'implémentation de l'Active Response permet de sécuriser les services critiques (comme GLPI) contre les scans automatisés et les tentatives d'intrusion répétées, assurant une résilience accrue de l'infrastructure périmétrique.
+En complément de Wazuh, Fail2ban a été déployé pour renforcer la protection locale des services, notamment SSH.
 
-### 6.5 — Mise en place de Fail2ban
+#### 6.5.1 Rôle de Fail2ban
 
-Afin de renforcer la sécurité du serveur, une protection supplémentaire a été mise en place à l’aide de Fail2ban.
+Fail2ban permet :
 
-Fail2ban permet de bloquer automatiquement les adresses IP réalisant des tentatives d’accès non autorisées, notamment sur le service SSH.
+* le blocage automatique des IP suspectes
+* la protection des services exposés
+* la réduction des attaques par force brute
 
-#### 6.5.1 Objectifs de Fail2ban
+#### 6.5.2 Complémentarité avec Wazuh
 
-La mise en place de Fail2ban permet :
+| Outil    | Rôle                           |
+| -------- | ------------------------------ |
+| Wazuh    | Supervision + corrélation SIEM |
+| Fail2ban | Réaction locale immédiate      |
 
-* Protection contre les attaques brute force
-* Blocage automatique des adresses IP malveillantes
-* Renforcement de la sécurité SSH
-* Réduction des tentatives d'intrusion
+#### 6.5.3 Configuration
 
-### 6.5.2 Défense en profondeur
+```bash
+maxretry = 3
+findtime = 10m
+bantime = 30m
+```
 
-Bien que Wazuh dispose d’une fonctionnalité Active Response permettant le blocage automatique des adresses IP, l’ajout de Fail2ban permet de renforcer la stratégie de défense en profondeur.
-
-Wazuh assure :
-
-* Supervision centralisée
-* Corrélation des événements
-* Analyse des incidents
-
-Fail2ban assure :
-
-* Protection locale rapide
-* Blocage immédiat des attaques
-* Sécurisation du service SSH
-
-L'utilisation conjointe de Wazuh et Fail2ban permet d’améliorer la sécurité globale de l’infrastructure.
-
-### 6.5.3 Configuration Fail2ban
-
-Fail2ban a été configuré pour protéger le service SSH avec les paramètres suivants :
-
-* maxretry : 3 tentatives
-* findtime : 10 minutes
-* bantime : 30 minutes
-
-Cette configuration permet de bloquer rapidement les tentatives de brute force.
+Ce paramétrage limite efficacement les tentatives d’authentification répétées sur SSH.
 
 ![alt text](../Images/fail2ban_config.png)
 
 #### 6.5.4 Test de validation
 
-Afin de valider la configuration, plusieurs tentatives de connexion SSH incorrectes ont été réalisées.
+Après plusieurs tentatives SSH échouées :
 
-Après plusieurs tentatives échouées, l’adresse IP a été automatiquement bloquée par Fail2ban, confirmant le bon fonctionnement de la protection.
+l’IP a été automatiquement bannie
+la règle a été appliquée sans intervention humaine
 
-Cette configuration permet de renforcer la sécurité du serveur face aux attaques automatisées.
+Protection effective contre brute force automatisé
 
 ![alt text](../Images/preuve_fail2ban.png)
 

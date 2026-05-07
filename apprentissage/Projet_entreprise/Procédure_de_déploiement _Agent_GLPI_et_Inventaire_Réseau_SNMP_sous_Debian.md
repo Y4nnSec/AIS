@@ -105,7 +105,7 @@ Modifications à effectuer : Rechercher la ligne # server = ... au début du fic
 
 **Le fichier doit ressembler à ceci :**
 
-![alt text](../Images/Configuration_serveur_et_ssl.png)
+![alt text](../Images/Configuration_serveur.png)
 
 **Vérification du Service Systemd**
 
