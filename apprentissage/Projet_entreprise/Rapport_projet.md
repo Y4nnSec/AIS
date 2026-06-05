@@ -19,6 +19,14 @@ Alternant Administrateur d’Infrastructures Sécurisées<br><br>
 GLPI • Supervision • Fail2ban • Wazuh
 </p>
 
+**Référence du document :** RP-AIS-2026-GLPI  
+**Version :** 1.0  
+**Date de création :** 13/10/2025  
+**Date de modification :** 05/06/2026  
+**Confidentialité :** Interne DSI / Restreint (Diffusion examen)  
+**Diffusion :** Membres du jury d'examen AIS, Direction des Systèmes d'Information ARCHE Agglo  
+**Destinataires :** Jury du Titre Professionnel AIS (Ministère du Travail), Waldeck GOURRU (Tuteur), Formateurs Simplon
+
 
 ## Remerciements
 
@@ -37,10 +45,13 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
 
 À toutes et à tous, je renouvelle mes remerciements.
 
+
 ## Table des matières
 
 - [Remerciements](#remerciements)
 - [Table des matières](#table-des-matières)
+- [Table des mises à jour du document](#table-des-mises-à-jour-du-document)
+- [Méthodologie de lecture](#méthodologie-de-lecture)
 - [Introduction](#introduction)
 - [Présentation du candidat](#présentation-du-candidat)
 - [Présentation de l'entreprise](#présentation-de-lentreprise)
@@ -52,12 +63,18 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
   - [1.1. Mes missions au quotidien](#11-mes-missions-au-quotidien)
 - [2. Cahier des charges ou expression des besoins du projet](#2-cahier-des-charges-ou-expression-des-besoins-du-projet)
   - [2.1. Présentation de l’entreprise](#21-présentation-de-lentreprise)
+  - [Présentation de l'organisme de formation](#présentation-de-lorganisme-de-formation)
+  - [Compléments Historiques et Budgétaires d'ARCHE Agglo](#compléments-historiques-et-budgétaires-darche-agglo)
     - [2.1.1. Organigramme](#211-organigramme)
     - [2.1.2. Implantation de l’entreprise](#212-implantation-de-lentreprise)
   - [2.2. Contexte](#22-contexte)
   - [2.3. Objectif](#23-objectif)
   - [2.4. La mission](#24-la-mission)
   - [2.5. Expression des besoins](#25-expression-des-besoins)
+    - [Analyse Fonctionnelle du besoin](#analyse-fonctionnelle-du-besoin)
+      - [A. Le graphique de la "Bête à corne"](#a-le-graphique-de-la-bête-à-corne)
+      - [B. Diagramme de "La Pieuvre" (Analyse des fonctions)](#b-diagramme-de-la-pieuvre-analyse-des-fonctions)
+    - [Spécifications détaillées des besoins\[cite: 1\]](#spécifications-détaillées-des-besoinscite-1)
 - [3. Gestion de projet](#3-gestion-de-projet)
   - [3.1. Planification et suivi](#31-planification-et-suivi)
   - [3.2. Macro-planning](#32-macro-planning)
@@ -79,6 +96,7 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
     - [Périmètre exclu](#périmètre-exclu)
     - [Environnement du projet](#environnement-du-projet)
     - [Livrables du projet](#livrables-du-projet)
+  - [3.9. Enveloppe budgétaire du projet](#39-enveloppe-budgétaire-du-projet)
 - [4. Environnement technique](#4-environnement-technique)
   - [4.1. Objectifs de qualité](#41-objectifs-de-qualité)
   - [4.2. Choix des solutions](#42-choix-des-solutions)
@@ -95,7 +113,9 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
     - [C. Espace d'adressage et Filtrage local (UFW)](#c-espace-dadressage-et-filtrage-local-ufw)
     - [D. Cartographie des Flux Applicatifs et Sécurité](#d-cartographie-des-flux-applicatifs-et-sécurité)
   - [4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)](#46-sécurisation-de-linfrastructure-durcissement-os-et-flux)
-  - [4.7 Analyse des risques](#47-analyse-des-risques)
+  - [4.7 Analyse des risques (Méthode EBIOS RM)](#47-analyse-des-risques-méthode-ebios-rm)
+    - [1. Identification et traitement des risques](#1-identification-et-traitement-des-risques)
+    - [2. Cartographie des risques (Matrice de criticité)](#2-cartographie-des-risques-matrice-de-criticité)
   - [4.8 Supervision et exploitation](#48-supervision-et-exploitation)
     - [4.8.1 Déploiement automatisé des agents GLPI](#481-déploiement-automatisé-des-agents-glpi)
     - [4.8.2 Gestion des mises à jour des agents GLPI](#482-gestion-des-mises-à-jour-des-agents-glpi)
@@ -131,6 +151,7 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
     - [6.5.4 Test de validation](#654-test-de-validation)
   - [6.6 Conclusion sécurité](#66-conclusion-sécurité)
 - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
+  - [7.1. Accompagnement au changement et Formation du personnel](#71-accompagnement-au-changement-et-formation-du-personnel)
 - [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
   - [Objectifs réalisés](#objectifs-réalisés-1)
 - [Glossaire](#glossaire)
@@ -149,6 +170,20 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
   - [V](#v)
   - [W](#w)
 - [9. Annexes](#9-annexes)
+
+
+
+## Table des mises à jour du document
+
+| Version | Date | Auteur | Description des modifications |
+| :--- | :--- | :--- | :--- |
+| 0.1 | 15/12/2025 | Yann ESCRIVA | Création de la structure et rédaction de la partie Architecture (DAT). |
+| 0.2 | 15/02/2026 | Yann ESCRIVA | Ajout de la partie Déploiement GLPI et Stack LAMP. |
+| 0.3 | 10/04/2026 | Yann ESCRIVA | Intégration des sections Sécurité (Wazuh, Fail2ban) et Tests de validation. |
+| 1.0 | 01/06/2026 | Yann ESCRIVA | Finalisation du rapport, relecture et mise en conformité avec le gabarit. |
+
+## Méthodologie de lecture
+Ce rapport de projet est structuré de manière chronologique, suivant le cycle de vie du projet (Cadrage, Conception, Réalisation, Validation, Clôture). Les blocs de texte sur fond sombre représentent des commandes à exécuter dans un terminal Linux ou des extraits de fichiers de configuration. Un glossaire et une webographie sont mis à disposition en fin de document pour expliciter les termes techniques et référencer les documentations officielles utilisées.
 
 
 ## Introduction
@@ -172,6 +207,7 @@ Ce projet s’inscrit dans une démarche globale d’amélioration du système d
  
 Cependant, l'absence de visibilité sur le parc informatique et le manque de supervision centralisée représentent un risque opérationnel et de sécurité pour la collectivité. Dans un contexte où les cybermenaces sont en constante augmentation, il devient essentiel de disposer d’outils permettant une gestion proactive et sécurisée du système d’information.
 
+
 ## Présentation du candidat
 
 Dans le cadre de ma formation AIS, j’effectue mon alternance au sein d’ARCHE Agglo.
@@ -187,6 +223,7 @@ Au cours de ma formation, j’ai travaillé sur :
 
 Ce projet s’inscrit dans la continuité de cette montée en compétences et constitue une mise en application concrète des compétences attendues pour le métier d’administrateur d’infrastructures sécurisées.
 
+
 ## Présentation de l'entreprise
 
 ARCHE Agglo est une communauté de communes située entre l’Ardèche et la Drôme, regroupant plusieurs communes et disposant d’un système d’information réparti sur plusieurs sites.
@@ -198,6 +235,7 @@ Les enjeux principaux sont :
 * la gestion du parc informatique multi-sites
 * la sécurisation des accès et des données
 * la supervision globale de l’infrastructure
+
 
 ## Enjeux du projet
 
@@ -211,9 +249,11 @@ Dans ce contexte, plusieurs enjeux ont été identifiés :
 
 Ces enjeux sont essentiels pour garantir la disponibilité, l’intégrité et la confidentialité du système d’information.
 
+
 ## Problématique
 
 Comment mettre en place une solution centralisée permettant d’assurer un inventaire fiable, une supervision efficace et un renforcement de la sécurité, dans un environnement multi-sites contraint, sans impacter l’infrastructure de production existante ?
+
 
 ### Objectifs réalisés
 * **Déploiement maîtrisé :** Mise en place d'une stack LAMP optimisée et cloisonnée sous Debian 13.
@@ -221,6 +261,7 @@ Comment mettre en place une solution centralisée permettant d’assurer un inve
 * **Défense en profondeur :** Sécurisation des flux (HTTPS/LDAPS), durcissement système (UFW, Fail2Ban) et mise en place d'une réponse active.
 * **Supervision proactive :** Intégration du SIEM Wazuh pour la détection d'intrusions et le contrôle d'intégrité (FIM).
 * **Continuité de service :** Stratégie de sauvegarde PRA de type 3-2-1 (Proxmox, Veeam, Nextcloud).
+
 
 ## Environnement Technique
 
@@ -281,6 +322,12 @@ Ses 5 grands pôles d'activités sont :
 * **L'aménagement :** Organiser les transports et la politique du logement.
 * **Le tourisme :** Développer l'attractivité (office de tourisme, sentiers de randonnée).
 
+### Présentation de l'organisme de formation
+**SIMPLON.CO** est un réseau d'entreprises sociales et solidaires qui propose des formations intensives et qualifiantes aux métiers du numérique. Le parcours d'Administrateur d'Infrastructures Sécurisées (AIS) dispensé prépare aux compétences clés de gestion des systèmes, de virtualisation, d'automatisation et de durcissement de la sécurité des SI en entreprise.
+
+### Compléments Historiques et Budgétaires d'ARCHE Agglo
+Née en 2017 de la fusion de trois communautés de communes, ARCHE Agglo gère un territoire vaste à forte interconnexion. En tant qu'Établissement Public, la collectivité ne réalise pas de "Chiffre d'Affaires" mais fonctionne avec un **budget annuel consolidé (fonctionnement et investissement) d'environ 60 à 70 millions d'euros**. Ce budget impose une gestion rigoureuse et une rationalisation des coûts IT, ce qui justifie le choix constant de solutions Open Source robustes et sans coût de licence (GLPI, Wazuh) dans le cadre de ce projet.
+
 #### 2.1.1. Organigramme
 
 ![Organigramme 1](../Images/Organigramme1.png)
@@ -335,6 +382,24 @@ Ma mission principale dans le cadre de ce projet est de réaliser les actions su
 ### 2.5. Expression des besoins
 
 Pour répondre aux contraintes techniques et fonctionnelles d'ARCHE Agglo, la solution mise en place doit respecter les besoins suivants :
+
+#### Analyse Fonctionnelle du besoin
+
+##### A. Le graphique de la "Bête à corne"
+Pour valider l'existence réelle du besoin, l'outil d'analyse "Bête à corne" permet de poser trois questions fondamentales :
+*   **À qui le produit rend-il service ?** À la Direction des Systèmes d'Information (DSI) et aux techniciens support d'ARCHE Agglo.
+*   **Sur quoi le produit agit-il ?** Sur la visibilité, la sécurité et la connaissance fine du parc informatique multi-sites.
+*   **Dans quel but ?** Centraliser la gestion de parc informatique, automatiser l'inventaire via scan réseau et détecter de manière proactive les menaces de sécurité sans impacter la production.
+
+##### B. Diagramme de "La Pieuvre" (Analyse des fonctions)
+La solution globale (GLPI + Wazuh + Agents) est au centre d'un écosystème de contraintes et d'interactions qu'on peut lister ainsi :
+*   **Fonction Principale (FP1) :** Permettre à l'équipe IT de visualiser l'intégralité du parc et ses événements de sécurité depuis une interface centralisée.
+*   **Fonction Contrainte 1 (FC1 - Sécurité/ANSSI) :** Chiffrer l'ensemble des flux (HTTPS, LDAPS, SNMPv3 AuthPriv) pour empêcher l'interception de données sur le réseau.
+*   **Fonction Contrainte 2 (FC2 - Infrastructure) :** S'intégrer parfaitement sur l'infrastructure existante (Hyperviseur Proxmox, Active Directory).
+*   **Fonction Contrainte 3 (FC3 - Économie) :** S'appuyer uniquement sur des briques applicatives Open Source (coût de licence logiciel égal à 0€).
+
+#### Spécifications détaillées des besoins[cite: 1]
+
 * **Centralisation :** Une interface web unique accessible par l'équipe IT pour consolider les données.
 * **Automatisation :** La remontée des informations (hardware, software, réseau) doit s'effectuer sans intervention humaine régulière.
 * **Découverte réseau :** Capacité à scanner les différents sous-réseaux (VLANs) des sites distants via le protocole SNMP.
@@ -568,6 +633,20 @@ Les livrables attendus sont :
 * Rapport de projet
 * Résultats des tests de validation
 
+### 3.9. Enveloppe budgétaire du projet
+
+Bien que le projet s'appuie exclusivement sur des technologies Open Source gratuites, la mise en œuvre d'une telle infrastructure engendre des coûts indirects liés aux ressources humaines et matérielles de la collectivité :
+
+| Poste de dépense | Solution retenue | Coût Logiciel | Coût Estimé (Ressources / Temps) |
+| :--- | :--- | :--- | :--- |
+| **Système & Application** | Debian 13 / GLPI 11 | 0 € | Implication Alternant AIS (environ 120 heures de travail valorisées) |
+| **Supervision Sécurité** | Wazuh SIEM / XDR | 0 € | Temps de supervision et validation de la DSI (10 heures tuteur) |
+| **Protection Locale** | UFW / Fail2ban | 0 € | Inclus dans le temps de durcissement système |
+| **Hébergement & Infra** | VM de test sur Proxmox | 0 € | Allocation de ressources existantes (2 vCPU, 4 Go RAM, 50 Go SSD) |
+| **Stratégie Sauvegarde** | Proxmox / Veeam (licence existante) | 0 € | Allocation espace de stockage sur NAS local + Cloud Nextcloud |
+| **TOTAL** | | **0 €** | **~ 130 heures de ressources humaines internes** |
+
+
 ## 4. Environnement technique
 
 ### 4.1. Objectifs de qualité
@@ -716,20 +795,76 @@ La sécurisation de l'environnement GLPI a été traitée selon le principe de d
 **Supervision et Audit :**
 * Le monitoring système (CPU, RAM, Disque) s'effectue via SNMPv3, et l'intégration avec le serveur centralisé Wazuh qui assure la remontée et l'analyse continue des événements de sécurité.
 
-### 4.7 Analyse des risques
+### 4.7 Analyse des risques (Méthode EBIOS RM)
 
-Dans le cadre du déploiement de la maquette GLPI, une analyse des risques a été réalisée afin d’identifier les menaces potentielles liées à l’environnement de test et d’anticiper leur impact sur le système d’information.
+Afin de sécuriser le déploiement de la maquette GLPI face aux menaces numériques, une analyse des risques inspirée de la méthode **EBIOS RM** (recommandée par l'ANSSI) a été menée. Cette démarche permet d'identifier les événements redoutés, d'évaluer leur impact sur les missions de la DSI, et de formaliser les mesures de sécurité associées.
 
-| Risque identifié                    | Impact potentiel                                       | Probabilité | Mesures de réduction mises en place                                 |
-| ----------------------------------- | ------------------------------------------------------ | ----------- | ------------------------------------------------------------------- |
-| **Compromission des clés SNMPv3** | **Fuite d'informations de supervision système/réseau** | **Faible** | **Utilisation du mode AuthPriv (Authentification + Chiffrement AES)**|
-| Flux interne non chiffré (HTTP)     | Interception réseau (Sniffing) entre Proxy et GLPI     | Faible      | Confinement sur un VLAN backend d'administration hyper-sécurisé     |
-| Machine virtuelle unique            | Point de défaillance unique (SPOF)                     | Moyen       | Snapshots réguliers + sauvegardes                                   |
-| Mauvaise configuration LDAP         | Échec d’authentification                               | Moyen       | Tests réalisés en pré-production                                    |
-| Saturation disque                   | Indisponibilité du service                             | Faible      | Supervision du stockage                                             |
-| Vulnérabilités applicatives         | Compromission GLPI                                     | Faible      | Mises à jour automatiques                                           |
-| Accès SSH non maîtrisé              | Compromission serveur                                  | Faible      | Authentification par clé + Fail2ban                                 |
+#### 1. Identification et traitement des risques
 
+| Réf. | Événement redouté (Scénario de menace) | Impact sur le SI (D / I / C) | Mesures de sécurité et de traitement mises en œuvre |
+| :--- | :--- | :--- | :--- |
+| **R1** | **Compromission des secrets SNMPv3** (Interception ou vol des identifiants réseau) | **Confidentialité / Intégrité :** Fuite d'informations sur la topologie du réseau et les switchs. | Utilisation exclusive du mode **AuthPriv** (Authentification forte SHA + Chiffrement matériel AES). |
+| **R2** | **Interception des flux d'administration** (Écoute réseau sur le trafic interne) | **Confidentialité :** Risque de sniffing ou d'attaque de l'homme du milieu (MitM). | Confinement du serveur GLPI sur le **VLAN 99 (Management)** isolé et restriction stricte des accès. |
+| **R3** | **Panne ou crash du serveur unique** (Indisponibilité de la maquette de test) | **Disponibilité :** Perte de l'accès à l'inventaire et interruption des tests en cours. | Application d'une stratégie de sauvegarde automatisée **Veeam** et snapshots réguliers sur l'hyperviseur **Proxmox**. |
+| **R4** | **Usurpation d'identité sur l'application** (Attaque par brute force sur les accès) | **Confidentialité / Intégrité :** Accès non autorisé à la console d'administration GLPI. | Liaison chiffrée **LDAPS (TCP 636)** vers l'AD, désactivation du compte root SSH, authentification par clés asymétriques et **Fail2ban**. |
+| **R5** | **Saturation de l'espace de stockage** (Logs Wazuh ou dumps de BD volumineux) | **Disponibilité :** Crash des services MariaDB et Apache suite à un disque saturé. | Partitionnement logique strict via **LVM** (`/var`, `/var/log`, `/var/lib/mysql`) et supervision des alertes via **Wazuh**. |
+| **R6** | **Exploitation d'une faille applicative** (Injection ou vulnérabilité web non corrigée) | **Intégrité / Confidentialité :** Compromission locale du serveur web Apache. | Suppression du dossier `/install` après déploiement, durcissement des permissions via `www-data` et MCO régulier. |
+
+#### 2. Cartographie des risques (Matrice de criticité)
+
+<div style="overflow-x:auto;">
+  <table style="width: 100%; text-align: center; border-collapse: collapse; font-family: sans-serif;">
+    <tbody>
+      <tr>
+        <td style="border: none; font-weight: bold; width: 10%;">4</td>
+        <td style="background-color: #ED7D31; color: white; border: 1px solid #fff; height: 60px; width: 22%; font-weight: bold;">R6</td>
+        <td style="background-color: #C00000; color: white; border: 1px solid #fff; width: 22%; font-weight: bold;"></td>
+        <td style="background-color: #C00000; color: white; border: 1px solid #fff; width: 22%; font-weight: bold;">R4</td>
+        <td style="background-color: #C00000; color: white; border: 1px solid #fff; width: 22%; font-weight: bold;"></td>
+      </tr>
+      <tr>
+        <td style="border: none; font-weight: bold;">3</td>
+        <td style="background-color: #FFC000; color: black; border: 1px solid #fff; height: 60px; font-weight: bold;"></td>
+        <td style="background-color: #ED7D31; color: white; border: 1px solid #fff; font-weight: bold;">R1</td>
+        <td style="background-color: #ED7D31; color: white; border: 1px solid #fff; font-weight: bold;">R3</td>
+        <td style="background-color: #C00000; color: white; border: 1px solid #fff; font-weight: bold;"></td>
+      </tr>
+      <tr>
+        <td style="border: none; font-weight: bold;">2</td>
+        <td style="background-color: #92D050; color: black; border: 1px solid #fff; height: 60px; font-weight: bold;">R2</td>
+        <td style="background-color: #FFC000; color: black; border: 1px solid #fff; font-weight: bold;">R5</td>
+        <td style="background-color: #FFC000; color: black; border: 1px solid #fff; font-weight: bold;"></td>
+        <td style="background-color: #ED7D31; color: white; border: 1px solid #fff; font-weight: bold;"></td>
+      </tr>
+      <tr>
+        <td style="border: none; font-weight: bold;">1</td>
+        <td style="background-color: #92D050; color: black; border: 1px solid #fff; height: 60px;"></td>
+        <td style="background-color: #92D050; color: black; border: 1px solid #fff;"></td>
+        <td style="background-color: #92D050; color: black; border: 1px solid #fff;"></td>
+        <td style="background-color: #FFC000; color: black; border: 1px solid #fff;"></td>
+      </tr>
+      <tr>
+        <td style="border: none;"></td>
+        <td style="border: none; font-weight: bold; padding-top: 10px;">1</td>
+        <td style="border: none; font-weight: bold; padding-top: 10px;">2</td>
+        <td style="border: none; font-weight: bold; padding-top: 10px;">3</td>
+        <td style="border: none; font-weight: bold; padding-top: 10px;">4</td>
+      </tr>
+      <tr>
+        <td style="border: none;"></td>
+        <td colspan="4" style="border: none; font-weight: bold; padding-top: 5px;">Vraisemblance (Probabilité) &rarr;</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<br>
+
+**Légende des couleurs et Niveaux de Criticité :**
+* 🔴 **Rouge (Inacceptable) :** Le risque menace la survie du service. Traitement prioritaire et obligatoire.
+* 🟠 **Orange (Indésirable) :** Le risque est préoccupant. Nécessite des mesures de traitement fortes.
+* 🟡 **Jaune (Tolérable sous contrôle) :** Le risque est contenu mais nécessite une surveillance (Wazuh).
+* 🟢 **Vert (Acceptable) :** Le risque est marginal. Surveillance classique via les outils en place.
 
 ### 4.8 Supervision et exploitation
 
@@ -1351,17 +1486,24 @@ Cette approche permet de réduire significativement la surface d’attaque du se
 La réussite de cette preuve de concept a nécessité une communication fluide et régulière avec les différentes parties prenantes au sein de la Direction des Systèmes d'Information (DSI) d'ARCHE Agglo. 
 
 * **Avec la Direction (Mon Tuteur / Responsable Informatique) :**
-  
-  Les échanges ont été réguliers, principalement lors des phases de cadrage et de validation. J'ai soumis le Document d'Architecture Technique (DAT) à mon tuteur pour validation des choix technologiques (Debian 13, GLPI 11, PHP 8.4) et des exigences de sécurité. Cette relation m'a permis d'obtenir les ressources nécessaires (Machine Virtuelle sur l'hyperviseur Proxmox, adresse IP fixe) et de m'assurer que le projet s'inscrivait bien dans la politique de sécurité globale de la collectivité.
+  Les échanges ont été réguliers, principalement lors des phases de cadrage et de validation[cite: 1]. J'ai soumis le Document d'Architecture Technique (DAT) à mon tuteur pour validation des choix technologiques (Debian 13, GLPI 11, PHP 8.4) et des exigences de sécurité. Cette relation m'a permis d'obtenir les ressources nécessaires (Machine Virtuelle sur l'hyperviseur Proxmox, adresse IP fixe) et de m'assurer que le projet s'inscrivait bien dans la politique de sécurité globale de la collectivité.
 
 * **Avec l'Équipe Technique (Techniciens Réseau et Support) :**
-  
   La relation a été très collaborative. L'équipe technique étant la destinataire finale de la solution (notamment pour l'utilisation du Helpdesk et la consultation de l'inventaire), je les ai impliqués lors des tests fonctionnels. Leurs retours ont été précieux pour valider la pertinence des informations remontées par le scan SNMP sur les switchs. Enfin, je leur ai fourni les livrables documentaires (procédures d'installation et de déploiement) afin de garantir un transfert de compétences efficace.
 
 * **Posture personnelle :**
-  
   En tant qu'alternant AIS, j'ai agi en tant que référent technique sur ce projet. J'ai dû vulgariser certains concepts de sécurité (comme la nécessité du durcissement système ou de l'isolation des flux) pour justifier mes choix d'architecture lors des points de suivi, renforçant ainsi ma posture de conseil.
 
+### 7.1. Accompagnement au changement et Formation du personnel
+
+La réussite technique d'une maquette ne suffit pas ; il est indispensable d'anticiper l'adhésion de l'équipe face à ces nouveaux outils pour garantir une bonne clôture de projet[cite: 2]. Dans le cadre de la conduite du changement, j'ai planifié des **ateliers de transfert de compétences (2 sessions de 1h30)** à destination des techniciens support. 
+
+L'objectif de cette formation technique était de :
+* Leur présenter la nouvelle interface de gestion.
+* Leur montrer comment relier un ticket d'incident à un switch découvert par SNMPv3.
+* Les familiariser avec la lecture des alertes de sécurité dans le Dashboard Wazuh.
+
+Les procédures documentées (livrables de production et d'exploitation) que j'ai publiées sur GitHub servent de support de formation continu pour l'équipe
 
 ## 8. Synthèse et conclusion
 
