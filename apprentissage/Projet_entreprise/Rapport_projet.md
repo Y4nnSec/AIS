@@ -715,7 +715,19 @@ Afin de garantir un haut niveau de sécurité, l'architecture cible a été pens
 
 #### A. Architecture Réseau Globale
 
-![alt text](../Images/Architecture_Réseau_Globale.png)
+L'évolution de l'infrastructure réseau et de la cinématique des flux applicatifs est découpée en deux phases distinctes afin de bien matérialiser les apports techniques du projet.
+
+##### 1. Architecture réseau initiale (Avant projet)
+Dans la configuration d'origine, l'ancien serveur GLPI de production (`SRV-MVS-GLPI-PROD`) est isolé sur l'adresse IP `10.50.99.50`. Son rôle est purement passif : il reçoit uniquement les requêtes HTTPS (port TCP 443) provenant des postes de travail des utilisateurs (VLAN 10 Mairie et Agglo) pour la saisie manuelle des tickets de support. À ce stade, il n'existe aucune découverte automatisée des équipements du réseau ni de centralisation des événements de sécurité.
+
+![alt text](../Images/Plan_Arche_Agglo_Avant.png)
+
+##### 2. Architecture réseau cible (Après projet)
+Cette topologie représente l'intégration finale de la solution de test au sein du VLAN 99. Le nouveau serveur GLPI de maquette (`10.50.99.100`) pilote désormais la découverte et l'inventaire automatique des commutateurs du VLAN 20 en utilisant le protocole sécurisé SNMPv3 AuthPriv (port UDP 161). 
+
+L'évolution majeure réside également dans l'introduction du serveur SIEM/XDR Wazuh (`10.50.99.101`), qui collecte en continu les journaux d'événements et les logs applicatifs chiffrés du serveur GLPI via le port TCP 1514. En local, le couplage avec Fail2ban permet de déclencher des réponses actives immédiates en cas de détection de brute force.
+
+![alt text](../Images/Plan_Arche_Agglo.png)
 
 #### B. Plan d'adressage cible et Segmentation (VLAN)
 
@@ -735,7 +747,7 @@ Au-delà de la simple installation du socle web, la valeur ajoutée du projet r�
 
 Pour automatiser la remontée des équipements réseau sans agent, le projet exploite deux mécanismes distincts mais complémentaires opérés par l'agent GLPI :
 
-1. **La Découverte Réseau :** L'agent effectue un balayage actif (sweep) d'une plage d'adresses IP cible (ex: `10.50.20.0/24` pour le site principal ou `10.61.20.0/24` pour St Donat) en testant les identifiants SNMPv3 configurés. Il détecte les équipements joignables et crée une fiche basique dans la base GLPI contenant l'adresse IP, l'adresse MAC et le nom de l'équipement.
+1. **La Découverte Réseau :** L'agent effectue un balayage actif d'une plage d'adresses IP cible (ex: `10.50.20.0/24` pour le site principal ou `10.61.20.0/24` pour St Donat) en testant les identifiants SNMPv3 configurés. Il d'étecte les équipements joignables et crée une fiche basique dans la base GLPI contenant l'adresse IP, l'adresse MAC et le nom de l'équipement.
 2. **L'Inventaire Réseau :** Une fois le switch administrable découvert, l'agent lance des requêtes SNMP approfondies pour lire ses tables internes (tables de routage, tables ARP, et tables FDB/MAC associées aux ports physiques). C'est ce processus complexe qui permet à GLPI de cartographier la topologie physique et de savoir précisément quel ordinateur est connecté sur quel port physique du switch.
 
 ### 4.5. Solution retenue et détails techniques
@@ -1119,9 +1131,17 @@ sudo apt install ./glpi-agent_1.15-1_all.deb ./glpi-agent-task-network_1.15-1_al
 
 ### 5.2. Schéma détaillé
 
-L'architecture détaillée du déploiement met en évidence le cloisonnement des services, la segmentation réseau ainsi que la séparation des rôles (supervision, inventaire, authentification).
+L'architecture détaillée du déploiement met en évidence le cloisonnement des services, la segmentation réseau ainsi que la séparation des rôles (supervision, inventaire, authentification). Afin de mettre en relief l'évolution de l'infrastructure et l'apport sécuritaire de la maquette, la topologie détaillée est découpée en deux phases distinctes.
 
-Cette organisation permet de limiter les surfaces d’attaque et d’améliorer la résilience globale du système d’information.
+#### A. Architecture détaillée initiale (Avant projet)
+Dans cette configuration d'origine, l'ancien serveur GLPI de production (`SRV-MVS-GLPI-PROD`) est isolé sur l'IP `10.50.99.50`. Son rôle est purement passif : il reçoit uniquement les flux HTTP/HTTPS des utilisateurs du VLAN 10 pour la saisie manuelle des tickets. Il n'existe aucune communication de supervision de sécurité ni de découverte de parc automatisée.
+
+![alt text](../Images/Architecture_Réseau_Globale_Avant.png)
+
+#### B. Architecture détaillée cible (Après projet)
+Cette vue représente l'implémentation finale de la solution de test sécurisée. On y observe l'introduction du nouveau serveur GLPI (`10.50.99.100`) configuré avec l'agent d'inventaire automatique et interrogeant le switch de cœur en SNMPv3 AuthPriv. Le serveur SIEM/XDR Wazuh (`10.50.99.101`) fait son apparition pour collecter les logs chiffrés du serveur GLPI, tandis que Fail2ban assure la protection active en couche locale.
+
+![alt text](../Images/Architecture_Réseau_Globale.png)
 
 ### 5.3. Diagramme de Séquence du Protocole SNMP
 
