@@ -169,6 +169,7 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
   - [S](#s)
   - [V](#v)
   - [W](#w)
+- [Bibliographie et Webographie](#bibliographie-et-webographie)
 - [9. Annexes](#9-annexes)
 
 
@@ -1483,7 +1484,7 @@ Cette approche permet de réduire significativement la surface d’attaque du se
 
 ## 7. Les relations avec les principaux acteurs du projet
 
-La réussite de cette preuve de concept a nécessité une communication fluide et régulière avec les différentes parties prenantes au sein de la Direction des Systèmes d'Information (DSI) d'ARCHE Agglo. 
+La réussite de cette preuve de concept a nécessité une communication fluide et régulière avec les différentes parties prenantes au sein de la Direction des Systèmes d'Information d'ARCHE Agglo. 
 
 * **Avec la Direction (Mon Tuteur / Responsable Informatique) :**
   Les échanges ont été réguliers, principalement lors des phases de cadrage et de validation[cite: 1]. J'ai soumis le Document d'Architecture Technique (DAT) à mon tuteur pour validation des choix technologiques (Debian 13, GLPI 11, PHP 8.4) et des exigences de sécurité. Cette relation m'a permis d'obtenir les ressources nécessaires (Machine Virtuelle sur l'hyperviseur Proxmox, adresse IP fixe) et de m'assurer que le projet s'inscrivait bien dans la politique de sécurité globale de la collectivité.
@@ -1645,6 +1646,12 @@ Technologie permettant d'exécuter plusieurs systèmes d'exploitation sur un mê
 
 Solution open source de supervision de sécurité et de détection d'intrusion.
 
+## Bibliographie et Webographie
+
+1. **GLPI Project** - *Documentation officielle d'installation et de configuration de GLPI 11 et de l'agent d'inventaire* : [https://glpi-project.org/documentation/](https://glpi-project.org/documentation/)
+2. **Wazuh SIEM/XDR** - *Guide officiel de déploiement du manager et enrôlement des agents sous Debian Linux* : [https://documentation.wazuh.com/](https://documentation.wazuh.com/)
+3. **ANSSI** - *Guide de durcissement des systèmes d'exploitation GNU/Linux et recommandations sur la configuration SSH* : [https://www.ssi.gouv.fr/](https://www.ssi.gouv.fr/)
+4. **Fail2ban** - *Documentation de configuration des filtres de protection locaux (jails)* : [https://www.fail2ban.org/](https://www.fail2ban.org/)
 
 ## 9. Annexes
 
