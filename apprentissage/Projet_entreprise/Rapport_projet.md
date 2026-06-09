@@ -1057,6 +1057,10 @@ En cas d’incident majeur :
 * Restauration complète de la VM possible  
 * Restauration de la base GLPI indépendante  
 
+Afin de valider cette stratégie, un test réel de Plan de Reprise d'Activité a été exécuté. À l'issue de la restauration de la machine virtuelle et de la réinjection du dump de la base de données, l'intégrité des données a été confirmée.
+
+![nterface GLPI après restauration PRA](../Images/GLPI_Post_Restauration.png)
+
 Cette organisation garantit une remise en service rapide tout en limitant la perte de données.
 
 ### 4.10 Justification des choix de sécurité et évolutions
