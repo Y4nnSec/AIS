@@ -52,6 +52,7 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
 - [Table des matières](#table-des-matières)
 - [Table des mises à jour du document](#table-des-mises-à-jour-du-document)
 - [Méthodologie de lecture](#méthodologie-de-lecture)
+- [Résumé Exécutif](#résumé-exécutif)
 - [Introduction](#introduction)
 - [Présentation du candidat](#présentation-du-candidat)
 - [Présentation de l'entreprise](#présentation-de-lentreprise)
@@ -104,6 +105,8 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
   - [4.3. Tableau comparatif des solutions](#43-tableau-comparatif-des-solutions)
   - [4.4. Proposition de solution](#44-proposition-de-solution)
     - [A. Architecture Réseau Globale](#a-architecture-réseau-globale)
+      - [1. Architecture réseau initiale (Avant projet)](#1-architecture-réseau-initiale-avant-projet)
+      - [2. Architecture réseau cible (Après projet)](#2-architecture-réseau-cible-après-projet)
     - [B. Plan d'adressage cible et Segmentation (VLAN)](#b-plan-dadressage-cible-et-segmentation-vlan)
     - [C. Les fonctionnalités clés de GLPI exploitées](#c-les-fonctionnalités-clés-de-glpi-exploitées)
     - [D. Focus technique : La différence entre Découverte et Inventaire réseau](#d-focus-technique--la-différence-entre-découverte-et-inventaire-réseau)
@@ -128,6 +131,8 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
     - [B. Déploiement de l'agent GLPI sous Debian](#b-déploiement-de-lagent-glpi-sous-debian)
     - [C. Installation](#c-installation)
   - [5.2. Schéma détaillé](#52-schéma-détaillé)
+    - [A. Architecture détaillée initiale (Avant projet)](#a-architecture-détaillée-initiale-avant-projet)
+    - [B. Architecture détaillée cible (Après projet)](#b-architecture-détaillée-cible-après-projet)
   - [5.3. Diagramme de Séquence du Protocole SNMP](#53-diagramme-de-séquence-du-protocole-snmp)
   - [5.4 Politique de sécurité mise en œuvre](#54-politique-de-sécurité-mise-en-œuvre)
     - [Intégration dans la politique de sécurité du SI](#intégration-dans-la-politique-de-sécurité-du-si)
@@ -185,6 +190,22 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
 
 ## Méthodologie de lecture
 Ce rapport de projet est structuré de manière chronologique, suivant le cycle de vie du projet (Cadrage, Conception, Réalisation, Validation, Clôture). Les blocs de texte sur fond sombre représentent des commandes à exécuter dans un terminal Linux ou des extraits de fichiers de configuration. Un glossaire et une webographie sont mis à disposition en fin de document pour expliciter les termes techniques et référencer les documentations officielles utilisées.
+
+
+## Résumé Exécutif
+
+Dans un contexte d'accroissement des cybermenaces et de nécessité d'optimisation de la gestion du parc informatique multi-sites d'ARCHE Agglo, ce projet a pour but de concevoir et déployer une infrastructure sécurisée de gestion et de supervision. 
+
+La solution technique retenue s'articule autour d'un environnement virtualisé (Proxmox / Debian 13) hébergeant la plateforme **GLPI** (pour l'inventaire automatisé et le Helpdesk), couplée au SIEM **Wazuh** et à **Fail2ban** (pour la détection et la réponse active aux incidents de sécurité).
+
+S'appuyant exclusivement sur des technologies Open Source éprouvées, cette architecture représente un **coût de licence logiciel nul (0€)** pour la collectivité. 
+
+Le retour sur investissement sécuritaire et opérationnel est immédiat :
+* **Automatisation :** Visibilité exhaustive du parc réseau via des requêtes SNMPv3 chiffrées, réduisant le temps de gestion manuel.
+* **Résilience :** Réduction drastique de la surface d'attaque grâce au durcissement système, à l'isolation dans un VLAN de management (VLAN 99), et à un Plan de Reprise d'Activité (PRA) validé via Nextcloud.
+* **Supervision proactive :** Capacité inédite à détecter, tracer et bloquer automatiquement les comportements suspects.
+
+Cette preuve de concept valide une architecture hautement sécurisée, prête pour une future mise en production.
 
 
 ## Introduction
