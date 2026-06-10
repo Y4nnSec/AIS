@@ -58,7 +58,7 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
 - [Présentation de l'entreprise](#présentation-de-lentreprise)
 - [Enjeux du projet](#enjeux-du-projet)
 - [Problématique](#problématique)
-  - [Objectifs réalisés](#objectifs-réalisés)
+- [Objectifs réalisés](#objectifs-réalisés)
 - [Environnement Technique](#environnement-technique)
 - [1. Liste des compétences mises en œuvre dans le cadre du projet](#1-liste-des-compétences-mises-en-œuvre-dans-le-cadre-du-projet)
   - [1.1. Mes missions au quotidien](#11-mes-missions-au-quotidien)
@@ -157,9 +157,14 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
   - [6.6 Conclusion sécurité](#66-conclusion-sécurité)
 - [7. Les relations avec les principaux acteurs du projet](#7-les-relations-avec-les-principaux-acteurs-du-projet)
   - [7.1. Accompagnement au changement et Formation du personnel](#71-accompagnement-au-changement-et-formation-du-personnel)
-- [8. Synthèse et conclusion](#8-synthèse-et-conclusion)
+- [8. Retour d'expérience](#8-retour-dexpérience)
+  - [Difficultés rencontrées](#difficultés-rencontrées)
+  - [Méthodologie adoptée](#méthodologie-adoptée)
+  - [Compétences développées](#compétences-développées)
+  - [Apports professionnels](#apports-professionnels)
+- [9. Synthèse et conclusion](#9-synthèse-et-conclusion)
   - [Objectifs réalisés](#objectifs-réalisés-1)
-- [Glossaire](#glossaire)
+- [10. Glossaire](#10-glossaire)
   - [A](#a)
   - [C](#c)
   - [D](#d)
@@ -175,8 +180,7 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
   - [V](#v)
   - [W](#w)
 - [Bibliographie et Webographie](#bibliographie-et-webographie)
-- [9. Annexes](#9-annexes)
-
+- [11. Annexes](#11-annexes)
 
 
 ## Table des mises à jour du document
@@ -277,7 +281,7 @@ Ces enjeux sont essentiels pour garantir la disponibilité, l’intégrité et l
 Comment mettre en place une solution centralisée permettant d’assurer un inventaire fiable, une supervision efficace et un renforcement de la sécurité, dans un environnement multi-sites contraint, sans impacter l’infrastructure de production existante ?
 
 
-### Objectifs réalisés
+## Objectifs réalisés
 * **Déploiement maîtrisé :** Mise en place d'une stack LAMP optimisée et cloisonnée sous Debian 13.
 * **Automatisation de l'inventaire :** Découverte réseau et remontée via le protocole SNMPv3 (chiffré et authentifié).
 * **Défense en profondeur :** Sécurisation des flux (HTTPS/LDAPS), durcissement système (UFW, Fail2Ban) et mise en place d'une réponse active.
@@ -1527,6 +1531,7 @@ L’association de Wazuh et Fail2ban permet de mettre en place une architecture 
 
 Cette approche permet de réduire significativement la surface d’attaque du serveur GLPI tout en assurant une capacité de détection et de réaction en temps réel.
 
+
 ## 7. Les relations avec les principaux acteurs du projet
 
 La réussite de cette preuve de concept a nécessité une communication fluide et régulière avec les différentes parties prenantes au sein de la Direction des Systèmes d'Information d'ARCHE Agglo. 
@@ -1551,7 +1556,61 @@ L'objectif de cette formation technique était de :
 
 Les procédures documentées (livrables de production et d'exploitation) que j'ai publiées sur GitHub servent de support de formation continu pour l'équipe
 
-## 8. Synthèse et conclusion
+
+## 8. Retour d'expérience
+
+Ce projet m'a permis de mettre en pratique les compétences acquises durant ma formation d'Administrateur d'Infrastructures Sécurisées dans un contexte proche d'un environnement de production.
+
+La réalisation de cette maquette m'a amené à intervenir sur plusieurs domaines techniques complémentaires :
+
+- administration système Linux ;
+- virtualisation sous Proxmox ;
+- gestion de parc informatique avec GLPI ;
+- supervision de sécurité avec Wazuh ;
+- sécurisation des services réseau ;
+- documentation technique et gestion de projet.
+
+### Difficultés rencontrées
+
+Plusieurs difficultés ont été rencontrées au cours du projet :
+
+- configuration des échanges SNMP entre les équipements réseau et GLPI ;
+- intégration et validation des agents de supervision Wazuh ;
+- compréhension et paramétrage des mécanismes de détection et de réponse active ;
+- sécurisation des flux entre les différents composants de l'infrastructure.
+
+Ces problématiques ont nécessité de nombreuses phases de recherche, de tests et de validation avant d'obtenir une solution stable et fonctionnelle.
+
+### Méthodologie adoptée
+
+Afin de résoudre les difficultés rencontrées, une démarche méthodique a été appliquée :
+
+- analyse des journaux système et applicatifs ;
+- consultation de la documentation officielle ;
+- réalisation de tests en environnement isolé ;
+- validation progressive de chaque composant avant intégration complète.
+
+Cette approche a permis de limiter les risques d'erreur et de faciliter le diagnostic lors des phases de dépannage.
+
+### Compétences développées
+
+Ce projet m'a permis de renforcer mes compétences dans les domaines suivants :
+
+- conception d'une architecture sécurisée ;
+- administration avancée de systèmes Linux ;
+- supervision et détection d'incidents de sécurité ;
+- gestion des sauvegardes et de la continuité de service ;
+- rédaction de documentation technique ;
+- communication avec les différents acteurs d'un projet informatique.
+
+### Apports professionnels
+
+Au-delà de l'aspect technique, ce projet m'a permis de mieux comprendre les contraintes réelles d'une collectivité territoriale en matière de gestion de parc, de sécurité et de disponibilité des services.
+
+Il a également renforcé ma capacité à justifier des choix techniques, à vulgariser des concepts de cybersécurité et à adopter une posture de conseil auprès des utilisateurs et des responsables informatiques.
+
+
+## 9. Synthèse et conclusion
 
 Le projet de déploiement d'un environnement de test GLPI pour ARCHE Agglo s'est achevé avec succès. L'ensemble des objectifs définis dans le cahier des charges a été atteint : la plateforme est fonctionnelle, sécurisée, et répond parfaitement aux exigences du Document d'Architecture Technique (DAT). 
 
@@ -1577,7 +1636,7 @@ D'un point de vue professionnel, ce projet valide pleinement les compétences vi
 La maquette ayant fait ses preuves de stabilité et de sécurité, la prochaine étape logique sera la migration de cette configuration vers l'environnement de production. À plus long terme, comme identifié lors de l'étude d'architecture, l'implémentation d'un système d'authentification unique (SSO) basé sur le protocole OpenID Connect constituera une évolution majeure. Cela permettra de centraliser la gestion des identités tout en offrant une expérience utilisateur simplifiée et plus sécurisée aux agents de la collectivité.
 
 
-## Glossaire
+## 10. Glossaire
 
 ### A
 
@@ -1698,7 +1757,7 @@ Solution open source de supervision de sécurité et de détection d'intrusion.
 3. **ANSSI** - *Guide de durcissement des systèmes d'exploitation GNU/Linux et recommandations sur la configuration SSH* : [https://www.ssi.gouv.fr/](https://www.ssi.gouv.fr/)
 4. **Fail2ban** - *Documentation de configuration des filtres de protection locaux (jails)* : [https://www.fail2ban.org/](https://www.fail2ban.org/)
 
-## 9. Annexes
+## 11. Annexes
 
 * **Annexe 1 :** Document d'Architecture Technique (DAT) GLPI.
 
