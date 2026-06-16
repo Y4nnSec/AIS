@@ -161,6 +161,7 @@ Je remercie particulièrement Monsieur **Waldeck GOURRU**, chef du système d’
   - [Difficultés rencontrées](#difficultés-rencontrées)
   - [Méthodologie adoptée](#méthodologie-adoptée)
   - [Compétences développées](#compétences-développées)
+  - [Bilan personnel](#bilan-personnel)
   - [Apports professionnels](#apports-professionnels)
 - [9. Synthèse et conclusion](#9-synthèse-et-conclusion)
   - [Objectifs réalisés](#objectifs-réalisés-1)
@@ -1602,6 +1603,12 @@ Ce projet m'a permis de renforcer mes compétences dans les domaines suivants :
 - gestion des sauvegardes et de la continuité de service ;
 - rédaction de documentation technique ;
 - communication avec les différents acteurs d'un projet informatique.
+
+### Bilan personnel
+
+Ce projet a constitué ma première mise en œuvre complète d'une solution intégrant à la fois la gestion de parc informatique, la supervision de sécurité et les mécanismes de protection active. Il m'a permis d'appréhender l'ensemble du cycle de vie d'un projet d'infrastructure, depuis l'étude de l'existant jusqu'à la validation technique de la solution déployée.
+
+J'ai particulièrement développé ma capacité à analyser un besoin, à justifier des choix techniques et à résoudre des problématiques complexes en autonomie. Cette expérience a renforcé mon intérêt pour les domaines de l'administration système et de la cybersécurité.
 
 ### Apports professionnels
 
