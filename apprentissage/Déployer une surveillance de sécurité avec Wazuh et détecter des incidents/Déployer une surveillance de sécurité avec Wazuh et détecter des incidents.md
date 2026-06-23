@@ -13,4 +13,4 @@
 **Mission 1** : [Installation](<Installation et Configuration de Wazuh - Installer Wazuh dans un environnement simulé et configurer la collecte de logs.md>)
 
 
-**Mission 2 :** explorer les capacités de Wazuh à travers les différents uses cases proposés dans sa documentation officielle (à travers la réalisation de use-cases pratiques) : 
+**Mission 2 :** [Capacités Wazuh](<Explorer les capacités de Wazuh à travers les différents uses cases proposés dans sa documentation officielle.md>)
