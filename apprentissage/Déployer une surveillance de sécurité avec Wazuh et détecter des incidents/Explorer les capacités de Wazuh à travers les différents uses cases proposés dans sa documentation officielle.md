@@ -231,69 +231,208 @@ Pour ce faire :
 
 📸 [Capture d'écran supplémentaire (Optionnelle mais recommandée) : Le détail d'une des alertes (en cliquant sur la petite flèche pour l'étendre), montrant le contenu exact qui a été modifié ou ajouté dans le fichier texte, prouvant que l'attribut report_changes="yes" fonctionne correctement]
 
+* Détection d'attaques bruteforce : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-brute-force-attack.html
 
+# Détection d'une attaque par force brute (Brute-force)
 
+L'attaque par force brute est un vecteur d'attaque courant utilisé par des acteurs malveillants pour obtenir un accès non autorisé à des points de terminaison et à des services. Les services tels que SSH sur les serveurs Linux et RDP sur les postes Windows sont particulièrement exposés à ce type de menace. Wazuh identifie ces attaques en corrélant plusieurs événements d'échec d'authentification successifs.
 
+Ce cas d'usage démontre comment simuler et détecter une attaque par force brute visant les protocoles SSH et RDP.
 
+## 1. Infrastructure requise
 
+Afin de réaliser ce scénario, trois rôles (ou machines) sont nécessaires :
+* **Machine de l'attaquant :** Un système Linux (ex: Ubuntu) depuis lequel l'attaque sera lancée. *Note : Dans un environnement de laboratoire restreint, la machine hébergeant la sonde Suricata peut jouer ce rôle.*
+* **Cible Linux (Ubuntu 24.04) :** La victime des attaques SSH. Il est requis d'avoir un serveur SSH installé, activé et supervisé par l'agent Wazuh sur cette machine.
+* **Cible Windows (Windows 11) :** La victime des attaques RDP. Le bureau à distance (RDP) doit être activé sur ce point de terminaison.
 
+## 2. Configuration de l'attaquant
 
+Les étapes suivantes permettent de configurer la machine de l'attaquant pour générer des tentatives d'authentification échouées sur les cibles.
 
+Sur la machine de l'attaquant, installer l'outil de sécurité **Hydra**, qui permet d'exécuter l'attaque par dictionnaire :
 
+```bash
+sudo apt update
+sudo apt install -y hydra
+```
 
+## 3. Émulation de l'attaque
 
+### 3.1 Préparation du dictionnaire
 
+Créer un fichier texte contenant une liste de mots de passe aléatoires (par exemple, 10 mots de passe erronés) qui serviront pour l'attaque.
 
+```bash
+nano pass.txt
+```
 
+📸 [Capture d'écran : Le terminal affichant le contenu du fichier pass.txt (via un simple cat pass.txt) pour montrer la liste des mots de passe générés pour le test]
 
+### 3.2 Attaque contre le serveur Linux (SSH)
 
+Exécuter Hydra depuis la machine de l'attaquant pour lancer l'attaque par force brute contre le service SSH. Remplacer <*IP_LINUX*> par l'adresse IP de la cible Ubuntu surveillée :
 
+```bash
+sudo hydra -l badguy -P pass.txt ssh://<IP_LINUX>
+```
 
+(Variante de syntaxe selon la version d'Hydra : *sudo hydra -l badguy -P pass.txt <IP_LINUX> ssh*)
 
+📸 [Capture d'écran : Le terminal de l'attaquant en train d'exécuter la commande Hydra contre l'IP Linux. L'outil doit afficher les différentes tentatives de connexion échouées en temps réel]
 
+### 3.3 Attaque contre le poste Windows (RDP)
 
+De la même manière, exécuter Hydra pour cibler le service Bureau à distance (RDP) du poste client Windows. Remplacer <*IP_WINDOWS*> par l'adresse IP de la cible Windows 11 :
 
+```bash
+sudo hydra -l badguy -P pass.txt rdp://<IP_WINDOWS>
+```
 
+📸 [Capture d'écran : Le terminal de l'attaquant exécutant l'attaque Hydra contre l'IP de la machine Windows 11]
 
+## 4. Visualisation des alertes
 
+Une fois les attaques lancées, les échecs d'authentification répétés sont automatiquement analysés par Wazuh, qui va déclencher des alertes de sécurité de niveau critique ou élevé.
 
+Il est possible de visualiser ces données directement dans le tableau de bord.
+Pour ce faire :
 
+* Accéder au module Threat Hunting dans l'interface web de Wazuh.
 
+* Ajouter les filtres suivants dans la barre de recherche pour interroger les alertes spécifiques à ces attaques :
 
+Pour la cible Linux (SSH) :
 
+* rule.id:(5551 OR 5712)
+(D'autres règles connexes peuvent également apparaître, telles que 5710, 5711, 5716, 5720, 5503, 5504).
 
+📸 [Capture d'écran : Le dashboard Wazuh filtré sur les règles SSH, montrant le pic d'alertes "sshd: brute force trying to get access to the system" ou "sshd: authentication failed"]
 
+Pour la cible Windows (RDP) :
 
+rule.id:(60122 OR 60204)
 
+📸 [Capture d'écran : Le dashboard Wazuh filtré sur les règles Windows, montrant les alertes d'échec de connexion RDP ("Logon Failure" / Event ID 4625), confirmant que l'agent a bien remonté les événements de sécurité du journal Windows]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Détection d'attaques bruteforce : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-brute-force-attack.html
 * Détection de processus non autorisés : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-unauthorized-processes-netcat.html
-* Détection de tentatives d'injection SQL : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-web-attack-sql-injection.html
+
+# Détection de processus non autorisés (Monitoring de commandes)
+
+La fonctionnalité de surveillance des commandes de Wazuh permet d'exécuter périodiquement des instructions sur un point de terminaison et d'en analyser la sortie. 
+
+Ce cas d'usage exploite cette capacité pour détecter l'exécution d'un processus spécifique non autorisé, en l'occurrence **Netcat** (souvent utilisé de manière illégitime pour l'écoute ou le balayage de ports), sur une machine cible.
+
+## 1. Infrastructure requise
+
+* **Machine cible (Endpoint) :** Un serveur sous **Ubuntu 24.04**. Le module de surveillance des commandes y sera configuré pour détecter le lancement du processus Netcat.
+* **Serveur Wazuh (Manager) :** Le serveur central qui hébergera les règles de détection personnalisées.
+
+## 2. Configuration de la machine cible (Ubuntu)
+
+Les étapes suivantes permettent de configurer la surveillance des commandes afin d'interroger périodiquement la liste des processus en cours d'exécution.
+
+1. Ajouter le bloc de configuration suivant dans le fichier `/var/ossec/etc/ossec.conf` de l'agent Wazuh. Cela permet d'exécuter la commande `ps` toutes les 30 secondes :
+
+```xml
+<ossec_config>
+  <localfile>
+    <log_format>full_command</log_format>
+    <alias>process list</alias>
+    <command>ps -e -o pid,uname,command</command>
+    <frequency>30</frequency>
+  </localfile>
+</ossec_config>
+```
+
+📸 [Capture d'écran : Le fichier ossec.conf ouvert sur la machine cible Ubuntu, mettant en évidence l'ajout du bloc <localfile> avec la commande ps -e -o pid,uname,command]
+
+Redémarrer l'agent Wazuh pour appliquer les modifications :
+
+```bash
+sudo systemctl restart wazuh-agent
+```
+
+* Installer Netcat (et ses dépendances) sur cette machine pour pouvoir simuler l'attaque ultérieurement :
+
+```bash
+sudo apt install ncat nmap -y
+```
+
+* Configuration du serveur Wazuh (Manager)
+
+Il est ensuite nécessaire de créer une règle personnalisée sur le serveur central pour qu'une alerte soit déclenchée chaque fois que le programme Netcat passe en mode écoute.
+
+Ajouter les règles suivantes dans le fichier */var/ossec/etc/rules/local_rules.xml* sur le serveur Wazuh :
+
+```XML
+<group name="ossec,">
+  <rule id="100050" level="0">
+    <if_sid>530</if_sid>
+    <match>^ossec: output: 'process list'</match>
+    <description>List of running processes.</description>
+    <group>process_monitor,</group>
+  </rule>
+
+  <rule id="100051" level="7" ignore="900">
+    <if_sid>100050</if_sid>
+    <match>nc -l</match>
+    <description>netcat listening for incoming connections.</description>
+    <group>process_monitor,</group>
+  </rule>
+</group>
+```
+
+📸 [Capture d'écran : Le fichier local_rules.xml édité sur le serveur Wazuh Manager, montrant la syntaxe correcte des règles 100050 et 100051]
+
+* Redémarrer le service Wazuh Manager pour compiler et appliquer ces nouvelles règles :
+
+```BASH
+sudo systemctl restart wazuh-manager
+```
+
+* Émulation de l'attaque
+Pour vérifier le bon fonctionnement de la règle, il faut simuler le lancement d'un processus non autorisé sur la machine cible.
+
+Sur la machine Ubuntu surveillée, exécuter la commande Netcat en mode écoute sur le port 8000 et la laisser tourner pendant au moins 30 secondes (pour laisser le temps au script de l'agent de s'exécuter) :
+
+```BASH
+nc -l 8000
+```
+
+📸 [Capture d'écran : Le terminal de la machine Ubuntu exécutant la commande nc -l 8000 et restant en attente (curseur bloquant)]
+
+* Visualisation des alertes
+Les données d'alerte peuvent désormais être consultées dans le tableau de bord Wazuh.
+
+Pour ce faire :
+
+* Accéder au module Threat Hunting.
+
+Ajouter le filtre suivant dans la barre de recherche pour isoler spécifiquement la règle personnalisée fraîchement créée :
+
+rule.id:(100051)
+
+📸 [Capture d'écran : Le tableau de bord Wazuh filtré sur rule.id: 100051, montrant l'alerte de niveau 7 avec la description "netcat listening for incoming connections". Déplier les détails de l'alerte (full_log) pour montrer que la commande exacte interceptée y figure bien.]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Détection de tentatives d'injection SQL : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-web-attack-sql-injection.html
 * Détection de cheval de troie : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-detect-trojan.html
 * Traitement de malware à travers l'intégration de VirusTotal : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-remove-malware-virustotal.html
 * Détection de vulnérabilités : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-vulnerability-detection.html
