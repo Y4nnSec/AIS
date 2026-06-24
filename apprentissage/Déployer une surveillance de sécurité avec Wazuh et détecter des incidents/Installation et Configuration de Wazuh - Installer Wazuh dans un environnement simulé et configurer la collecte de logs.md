@@ -58,12 +58,12 @@ sudo tar -O -xvf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
 
 ### 3. Accès au Dashboard
 
-* Ouvre le navigateur et se rendre sur https://<IP_DU_SERVEUR>.
-* Lors du premier accès, le navigateur affiche un message d'avertissement indiquant que le certificat n'a pas été émis par une autorité de confiance. Ceci est attendu et l'utilisateur a la possibilité d'accepter le certificat comme exception ou, alternativement, de configurer le système pour utiliser un certificat provenant d'une autorité de confiance.
+1. Ouvre le navigateur et se rendre sur https://<IP_DU_SERVEUR>.
+2. Lors du premier accès, le navigateur affiche un message d'avertissement indiquant que le certificat n'a pas été émis par une autorité de confiance. Ceci est attendu et l'utilisateur a la possibilité d'accepter le certificat comme exception ou, alternativement, de configurer le système pour utiliser un certificat provenant d'une autorité de confiance.
 
 📸 [Capture d'écran : L'avertissement de sécurité du navigateur (type "Votre connexion n'est pas privée").]
 
-Connecte-toi avec l'utilisateur admin et le mot de passe fourni à l'étape précédente.
+1. Connecte-toi avec l'utilisateur admin et le mot de passe fourni à l'étape précédente.
 
 📸 [Capture d'écran : La page d'accueil globale de Wazuh (le Dashboard) montrant que l'interface est fonctionnelle.]
 

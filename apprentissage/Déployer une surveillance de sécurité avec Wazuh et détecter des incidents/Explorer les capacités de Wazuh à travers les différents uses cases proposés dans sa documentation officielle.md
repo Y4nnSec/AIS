@@ -171,7 +171,7 @@ Les étapes suivantes permettent de configurer l'agent Wazuh pour surveiller les
 
 📸 [Capture d'écran : Le fichier ossec.conf ouvert dans un éditeur de texte (comme nano ou vim) sur la machine Ubuntu, mettant en évidence la ligne <directories...> ajoutée dans le bloc <syscheck>]
 
-* Redémarrer l'agent Wazuh pour appliquer les modifications de configuration :
+1. Redémarrer l'agent Wazuh pour appliquer les modifications de configuration :
 
 ```bash
 sudo systemctl restart wazuh-agent
@@ -181,9 +181,9 @@ sudo systemctl restart wazuh-agent
 
 Les étapes suivantes permettent de configurer l'agent Wazuh pour surveiller les modifications dans le répertoire du bureau de l'utilisateur.
 
-* Ouvrir le fichier de configuration *C:\Program Files (x86)\ossec-agent\ossec.conf* sur la machine Windows surveillée (avec des droits d'administrateur).
+1. Ouvrir le fichier de configuration *C:\Program Files (x86)\ossec-agent\ossec.conf* sur la machine Windows surveillée (avec des droits d'administrateur).
 
-* Ajouter le répertoire à surveiller dans le bloc <*syscheck*>. Il faut remplacer <*USER_NAME*> par le nom de l'utilisateur de la session Windows 11 :
+2. Ajouter le répertoire à surveiller dans le bloc <*syscheck*>. Il faut remplacer <*USER_NAME*> par le nom de l'utilisateur de la session Windows 11 :
 
 ```XML
 <directories check_all="yes" report_changes="yes" realtime="yes">C:\Users\<USER_NAME>\Desktop</directories>
@@ -191,7 +191,7 @@ Les étapes suivantes permettent de configurer l'agent Wazuh pour surveiller les
 
 📸 [Capture d'écran : Le fichier ossec.conf ouvert dans le Bloc-notes (Notepad) ou Notepad++ sur la machine Windows 11, avec la ligne bien renseignée avec le bon nom d'utilisateur]
 
-Redémarrer le service de l'agent Wazuh à l'aide de PowerShell (lancé en tant qu'administrateur) pour appliquer les changements :
+1. Redémarrer le service de l'agent Wazuh à l'aide de PowerShell (lancé en tant qu'administrateur) pour appliquer les changements :
 
 ```PowerShell
 Restart-Service -Name wazuh
@@ -203,15 +203,15 @@ Restart-Service -Name wazuh
 
 Afin de vérifier que le module FIM remonte correctement les informations, il faut simuler une activité suspecte sur les deux machines (Ubuntu et Windows) dans les répertoires surveillés :
 
-* Créer un fichier texte dans le répertoire surveillé.
+1. Créer un fichier texte dans le répertoire surveillé.
 
-* Attendre 5 secondes.
+2. Attendre 5 secondes.
 
-* Ajouter du contenu au fichier texte, puis l'enregistrer.
+3. Ajouter du contenu au fichier texte, puis l'enregistrer.
 
-* Attendre 5 secondes.
+4. Attendre 5 secondes.
 
-* Supprimer le fichier texte du répertoire surveillé.
+5. Supprimer le fichier texte du répertoire surveillé.
 
 📸 [Capture d'écran : Deux terminaux (ou fenêtres) côte à côte. L'un montrant la création/modification du fichier sur Ubuntu (via des commandes comme touch, echo, rm), l'autre montrant l'action équivalente sur le bureau Windows 11]
 
@@ -221,11 +221,11 @@ Il est possible de visualiser les données d'alerte générées par ces actions 
 
 Pour ce faire :
 
-* Se rendre dans le module File Integrity Monitoring (ou Threat Hunting) de l'interface web.
+1. Se rendre dans le module File Integrity Monitoring (ou Threat Hunting) de l'interface web.
 
-* Ajouter le filtre suivant dans la barre de recherche pour interroger spécifiquement les alertes de création, modification et suppression de fichiers :
+2. Ajouter le filtre suivant dans la barre de recherche pour interroger spécifiquement les alertes de création, modification et suppression de fichiers :
 
-  * rule.id: is one of 550,553,554
+   * rule.id: is one of 550,553,554
 
 📸 [Capture d'écran : Le tableau de bord Wazuh filtré par ces rule.id, montrant clairement les trois phases de l'attaque simulée (Création = 554, Modification = 550, Suppression = 553) pour les deux agents (Ubuntu et Windows)]
 
@@ -298,9 +298,9 @@ Une fois les attaques lancées, les échecs d'authentification répétés sont a
 Il est possible de visualiser ces données directement dans le tableau de bord.
 Pour ce faire :
 
-* Accéder au module Threat Hunting dans l'interface web de Wazuh.
+1. Accéder au module Threat Hunting dans l'interface web de Wazuh.
 
-* Ajouter les filtres suivants dans la barre de recherche pour interroger les alertes spécifiques à ces attaques :
+2. Ajouter les filtres suivants dans la barre de recherche pour interroger les alertes spécifiques à ces attaques :
 
 Pour la cible Linux (SSH) :
 
@@ -311,7 +311,7 @@ Pour la cible Linux (SSH) :
 
 Pour la cible Windows (RDP) :
 
-rule.id:(60122 OR 60204)
+* rule.id:(60122 OR 60204)
 
 📸 [Capture d'écran : Le dashboard Wazuh filtré sur les règles Windows, montrant les alertes d'échec de connexion RDP ("Logon Failure" / Event ID 4625), confirmant que l'agent a bien remonté les événements de sécurité du journal Windows]
 
@@ -347,23 +347,23 @@ Les étapes suivantes permettent de configurer la surveillance des commandes afi
 
 📸 [Capture d'écran : Le fichier ossec.conf ouvert sur la machine cible Ubuntu, mettant en évidence l'ajout du bloc <localfile> avec la commande ps -e -o pid,uname,command]
 
-Redémarrer l'agent Wazuh pour appliquer les modifications :
+2. Redémarrer l'agent Wazuh pour appliquer les modifications :
 
 ```bash
 sudo systemctl restart wazuh-agent
 ```
 
-* Installer Netcat (et ses dépendances) sur cette machine pour pouvoir simuler l'attaque ultérieurement :
+3. Installer Netcat (et ses dépendances) sur cette machine pour pouvoir simuler l'attaque ultérieurement :
 
 ```bash
 sudo apt install ncat nmap -y
 ```
 
-* Configuration du serveur Wazuh (Manager)
+## 3. Configuration du serveur Wazuh (Manager)
 
 Il est ensuite nécessaire de créer une règle personnalisée sur le serveur central pour qu'une alerte soit déclenchée chaque fois que le programme Netcat passe en mode écoute.
 
-Ajouter les règles suivantes dans le fichier */var/ossec/etc/rules/local_rules.xml* sur le serveur Wazuh :
+1. Ajouter les règles suivantes dans le fichier */var/ossec/etc/rules/local_rules.xml* sur le serveur Wazuh :
 
 ```XML
 <group name="ossec,">
@@ -385,13 +385,14 @@ Ajouter les règles suivantes dans le fichier */var/ossec/etc/rules/local_rules.
 
 📸 [Capture d'écran : Le fichier local_rules.xml édité sur le serveur Wazuh Manager, montrant la syntaxe correcte des règles 100050 et 100051]
 
-* Redémarrer le service Wazuh Manager pour compiler et appliquer ces nouvelles règles :
+2. Redémarrer le service Wazuh Manager pour compiler et appliquer ces nouvelles règles :
 
 ```BASH
 sudo systemctl restart wazuh-manager
 ```
 
-* Émulation de l'attaque
+## 4. Émulation de l'attaque
+
 Pour vérifier le bon fonctionnement de la règle, il faut simuler le lancement d'un processus non autorisé sur la machine cible.
 
 Sur la machine Ubuntu surveillée, exécuter la commande Netcat en mode écoute sur le port 8000 et la laisser tourner pendant au moins 30 secondes (pour laisser le temps au script de l'agent de s'exécuter) :
@@ -402,39 +403,152 @@ nc -l 8000
 
 📸 [Capture d'écran : Le terminal de la machine Ubuntu exécutant la commande nc -l 8000 et restant en attente (curseur bloquant)]
 
-* Visualisation des alertes
+## 5.  Visualisation des alertes
 Les données d'alerte peuvent désormais être consultées dans le tableau de bord Wazuh.
 
 Pour ce faire :
 
-* Accéder au module Threat Hunting.
+1. Accéder au module Threat Hunting.
 
-Ajouter le filtre suivant dans la barre de recherche pour isoler spécifiquement la règle personnalisée fraîchement créée :
+2. Ajouter le filtre suivant dans la barre de recherche pour isoler spécifiquement la règle personnalisée fraîchement créée :
 
-rule.id:(100051)
+   * rule.id:(100051)
 
 📸 [Capture d'écran : Le tableau de bord Wazuh filtré sur rule.id: 100051, montrant l'alerte de niveau 7 avec la description "netcat listening for incoming connections". Déplier les détails de l'alerte (full_log) pour montrer que la commande exacte interceptée y figure bien.]
 
+* Détection de tentatives d'injection SQL : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-web-attack-sql-injection.html
 
+# Détection d'une attaque par injection SQL (SQLi)
 
+L'injection SQL est une attaque par laquelle un acteur malveillant insère du code non autorisé dans des chaînes de caractères transmises à un serveur de base de données pour être analysées et exécutées. Une attaque réussie permet d'obtenir un accès illégitime aux informations confidentielles de la base de données.
 
+Wazuh permet de détecter ces tentatives en analysant les journaux du serveur web à la recherche de modèles courants d'injection SQL (comme les mots-clés `SELECT`, `UNION`, etc.).
 
+Ce cas d'usage démontre comment configurer la surveillance d'un serveur web Apache et détecter une simulation d'attaque par injection SQL.
 
+## 1. Infrastructure requise
 
+* **Cible (Victime) :** Un serveur sous **Ubuntu 24.04** hébergeant un serveur web Apache (version 2.4.x). L'agent Wazuh y est configuré pour lire les journaux d'accès web.
+* **Attaquant :** Une machine distante (ex: RHEL, Ubuntu ou la machine hôte) depuis laquelle la requête web malveillante sera lancée.
 
+## 2. Configuration de la machine cible (Ubuntu)
 
+Les étapes suivantes permettent d'installer le serveur web Apache et de configurer l'agent Wazuh pour en surveiller les journaux (logs).
 
+### 2.1 Installation et vérification d'Apache
 
+1. Mettre à jour les paquets locaux et installer le serveur web Apache :
 
+```bash
+sudo apt update
+sudo apt install apache2 -y
+```
 
+1. Si le pare-feu (UFW) est activé sur le système, il est nécessaire d'autoriser le trafic web entrant. (Si le pare-feu est inactif, cette étape peut être ignorée) :
 
+```bash
+sudo ufw app list
+sudo ufw allow 'Apache'
+sudo ufw status
+```
 
+2. Vérifier que le service Apache est bien en cours d'exécution :
 
+```bash
+sudo systemctl status apache2
+```
 
+3. Valider l'accès au serveur web en utilisant la commande *curl* localement ou en ouvrant un navigateur web vers *http://<IP_DE_LA_MACHINE_UBUNTU>* pour afficher la page d'accueil par défaut d'Apache.
 
-Détection de tentatives d'injection SQL : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-web-attack-sql-injection.html
+📸 [Capture d'écran : La page par défaut "Apache2 Ubuntu Default Page" affichée dans un navigateur web, ou le résultat de la commande systemctl status apache2 en vert, prouvant que le serveur web est opérationnel]
+
+### 2.2 Configuration de l'agent Wazuh
+
+Afin que Wazuh puisse analyser les requêtes web entrantes, l'agent doit être instruit de lire le fichier de journalisation d'Apache.
+
+Ajouter les lignes suivantes au fichier de configuration de l'agent Wazuh */var/ossec/etc/ossec.conf* :
+
+```xml
+<ossec_config>
+  <localfile>
+    <log_format>apache</log_format>
+    <location>/var/log/apache2/access.log</location>
+  </localfile>
+</ossec_config>
+```
+
+📸 [Capture d'écran : Le fichier *ossec.conf* ouvert sur la machine Ubuntu, mettant en évidence l'ajout du bloc *<localfile>* pointant vers */var/log/apache2/access.log*]
+
+1. Redémarrer l'agent Wazuh pour appliquer les modifications de configuration :
+
+```bash
+sudo systemctl restart wazuh-agent
+```
+
+3. Émulation de l'attaque
+Pour tester la détection, il convient d'exécuter une requête HTTP contenant une charge utile (payload) d'injection SQL basique.
+
+Depuis la machine de l'attaquant, exécuter la commande suivante (en remplaçant <IP_UBUNTU> par l'adresse IP de la cible) :
+
+```bash
+curl -XGET "http://<IP_UBUNTU>/users/?id=SELECT+*+FROM+users";
+```
+
+📸 [Capture d'écran : Le terminal de la machine attaquante exécutant la commande curl avec le payload SQLi. Le résultat affichera probablement le code source de la page d'accueil ou une erreur 404, mais l'essentiel est que la requête soit partie]
+
+## 4. Visualisation des alertes
+
+La requête malveillante a été enregistrée dans le fichier access.log d'Apache. L'agent Wazuh l'a transmise au Manager qui a identifié le modèle d'injection SQL.
+
+Les données d'alerte peuvent être visualisées dans le tableau de bord Wazuh.
+Pour ce faire :
+
+1. Accéder au module Threat Hunting.
+
+2. Ajouter l'un des filtres suivants dans la barre de recherche :
+
+   * rule.id: 31103 (Détecte une attaque par injection SQL générique via requête web)
+
+   * rule.id: 31106 (Détecte une tentative d'injection SQL qui a potentiellement réussi - code HTTP 200)
+
+📸 [Capture d'écran : Le tableau de bord Wazuh filtré sur rule.id: 31103 ou 31106, montrant l'alerte "SQL injection attempt". Il est recommandé de déplier le détail de l'alerte pour montrer le champ full_log qui contient la requête exacte SELECT * FROM users]
+
 * Détection de cheval de troie : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-detect-trojan.html
-* Traitement de malware à travers l'intégration de VirusTotal : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-remove-malware-virustotal.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Traitement de malware à travers l'intégration de VirusTotal : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-remove-malware-virustotal.html
 * Détection de vulnérabilités : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-vulnerability-detection.html
 * Détection de processus cachés par rootkit : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-detect-hidden-process.html
 * Détection de commandes malveillantes : https://documentation.wazuh.com/current/proof-of-concept-guide/audit-commands-run-by-user.html
