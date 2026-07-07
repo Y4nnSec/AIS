@@ -28,8 +28,6 @@ Les ressources nécessaires dépendent du nombre de machines supervisées. Pour 
 | **25 à 50** | 8 vCPU | 8 Go | 100 Go |
 | **50 à 100** | 8 vCPU | 8 Go | 200 Go |
 
-📸 **[Capture d'écran : Affiche le terminal de ton serveur Ubuntu avec la commande `htop` (ou `free -m` et `lscpu`) et `df -h` pour prouver que ta machine virtuelle respecte bien ces prérequis matériels]**
-
 ### 2. Installation de Wazuh
 
 Sur le serveur Ubuntu, télécharger et exécuter l'assistant d'installation avec l'option `-a` (pour tout installer sur la même machine) :
@@ -46,7 +44,10 @@ INFO: You can access the web interface https://<IP_DE_DU_SERVEUR>
     Password: <MOT_DE_PASSE_GENERE>
 INFO: Installation finished.
 
-📸 [Capture d'écran : Le terminal affichant ce fameux message "Summary" avec l'IP et le mot de passe. Pense à flouter une partie du mot de passe pour montrer que tu appliques les bonnes pratiques de sécurité]
+![alt text](Images_tp_wazuh/Wazuh_20260527-105013.png)
+![alt text](Images_tp_wazuh/Wazuh_20260527-105014.png)
+![alt text](Images_tp_wazuh/Wazuh_20260527-105014(4).png)
+![alt text](Images_tp_wazuh/Wazuh_20260527-105014(3).png)
 
 **Note :** Tu peux trouver les mots de passe de tous les utilisateurs de l'indexeur Wazuh et de l'API Wazuh dans le fichier wazuh-passwords.txt à l'intérieur de l'archive wazuh-install-files.tar. Pour les imprimer, exécute la commande suivante :
 
@@ -59,13 +60,11 @@ sudo tar -O -xvf wazuh-install-files.tar wazuh-install-files/wazuh-passwords.txt
 ### 3. Accès au Dashboard
 
 1. Ouvre le navigateur et se rendre sur https://<IP_DU_SERVEUR>.
-2. Lors du premier accès, le navigateur affiche un message d'avertissement indiquant que le certificat n'a pas été émis par une autorité de confiance. Ceci est attendu et l'utilisateur a la possibilité d'accepter le certificat comme exception ou, alternativement, de configurer le système pour utiliser un certificat provenant d'une autorité de confiance.
 
-📸 [Capture d'écran : L'avertissement de sécurité du navigateur (type "Votre connexion n'est pas privée").]
+2. Connecte-toi avec l'utilisateur admin et le mot de passe fourni à l'étape précédente.
 
-1. Connecte-toi avec l'utilisateur admin et le mot de passe fourni à l'étape précédente.
-
-📸 [Capture d'écran : La page d'accueil globale de Wazuh (le Dashboard) montrant que l'interface est fonctionnelle.]
+![alt text](Images_tp_wazuh/Wazuh_int_graph.png)
+![alt text](Images_tp_wazuh/Wazuh_int_graph(2).png)
 
 ### 4. Post-installation : Désactiver les mises à jour
 
@@ -78,6 +77,3 @@ Exécute la commande suivante pour désactiver le référentiel Wazuh (version A
 ```bash
 sudo sed -i "s/^deb/#deb/" /etc/apt/sources.list.d/wazuh.list
 ```
-
-📸 [Capture d'écran : Un petit cat /etc/apt/sources.list.d/wazuh.list montrant que la ligne est bien commentée avec un # devant]
-
