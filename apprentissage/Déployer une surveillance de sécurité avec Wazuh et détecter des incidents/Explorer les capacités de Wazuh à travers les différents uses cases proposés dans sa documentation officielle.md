@@ -18,7 +18,7 @@ Ce cas d'usage démontre comment intégrer Suricata avec Wazuh. Suricata fournit
 
 ## 1. Infrastructure requise
 
-* **Machine cible (Endpoint) :** Un serveur sous **Ubuntu 24.04** avec l'agent Wazuh préalablement installé. 
+* **Machine cible (Endpoint) :** Un serveur sous **Ubuntu 22.04** avec l'agent Wazuh préalablement installé. 
 * **Rôle :** C'est sur cette machine qu'est installé Suricata. Wazuh surveillera et analysera le trafic réseau généré et intercepté sur ce point de terminaison.
 
 ## 2. Installation et configuration de Suricata
@@ -35,7 +35,9 @@ sudo apt-get update
 sudo apt-get install suricata -y
 ```
 
-📸 [Capture d'écran : Le terminal affichant la fin de l'installation de Suricata avec succès, ou le résultat de la commande *suricata -V* montrant la version installée]
+![alt text](Images_tp_wazuh/Installation_suricata.png)
+![alt text](Images_tp_wazuh/Installation_suricata(2).png)
+![alt text](Images_tp_wazuh/Installation_suricata(3).png)
 
 ### 2.2 Téléchargement des règles de détection
 
@@ -46,6 +48,10 @@ cd /tmp/ && curl -LO [https://rules.emergingthreats.net/open/suricata-6.0.8/emer
 sudo tar -xvzf emerging.rules.tar.gz && sudo mkdir -p /etc/suricata/rules && sudo mv rules/*.rules /etc/suricata/rules/
 sudo find /etc/suricata/rules -name "*.rules" -exec chmod 777 {} \;
 ```  
+
+![alt text](<Images_tp_wazuh/Règle suricata.png>)
+![alt text](Images_tp_wazuh/Règle_suricata(2).png)
+![alt text](Images_tp_wazuh/Règle_suricata(3).png)
   
 ### 2.3 Configuration de Suricata
 
@@ -54,7 +60,7 @@ Il est nécessaire de modifier les paramètres de Suricata dans le fichier */etc
 **Définir les variables de réseau :**
   
 ```YAML
-HOME_NET: "<IP_DE_LA_MACHINE_UBUNTU_24.04>"
+HOME_NET: "<IP_DE_LA_MACHINE_UBUNTU_22.04>"
 EXTERNAL_NET: "any"
 
 default-rule-path: /etc/suricata/rules
@@ -74,7 +80,7 @@ af-packet:
   - interface: enp0s3 
 ```  
   
-📸 [Capture d'écran : Le terminal affichant le résultat de la commande *ip a* prouvant le nom de l'interface réseau, à côté du fichier *suricata.yaml* modifié montrant le bon nom d'interface renseigné]
+![alt text](Images_tp_wazuh/Paramètre_suricata.png)
 
 Redémarrer le service Suricata pour appliquer les modifications :
   
@@ -82,8 +88,6 @@ Redémarrer le service Suricata pour appliquer les modifications :
 sudo systemctl restart suricata  
 ```  
   
-📸 [Capture d'écran : Le résultat de la commande *systemctl status suricata* montrant le service en statut "active (running)"]
-
 ## 3. Configuration de l'agent Wazuh
 
 Afin que l'agent Wazuh puisse lire et transmettre les alertes générées par Suricata, il faut modifier la configuration locale de l'agent.
@@ -98,6 +102,8 @@ Ajouter le bloc de configuration suivant dans le fichier */var/ossec/etc/ossec.c
   </localfile>
 </ossec_config> 
 ```  
+
+![alt text](Images_tp_wazuh/OSSEC.conf_suricata.png)
   
 Redémarrer l'agent Wazuh pour appliquer les changements :
   
@@ -116,8 +122,8 @@ Pour vérifier le bon fonctionnement, générer un trafic ICMP (Ping) depuis le 
  ping -c 20 "<IP_DE_LA_MACHINE_UBUNTU>" 
 ```  
   
- 📸 [Capture d'écran : Le terminal d'une machine distante en train d'exécuter la commande ping vers la machine Ubuntu surveillée]
-  
+
+
 ### 4.2 Visualisation des alertes
 
 Il est possible de visualiser les données d'alerte directement dans le tableau de bord Wazuh.
@@ -128,7 +134,7 @@ Pour ce faire :
 
 * Ajouter le filtre suivant dans la barre de recherche pour isoler les événements du NIDS : rule.groups:suricata.
 
-📸 [Capture d'écran : Le dashboard Wazuh (Threat Hunting) filtré avec rule.groups:suricata, montrant clairement les événements de trafic réseau interceptés (ex: ICMP request)]
+![alt text](Images_tp_wazuh/Attaque_ICMP.png)
 
 ## 5. Dépannage (Troubleshooting)
 
@@ -151,7 +157,7 @@ Ce cas d'usage exploite le module FIM de Wazuh pour détecter les modifications 
 
 ## 1. Infrastructure requise
 
-* **Serveur Linux (Ubuntu 24.04) :** Le module FIM surveillera un répertoire spécifique sur cette machine cible pour détecter les changements de fichiers.
+* **Serveur Linux (Ubuntu 22.04) :** Le module FIM surveillera un répertoire spécifique sur cette machine cible pour détecter les changements de fichiers.
 * **Poste Client (Windows 11) :** Le module FIM surveillera un répertoire spécifique sur ce point de terminaison pour détecter les mêmes types d'événements.
 
 ## 2. Configuration
@@ -167,15 +173,15 @@ Les étapes suivantes permettent de configurer l'agent Wazuh pour surveiller les
 <directories check_all="yes" report_changes="yes" realtime="yes">/root</directories>
 ```
 
-(*Note : Il est possible de configurer n'importe quel chemin dans le bloc <directories> en fonction des besoins de sécurité*).
-
-📸 [Capture d'écran : Le fichier ossec.conf ouvert dans un éditeur de texte (comme nano ou vim) sur la machine Ubuntu, mettant en évidence la ligne <directories...> ajoutée dans le bloc <syscheck>]
+![alt text](Images_tp_wazuh/Directories_suricata.png)
 
 1. Redémarrer l'agent Wazuh pour appliquer les modifications de configuration :
 
 ```bash
 sudo systemctl restart wazuh-agent
 ```
+
+![alt text](Images_tp_wazuh/Redémarrage_agent_wazuh.png)
 
 ### 2.2 Configuration de la machine cible Windows
 
@@ -189,15 +195,13 @@ Les étapes suivantes permettent de configurer l'agent Wazuh pour surveiller les
 <directories check_all="yes" report_changes="yes" realtime="yes">C:\Users\<USER_NAME>\Desktop</directories>
 ```
 
-📸 [Capture d'écran : Le fichier ossec.conf ouvert dans le Bloc-notes (Notepad) ou Notepad++ sur la machine Windows 11, avec la ligne bien renseignée avec le bon nom d'utilisateur]
+![alt text](Images_tp_wazuh/OSSEC.conf_Windows.png)
 
 1. Redémarrer le service de l'agent Wazuh à l'aide de PowerShell (lancé en tant qu'administrateur) pour appliquer les changements :
 
 ```PowerShell
 Restart-Service -Name wazuh
 ```
-
-(*Note : En environnement de production, plutôt que de configurer localement chaque agent, il est possible de configurer de manière centralisée des groupes d'agents depuis le serveur Wazuh*).
 
 ## 3. Test et simulation
 
@@ -213,8 +217,6 @@ Afin de vérifier que le module FIM remonte correctement les informations, il fa
 
 5. Supprimer le fichier texte du répertoire surveillé.
 
-📸 [Capture d'écran : Deux terminaux (ou fenêtres) côte à côte. L'un montrant la création/modification du fichier sur Ubuntu (via des commandes comme touch, echo, rm), l'autre montrant l'action équivalente sur le bureau Windows 11]
-
 ## 4. Visualisation des alertes
 
 Il est possible de visualiser les données d'alerte générées par ces actions directement dans le tableau de bord Wazuh.
@@ -227,9 +229,8 @@ Pour ce faire :
 
    * rule.id: is one of 550,553,554
 
-📸 [Capture d'écran : Le tableau de bord Wazuh filtré par ces rule.id, montrant clairement les trois phases de l'attaque simulée (Création = 554, Modification = 550, Suppression = 553) pour les deux agents (Ubuntu et Windows)]
-
-📸 [Capture d'écran supplémentaire (Optionnelle mais recommandée) : Le détail d'une des alertes (en cliquant sur la petite flèche pour l'étendre), montrant le contenu exact qui a été modifié ou ajouté dans le fichier texte, prouvant que l'attribut report_changes="yes" fonctionne correctement]
+![alt text](Images_tp_wazuh/Attaque_Fim_suricata.png)
+![alt text](Images_tp_wazuh/Ataque_Fim_Windows.png)
 
 * Détection d'attaques bruteforce : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-brute-force-attack.html
 
@@ -257,6 +258,8 @@ sudo apt update
 sudo apt install -y hydra
 ```
 
+![alt text](Images_tp_wazuh/Installation_hydra.png)
+
 ## 3. Émulation de l'attaque
 
 ### 3.1 Préparation du dictionnaire
@@ -267,7 +270,7 @@ Créer un fichier texte contenant une liste de mots de passe aléatoires (par ex
 nano pass.txt
 ```
 
-📸 [Capture d'écran : Le terminal affichant le contenu du fichier pass.txt (via un simple cat pass.txt) pour montrer la liste des mots de passe générés pour le test]
+
 
 ### 3.2 Attaque contre le serveur Linux (SSH)
 
@@ -279,7 +282,7 @@ sudo hydra -l badguy -P pass.txt ssh://<IP_LINUX>
 
 (Variante de syntaxe selon la version d'Hydra : *sudo hydra -l badguy -P pass.txt <IP_LINUX> ssh*)
 
-📸 [Capture d'écran : Le terminal de l'attaquant en train d'exécuter la commande Hydra contre l'IP Linux. L'outil doit afficher les différentes tentatives de connexion échouées en temps réel]
+![alt text](Images_tp_wazuh/Attaque_hydra_ssh.png)
 
 ### 3.3 Attaque contre le poste Windows (RDP)
 
@@ -289,7 +292,7 @@ De la même manière, exécuter Hydra pour cibler le service Bureau à distance 
 sudo hydra -l badguy -P pass.txt rdp://<IP_WINDOWS>
 ```
 
-📸 [Capture d'écran : Le terminal de l'attaquant exécutant l'attaque Hydra contre l'IP de la machine Windows 11]
+
 
 ## 4. Visualisation des alertes
 
@@ -307,13 +310,13 @@ Pour la cible Linux (SSH) :
 * rule.id:(5551 OR 5712)
 (D'autres règles connexes peuvent également apparaître, telles que 5710, 5711, 5716, 5720, 5503, 5504).
 
-📸 [Capture d'écran : Le dashboard Wazuh filtré sur les règles SSH, montrant le pic d'alertes "sshd: brute force trying to get access to the system" ou "sshd: authentication failed"]
+![alt text](Images_tp_wazuh/Preuve_attaque_brute_force_ssh.png)
 
 Pour la cible Windows (RDP) :
 
 * rule.id:(60122 OR 60204)
 
-📸 [Capture d'écran : Le dashboard Wazuh filtré sur les règles Windows, montrant les alertes d'échec de connexion RDP ("Logon Failure" / Event ID 4625), confirmant que l'agent a bien remonté les événements de sécurité du journal Windows]
+![alt text](Images_tp_wazuh/Preuve_attaque_brute_force_RDP.png)
 
 * Détection de processus non autorisés : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-unauthorized-processes-netcat.html
 
