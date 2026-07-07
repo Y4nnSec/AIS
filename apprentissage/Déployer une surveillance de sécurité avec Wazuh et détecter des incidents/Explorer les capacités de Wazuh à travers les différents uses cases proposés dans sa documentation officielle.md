@@ -348,7 +348,7 @@ Les étapes suivantes permettent de configurer la surveillance des commandes afi
 </ossec_config>
 ```
 
-📸 [Capture d'écran : Le fichier ossec.conf ouvert sur la machine cible Ubuntu, mettant en évidence l'ajout du bloc <localfile> avec la commande ps -e -o pid,uname,command]
+![alt text](Images_tp_wazuh/Ossec.conf_suricata_pid.png)
 
 2. Redémarrer l'agent Wazuh pour appliquer les modifications :
 
@@ -361,6 +361,8 @@ sudo systemctl restart wazuh-agent
 ```bash
 sudo apt install ncat nmap -y
 ```
+
+![alt text](Images_tp_wazuh/Installation_ncat.png)
 
 ## 3. Configuration du serveur Wazuh (Manager)
 
@@ -386,7 +388,7 @@ Il est ensuite nécessaire de créer une règle personnalisée sur le serveur ce
 </group>
 ```
 
-📸 [Capture d'écran : Le fichier local_rules.xml édité sur le serveur Wazuh Manager, montrant la syntaxe correcte des règles 100050 et 100051]
+![alt text](Images_tp_wazuh/Règles_xml_sur_wazuh_manager.png)
 
 2. Redémarrer le service Wazuh Manager pour compiler et appliquer ces nouvelles règles :
 

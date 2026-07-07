@@ -47,7 +47,7 @@ INFO: Installation finished.
 ![alt text](Images_tp_wazuh/Wazuh_20260527-105013.png)
 ![alt text](Images_tp_wazuh/Wazuh_20260527-105014.png)
 ![alt text](Images_tp_wazuh/Wazuh_20260527-105014(4).png)
-![alt text](Images_tp_wazuh/Wazuh_20260527-105014(3).png)
+![alt text](Images_tp_wazuh/Installation_wazuh.png)
 
 **Note :** Tu peux trouver les mots de passe de tous les utilisateurs de l'indexeur Wazuh et de l'API Wazuh dans le fichier wazuh-passwords.txt à l'intérieur de l'archive wazuh-install-files.tar. Pour les imprimer, exécute la commande suivante :
 
