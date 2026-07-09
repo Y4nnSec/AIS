@@ -638,49 +638,54 @@ sudo rm /tmp/trojan_created_file
 
 * Traitement de malware à travers l'intégration de VirusTotal : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-remove-malware-virustotal.html
 
-Détection et suppression de malwares avec VirusTotal
+# Détection et suppression de malwares avec VirusTotal
+
 Dans ce cas d'usage, le module de surveillance de l'intégrité des fichiers (FIM) de Wazuh est utilisé pour surveiller les modifications d'un répertoire. Les fichiers détectés sont ensuite analysés via l'API de VirusTotal. Si VirusTotal identifie un fichier comme malveillant, Wazuh déclenche automatiquement un script de réponse active (Active Response) pour le supprimer.
 
 Cette démonstration illustre la mise en place d'une chaîne de défense automatisée sur un point de terminaison Ubuntu.
 
-1. Infrastructure requise
-Machine cible (Endpoint) : Un serveur sous Ubuntu avec l'agent Wazuh installé. Le répertoire /root y sera surveillé.
+## 1. Infrastructure requise
 
-Serveur Wazuh (Manager) : Le serveur central qui fera le lien avec l'API VirusTotal et ordonnera la suppression en cas de menace.
+* Machine cible (Endpoint) : Un serveur sous Ubuntu avec l'agent Wazuh installé. Le répertoire /root y sera surveillé.
 
-Prérequis externe : Une clé API VirusTotal (gratuite, à créer sur leur site officiel).
+* Serveur Wazuh (Manager) : Le serveur central qui fera le lien avec l'API VirusTotal et ordonnera la suppression en cas de menace.
 
-2. Configuration de la machine cible (Ubuntu)
+* Prérequis externe : Une clé API VirusTotal (gratuite, à créer sur leur site officiel).
+
+## 2. Configuration de la machine cible (Ubuntu)
+
 Ces étapes permettent d'activer la surveillance en temps réel, d'installer les dépendances requises et de créer le script de suppression.
 
-2.1 Activation du module FIM (File Integrity Monitoring)
-Éditer le fichier de configuration de l'agent Wazuh /var/ossec/etc/ossec.conf.
+### 2.1 Activation du module FIM (File Integrity Monitoring)
 
-S'assurer que le module syscheck n'est pas désactivé (<disabled>no</disabled>).
+1. Éditer le fichier de configuration de l'agent Wazuh */var/ossec/etc/ossec.conf*.
 
-Ajouter le répertoire /root pour qu'il soit surveillé en temps réel (realtime) dans le bloc <syscheck> :
+2. S'assurer que le module syscheck n'est pas désactivé (<disabled>no</disabled>).
+
+3. Ajouter le répertoire */root* pour qu'il soit surveillé en temps réel (realtime) dans le bloc <syscheck> :
 
 ```XML
 <directories realtime="yes">/root</directories>
 ```
 
-2.2 Préparation et création du script de réponse active
+### 2.2 Préparation et création du script de réponse active
+
 Le script de réponse active aura besoin de l'utilitaire jq pour traiter les données JSON envoyées par le serveur Wazuh.
 
-Mettre à jour les paquets et installer jq :
+1. Mettre à jour les paquets et installer *jq* :
 
 ```bash
 sudo apt update
 sudo apt -y install jq
 ```
 
-Créer le script de suppression /var/ossec/active-response/bin/remove-threat.sh :
+1. Créer le script de suppression */var/ossec/active-response/bin/remove-threat.sh* :
 
 ```bash
 sudo nano /var/ossec/active-response/bin/remove-threat.sh
 ```
 
-Coller le code suivant dans le fichier (ce script lit l'alerte JSON, extrait le nom du fichier ciblé et le supprime) :
+1. Coller le code suivant dans le fichier (ce script lit l'alerte JSON, extrait le nom du fichier ciblé et le supprime) :
 
 ```bash
 #!/bin/bash
@@ -711,7 +716,7 @@ else
 fi
 ```
 
-Ajuster les permissions et le propriétaire du script, puis redémarrer l'agent Wazuh :
+1. Ajuster les permissions et le propriétaire du script, puis redémarrer l'agent Wazuh :
 
 ```bash
 sudo chmod 750 /var/ossec/active-response/bin/remove-threat.sh
@@ -719,12 +724,14 @@ sudo chown root:wazuh /var/ossec/active-response/bin/remove-threat.sh
 sudo systemctl restart wazuh-agent
 ```
 
-3. Configuration du serveur Wazuh (Manager)  
+## 3. Configuration du serveur Wazuh (Manager)  
+
 Le serveur doit être configuré pour interroger VirusTotal à chaque fois qu'un fichier est créé ou modifié, puis pour déclencher le script si le fichier est malveillant.  
 
-Éditer le fichier de configuration central /var/ossec/etc/ossec.conf sur le serveur Wazuh.
+1. Éditer le fichier de configuration central /var/ossec/etc/ossec.conf sur le serveur Wazuh.
 
-3.1 Intégration de l'API VirusTotal
+### 3.1 Intégration de l'API VirusTotal
+
 Ajouter le bloc <integration> suivant à l'intérieur des balises <ossec_config>. Remplacer <TA_CLE_API_VIRUSTOTAL> par ta véritable clé API. Ce bloc indique à Wazuh d'envoyer à VirusTotal les hachages des fichiers générant les alertes FIM 554 (nouveau fichier) et 550 (fichier modifié) :
 
 ```xml
@@ -734,10 +741,11 @@ Ajouter le bloc <integration> suivant à l'intérieur des balises <ossec_config>
     <rule_id>554,550</rule_id>
     <alert_format>json</alert_format>
   </integration>
-  ```
+```
 
- 3.2 Configuration de la réponse active (Active Response)
-Ajouter les blocs <command> et <active-response> suivants (toujours dans <ossec_config>). Cela lie le script remove-threat.sh à la règle 87105 (qui correspond à un résultat positif renvoyé par VirusTotal) :
+### 3.2 Configuration de la réponse active (Active Response)
+
+Ajouter les blocs <command> et <active-response> suivants (toujours dans <ossec_config>). Cela lie le script remove-threat.sh à la règle *87105* (qui correspond à un résultat positif renvoyé par VirusTotal) :
 
 ```xml
 <command>
@@ -752,15 +760,16 @@ Ajouter les blocs <command> et <active-response> suivants (toujours dans <ossec_
     <location>local</location>
     <rules_id>87105</rules_id>
   </active-response>
-  ```
+```
 
-  Redémarrer le gestionnaire Wazuh pour appliquer la configuration :
+1. Redémarrer le gestionnaire Wazuh pour appliquer la configuration :
 
-  ```bash
+```bash
  sudo systemctl restart wazuh-manager
- ```
+```
 
-4. Émulation de l'attaque
+## 4. Émulation de l'attaque
+
 Pour vérifier la chaîne de détection et de suppression automatisée, il suffit de télécharger un faux fichier malveillant (le fichier de test standard EICAR) dans le répertoire surveillé de la machine cible (Ubuntu) :
 
 ```bash
@@ -769,16 +778,17 @@ sudo curl -Lo /root/eicar.com https://secure.eicar.org/eicar.com
 
 Vérifie la présence du fichier, puis attends quelques secondes. Si la configuration est correcte, Wazuh détectera le fichier, consultera VirusTotal, et supprimera le fichier automatiquement. Si tu relances un ls /root/, le fichier eicar.com devrait avoir disparu de lui-même.  
 
-5. Visualisation des alertes
+## 5. Visualisation des alertes
+
 La séquence complète de l'événement est enregistrée et consultable dans le tableau de bord Wazuh.
 
 Pour ce faire :
 
-Accéder au module Threat Hunting dans l'interface web de Wazuh.
+1. Accéder au module Threat Hunting dans l'interface web de Wazuh.
 
-Ajouter le filtre suivant dans la barre de recherche pour interroger spécifiquement les étapes de cette chaîne automatisée :
+1. Ajouter le filtre suivant dans la barre de recherche pour interroger spécifiquement les étapes de cette chaîne automatisée :
 
-rule.id: is one of 554, 87105, 651
+   * rule.id: is one of 554, 87105, 651
 
 (Règle 554 : Fichier créé/modifié | Règle 87105 : Menace détectée par VirusTotal | Règle 651 : Réponse active exécutée)
 
