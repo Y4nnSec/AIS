@@ -522,83 +522,366 @@ Pour ce faire :
 
 * Détection de cheval de troie : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-detect-trojan.html
 
-Détection de fichiers binaires suspects (Cheval de Troie)
+# Détection de fichiers binaires suspects (Cheval de Troie)
+
 Wazuh possède des capacités de détection d'anomalies et de malwares permettant d'identifier des binaires suspects sur un point de terminaison. Les binaires sont des fichiers exécutables conçus pour effectuer des tâches automatisées. Les acteurs malveillants utilisent souvent des binaires altérés (chevaux de Troie) pour exploiter un système tout en évitant d'être détectés.
 
 Ce cas d'usage démontre comment le module Rootcheck de Wazuh peut détecter un binaire système infecté par un cheval de Troie sur un point de terminaison Ubuntu. L'attaque consiste à remplacer le contenu d'un binaire légitime par du script malveillant afin de tromper le système pour qu'il l'exécute.
 
-1. Infrastructure requise
-Machine cible (Endpoint) : Un serveur sous Ubuntu (par exemple la VM Ubuntu 22.04 ou 24.04 déjà utilisée) avec l'agent Wazuh préalablement installé.
+## 1. Infrastructure requise
 
-Rôle : C'est sur cette machine que le module Rootcheck analysera l'intégrité des fichiers et que l'infection du binaire sera simulée.
+* **Machine cible (Endpoint)** : Un serveur sous Ubuntu (par exemple la VM Ubuntu 22.04 ou 22.04 déjà utilisée) avec l'agent Wazuh préalablement installé.
 
-2. Configuration de l'agent Wazuh
+* **Rôle** : C'est sur cette machine que le module Rootcheck analysera l'intégrité des fichiers et que l'infection du binaire sera simulée.
+
+## 2. Configuration de l'agent Wazuh
+
 Par défaut, le module Rootcheck est activé dans le fichier de configuration de l'agent Wazuh. Il convient de s'en assurer sur la machine cible.
 
-Éditer le fichier de configuration de l'agent Wazuh /var/ossec/etc/ossec.conf sur la machine Ubuntu.
+1. Éditer le fichier de configuration de l'agent Wazuh */var/ossec/etc/ossec.conf* sur la machine Ubuntu.
 
-Vérifier que le bloc <rootcheck> contient bien les balises suivantes, sans lesquelles l'analyse des fichiers ne pourrait pas s'effectuer :
+2. Vérifier que le bloc <rootcheck> contient bien les balises suivantes, sans lesquelles l'analyse des fichiers ne pourrait pas s'effectuer :
 
 ```xml
-<ossec_config>
-  <rootcheck>
+<rootcheck>
     <disabled>no</disabled>
     <check_files>yes</check_files>
-    </rootcheck>
-</ossec_config>
+
+    <!-- Line for trojans detection -->
+    <check_trojans>yes</check_trojans>
+
+    <check_dev>yes</check_dev>
+    <check_sys>yes</check_sys>
+    <check_pids>yes</check_pids>
+    <check_ports>yes</check_ports>
+    <check_if>yes</check_if>
+
+    <!-- Frequency that rootcheck is executed - every 12 hours -->
+    <frequency>43200</frequency>
+    <rootkit_files>/var/ossec/etc/shared/rootkit_files.txt</rootkit_files>
+    <rootkit_trojans>/var/ossec/etc/shared/rootkit_trojans.txt</rootkit_trojans>
+    <skip_nfs>yes</skip_nfs>
+</rootcheck>
 ```
 
-(Si des modifications ont dû être apportées, redémarrer l'agent Wazuh avec la commande sudo systemctl restart wazuh-agent).
+![alt text](Images_tp_wazuh/paramètres_rootcheck.png)
 
-3. Émulation de l'attaque
-Pour simuler l'attaque, nous allons compromettre un utilitaire système natif, le programme /usr/bin/w (qui sert normalement à afficher les utilisateurs connectés au système), en le remplaçant par un script malveillant.
+(Si des modifications ont dû être apportées, redémarrer l'agent Wazuh avec la commande *sudo systemctl restart wazuh-agent*).
 
-3.1 Création du cheval de Troie
+## 3. Émulation de l'attaque
+
+Pour simuler l'attaque, nous allons compromettre un utilitaire système natif, le programme */usr/bin/w* (qui sert normalement à afficher les utilisateurs connectés au système), en le remplaçant par un script malveillant.
+
+### 3.1 Création du cheval de Troie
+
 Sur la machine cible (Ubuntu), exécuter les commandes suivantes :
 
-Créer une sauvegarde (copie) du binaire système d'origine pour ne pas le perdre :
+1. Créer une sauvegarde (copie) du binaire système d'origine pour ne pas le perdre :
 
 ```bash
 sudo cp -p /usr/bin/w /usr/bin/w.copy
 ```
 
+![alt text](Images_tp_wazuh/copie_fichier_Trojan.png)
 
+1. Remplacer le binaire d'origine */usr/bin/*w par un script shell simulant une action malveillante. Ce script va écrire dans un fichier temporaire, puis exécuter l'ancien binaire légitime de manière transparente pour faire illusion :
 
+```bash
+sudo tee /usr/bin/w << EOF
+#!/bin/bash
+echo "\`date\` this is evil" > /tmp/trojan_created_file
+echo 'test for /usr/bin/w trojaned file' >> /tmp/trojan_created_file
+# Exécution du binaire original pour masquer la compromission
+/usr/bin/w.copy
+EOF
+```
 
+![alt text](Images_tp_wazuh/Script_Trojan.png)
 
+### 3.2 Forcer l'analyse (Scan)
+Le scan Rootcheck de Wazuh s'exécute toutes les 12 heures par défaut. Pour ne pas avoir à attendre et déclencher la détection immédiatement, il suffit de redémarrer l'agent Wazuh. Le redémarrage force automatiquement l'exécution d'un nouveau scan système :
 
+```bash
+sudo systemctl restart wazuh-agent
+```
 
+## 4. Visualisation des alertes
 
+Dès que le scan Rootcheck est terminé, Wazuh détecte que le binaire système attendu ne correspond plus à sa signature d'origine et génère une alerte de sécurité.
 
+Il est possible de visualiser ces données directement dans le tableau de bord Wazuh.
 
+Pour ce faire :
 
+1. Accéder au module Threat Hunting dans l'interface web de Wazuh.
 
+2. Ajouter les filtres suivants dans la barre de recherche pour isoler l'événement de détection :
 
+* location:rootcheck
 
+* rule.id:510
 
+* data.title:Trojaned version of file detected
 
+![alt text](Images_tp_wazuh/Scan_Trojan_réussi.png)
 
+## 5. Dépannage et Nettoyage (Post-test)
 
+Une fois l'alerte validée dans le tableau de bord, il est impératif de remettre le système dans son état d'origine pour conserver un environnement de travail sain et stopper la remontée d'alertes.
 
+Exécuter les commandes suivantes sur la machine cible pour restaurer le fichier binaire d'origine et supprimer les fichiers de test :
 
+```bash
+sudo mv /usr/bin/w.copy /usr/bin/w
+sudo rm /tmp/trojan_created_file
+```
 
+* Traitement de malware à travers l'intégration de VirusTotal : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-remove-malware-virustotal.html
 
+Détection et suppression de malwares avec VirusTotal
+Dans ce cas d'usage, le module de surveillance de l'intégrité des fichiers (FIM) de Wazuh est utilisé pour surveiller les modifications d'un répertoire. Les fichiers détectés sont ensuite analysés via l'API de VirusTotal. Si VirusTotal identifie un fichier comme malveillant, Wazuh déclenche automatiquement un script de réponse active (Active Response) pour le supprimer.
 
+Cette démonstration illustre la mise en place d'une chaîne de défense automatisée sur un point de terminaison Ubuntu.
 
+1. Infrastructure requise
+Machine cible (Endpoint) : Un serveur sous Ubuntu avec l'agent Wazuh installé. Le répertoire /root y sera surveillé.
 
+Serveur Wazuh (Manager) : Le serveur central qui fera le lien avec l'API VirusTotal et ordonnera la suppression en cas de menace.
 
+Prérequis externe : Une clé API VirusTotal (gratuite, à créer sur leur site officiel).
 
+2. Configuration de la machine cible (Ubuntu)
+Ces étapes permettent d'activer la surveillance en temps réel, d'installer les dépendances requises et de créer le script de suppression.
 
+2.1 Activation du module FIM (File Integrity Monitoring)
+Éditer le fichier de configuration de l'agent Wazuh /var/ossec/etc/ossec.conf.
 
+S'assurer que le module syscheck n'est pas désactivé (<disabled>no</disabled>).
 
+Ajouter le répertoire /root pour qu'il soit surveillé en temps réel (realtime) dans le bloc <syscheck> :
 
+```XML
+<directories realtime="yes">/root</directories>
+```
 
+2.2 Préparation et création du script de réponse active
+Le script de réponse active aura besoin de l'utilitaire jq pour traiter les données JSON envoyées par le serveur Wazuh.
 
+Mettre à jour les paquets et installer jq :
 
+```bash
+sudo apt update
+sudo apt -y install jq
+```
 
+Créer le script de suppression /var/ossec/active-response/bin/remove-threat.sh :
 
-Traitement de malware à travers l'intégration de VirusTotal : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-remove-malware-virustotal.html
+```bash
+sudo nano /var/ossec/active-response/bin/remove-threat.sh
+```
+
+Coller le code suivant dans le fichier (ce script lit l'alerte JSON, extrait le nom du fichier ciblé et le supprime) :
+
+```bash
+#!/bin/bash
+
+LOCAL=`dirname $0`;
+cd $LOCAL
+cd ../
+PWD=`pwd`
+
+read INPUT_JSON
+FILENAME=$(echo $INPUT_JSON | jq -r .parameters.alert.data.virustotal.source.file)
+COMMAND=$(echo $INPUT_JSON | jq -r .command)
+LOG_FILE="${PWD}/../logs/active-responses.log"
+
+#------------------------ Analyze command -------------------------#
+if [ ${COMMAND} = "add" ]
+then
+ # Send confirmation message
+ echo "`date '+%Y/%m/%d %H:%M:%S'` $0: $INPUT_JSON Active response executed" >> ${LOG_FILE}
+fi
+
+#------------------------- Removing file --------------------------#
+rm -f $FILENAME
+if [ $? -eq 0 ]; then
+ echo "`date '+%Y/%m/%d %H:%M:%S'` $0: $INPUT_JSON Successfully removed threat" >> ${LOG_FILE}
+else
+ echo "`date '+%Y/%m/%d %H:%M:%S'` $0: $INPUT_JSON Error removing threat" >> ${LOG_FILE}
+fi
+```
+
+Ajuster les permissions et le propriétaire du script, puis redémarrer l'agent Wazuh :
+
+```bash
+sudo chmod 750 /var/ossec/active-response/bin/remove-threat.sh
+sudo chown root:wazuh /var/ossec/active-response/bin/remove-threat.sh
+sudo systemctl restart wazuh-agent
+```
+
+3. Configuration du serveur Wazuh (Manager)  
+Le serveur doit être configuré pour interroger VirusTotal à chaque fois qu'un fichier est créé ou modifié, puis pour déclencher le script si le fichier est malveillant.  
+
+Éditer le fichier de configuration central /var/ossec/etc/ossec.conf sur le serveur Wazuh.
+
+3.1 Intégration de l'API VirusTotal
+Ajouter le bloc <integration> suivant à l'intérieur des balises <ossec_config>. Remplacer <TA_CLE_API_VIRUSTOTAL> par ta véritable clé API. Ce bloc indique à Wazuh d'envoyer à VirusTotal les hachages des fichiers générant les alertes FIM 554 (nouveau fichier) et 550 (fichier modifié) :
+
+```xml
+<integration>
+    <name>virustotal</name>
+    <api_key><TA_CLE_API_VIRUSTOTAL></api_key>
+    <rule_id>554,550</rule_id>
+    <alert_format>json</alert_format>
+  </integration>
+  ```
+
+ 3.2 Configuration de la réponse active (Active Response)
+Ajouter les blocs <command> et <active-response> suivants (toujours dans <ossec_config>). Cela lie le script remove-threat.sh à la règle 87105 (qui correspond à un résultat positif renvoyé par VirusTotal) :
+
+```xml
+<command>
+    <name>remove-threat</name>
+    <executable>remove-threat.sh</executable>
+    <timeout_allowed>no</timeout_allowed>
+  </command>
+
+  <active-response>
+    <disabled>no</disabled>
+    <command>remove-threat</command>
+    <location>local</location>
+    <rules_id>87105</rules_id>
+  </active-response>
+  ```
+
+  Redémarrer le gestionnaire Wazuh pour appliquer la configuration :
+
+  ```bash
+ sudo systemctl restart wazuh-manager
+ ```
+
+4. Émulation de l'attaque
+Pour vérifier la chaîne de détection et de suppression automatisée, il suffit de télécharger un faux fichier malveillant (le fichier de test standard EICAR) dans le répertoire surveillé de la machine cible (Ubuntu) :
+
+```bash
+sudo curl -Lo /root/eicar.com https://secure.eicar.org/eicar.com
+```
+
+Vérifie la présence du fichier, puis attends quelques secondes. Si la configuration est correcte, Wazuh détectera le fichier, consultera VirusTotal, et supprimera le fichier automatiquement. Si tu relances un ls /root/, le fichier eicar.com devrait avoir disparu de lui-même.  
+
+5. Visualisation des alertes
+La séquence complète de l'événement est enregistrée et consultable dans le tableau de bord Wazuh.
+
+Pour ce faire :
+
+Accéder au module Threat Hunting dans l'interface web de Wazuh.
+
+Ajouter le filtre suivant dans la barre de recherche pour interroger spécifiquement les étapes de cette chaîne automatisée :
+
+rule.id: is one of 554, 87105, 651
+
+(Règle 554 : Fichier créé/modifié | Règle 87105 : Menace détectée par VirusTotal | Règle 651 : Réponse active exécutée)
+
 * Détection de vulnérabilités : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-vulnerability-detection.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 * Détection de processus cachés par rootkit : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-detect-hidden-process.html
+
 * Détection de commandes malveillantes : https://documentation.wazuh.com/current/proof-of-concept-guide/audit-commands-run-by-user.html
+
 * Détection d'attaques shellshock : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-web-attack-shellshock.html
