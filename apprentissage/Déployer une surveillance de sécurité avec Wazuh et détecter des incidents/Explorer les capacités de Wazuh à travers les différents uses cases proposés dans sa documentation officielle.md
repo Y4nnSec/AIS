@@ -406,7 +406,7 @@ Sur la machine Ubuntu surveillée, exécuter la commande Netcat en mode écoute 
 nc -l 8000
 ```
 
-📸 [Capture d'écran : Le terminal de la machine Ubuntu exécutant la commande nc -l 8000 et restant en attente (curseur bloquant)]
+![alt text](<Images_tp_wazuh/commande nc -l.png>)
 
 ## 5.  Visualisation des alertes
 Les données d'alerte peuvent désormais être consultées dans le tableau de bord Wazuh.
@@ -419,7 +419,7 @@ Pour ce faire :
 
    * rule.id:(100051)
 
-📸 [Capture d'écran : Le tableau de bord Wazuh filtré sur rule.id: 100051, montrant l'alerte de niveau 7 avec la description "netcat listening for incoming connections". Déplier les détails de l'alerte (full_log) pour montrer que la commande exacte interceptée y figure bien.]
+![alt text](Images_tp_wazuh/preuve_netcat.png)
 
 * Détection de tentatives d'injection SQL : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-web-attack-sql-injection.html
 
@@ -433,7 +433,7 @@ Ce cas d'usage démontre comment configurer la surveillance d'un serveur web Apa
 
 ## 1. Infrastructure requise
 
-* **Cible (Victime) :** Un serveur sous **Ubuntu 24.04** hébergeant un serveur web Apache (version 2.4.x). L'agent Wazuh y est configuré pour lire les journaux d'accès web.
+* **Cible (Victime) :** Un serveur sous **Ubuntu 22.04** hébergeant un serveur web Apache (version 2.4.x). L'agent Wazuh y est configuré pour lire les journaux d'accès web.
 * **Attaquant :** Une machine distante (ex: RHEL, Ubuntu ou la machine hôte) depuis laquelle la requête web malveillante sera lancée.
 
 ## 2. Configuration de la machine cible (Ubuntu)
@@ -465,7 +465,9 @@ sudo systemctl status apache2
 
 3. Valider l'accès au serveur web en utilisant la commande *curl* localement ou en ouvrant un navigateur web vers *http://<IP_DE_LA_MACHINE_UBUNTU>* pour afficher la page d'accueil par défaut d'Apache.
 
-📸 [Capture d'écran : La page par défaut "Apache2 Ubuntu Default Page" affichée dans un navigateur web, ou le résultat de la commande systemctl status apache2 en vert, prouvant que le serveur web est opérationnel]
+![alt text](Images_tp_wazuh/Mise_a_jour_sql.png)
+![alt text](Images_tp_wazuh/Firewall_sql.png)
+![alt text](Images_tp_wazuh/apache2_sql.png)
 
 ### 2.2 Configuration de l'agent Wazuh
 
@@ -482,7 +484,7 @@ Ajouter les lignes suivantes au fichier de configuration de l'agent Wazuh */var/
 </ossec_config>
 ```
 
-📸 [Capture d'écran : Le fichier *ossec.conf* ouvert sur la machine Ubuntu, mettant en évidence l'ajout du bloc *<localfile>* pointant vers */var/log/apache2/access.log*]
+![alt text](Images_tp_wazuh/ossec_sql.png)
 
 1. Redémarrer l'agent Wazuh pour appliquer les modifications de configuration :
 
@@ -499,7 +501,7 @@ Depuis la machine de l'attaquant, exécuter la commande suivante (en remplaçant
 curl -XGET "http://<IP_UBUNTU>/users/?id=SELECT+*+FROM+users";
 ```
 
-📸 [Capture d'écran : Le terminal de la machine attaquante exécutant la commande curl avec le payload SQLi. Le résultat affichera probablement le code source de la page d'accueil ou une erreur 404, mais l'essentiel est que la requête soit partie]
+![alt text](Images_tp_wazuh/Attaque_sql.png)
 
 ## 4. Visualisation des alertes
 
@@ -516,9 +518,51 @@ Pour ce faire :
 
    * rule.id: 31106 (Détecte une tentative d'injection SQL qui a potentiellement réussi - code HTTP 200)
 
-📸 [Capture d'écran : Le tableau de bord Wazuh filtré sur rule.id: 31103 ou 31106, montrant l'alerte "SQL injection attempt". Il est recommandé de déplier le détail de l'alerte pour montrer le champ full_log qui contient la requête exacte SELECT * FROM users]
+![alt text](Images_tp_wazuh/Preuve_sql.png)
 
 * Détection de cheval de troie : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-detect-trojan.html
+
+Détection de fichiers binaires suspects (Cheval de Troie)
+Wazuh possède des capacités de détection d'anomalies et de malwares permettant d'identifier des binaires suspects sur un point de terminaison. Les binaires sont des fichiers exécutables conçus pour effectuer des tâches automatisées. Les acteurs malveillants utilisent souvent des binaires altérés (chevaux de Troie) pour exploiter un système tout en évitant d'être détectés.
+
+Ce cas d'usage démontre comment le module Rootcheck de Wazuh peut détecter un binaire système infecté par un cheval de Troie sur un point de terminaison Ubuntu. L'attaque consiste à remplacer le contenu d'un binaire légitime par du script malveillant afin de tromper le système pour qu'il l'exécute.
+
+1. Infrastructure requise
+Machine cible (Endpoint) : Un serveur sous Ubuntu (par exemple la VM Ubuntu 22.04 ou 24.04 déjà utilisée) avec l'agent Wazuh préalablement installé.
+
+Rôle : C'est sur cette machine que le module Rootcheck analysera l'intégrité des fichiers et que l'infection du binaire sera simulée.
+
+2. Configuration de l'agent Wazuh
+Par défaut, le module Rootcheck est activé dans le fichier de configuration de l'agent Wazuh. Il convient de s'en assurer sur la machine cible.
+
+Éditer le fichier de configuration de l'agent Wazuh /var/ossec/etc/ossec.conf sur la machine Ubuntu.
+
+Vérifier que le bloc <rootcheck> contient bien les balises suivantes, sans lesquelles l'analyse des fichiers ne pourrait pas s'effectuer :
+
+```xml
+<ossec_config>
+  <rootcheck>
+    <disabled>no</disabled>
+    <check_files>yes</check_files>
+    </rootcheck>
+</ossec_config>
+```
+
+(Si des modifications ont dû être apportées, redémarrer l'agent Wazuh avec la commande sudo systemctl restart wazuh-agent).
+
+3. Émulation de l'attaque
+Pour simuler l'attaque, nous allons compromettre un utilitaire système natif, le programme /usr/bin/w (qui sert normalement à afficher les utilisateurs connectés au système), en le remplaçant par un script malveillant.
+
+3.1 Création du cheval de Troie
+Sur la machine cible (Ubuntu), exécuter les commandes suivantes :
+
+Créer une sauvegarde (copie) du binaire système d'origine pour ne pas le perdre :
+
+```bash
+sudo cp -p /usr/bin/w /usr/bin/w.copy
+```
+
+
 
 
 
