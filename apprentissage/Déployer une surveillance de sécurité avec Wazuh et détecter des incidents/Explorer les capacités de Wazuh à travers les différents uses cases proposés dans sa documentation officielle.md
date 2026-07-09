@@ -778,6 +778,1289 @@ sudo curl -Lo /root/eicar.com https://secure.eicar.org/eicar.com
 
 Vérifie la présence du fichier, puis attends quelques secondes. Si la configuration est correcte, Wazuh détectera le fichier, consultera VirusTotal, et supprimera le fichier automatiquement. Si tu relances un ls /root/, le fichier eicar.com devrait avoir disparu de lui-même.  
 
+## 5. Variante : Configuration de la machine cible Windows (Windows 11)
+
+Ces étapes permettent d'activer la surveillance FIM sur le poste Windows, de compiler l'exécutable de réponse active et d'adapter le serveur Manager pour traiter ces nouvelles alertes.
+
+### 5.1 Configuration de l'agent (Windows 11)
+
+**Activation du module FIM** :
+
+1. Ouvrir le fichier *C:\Program Files (x86)\ossec-agent\ossec.conf* avec un éditeur de texte (en tant qu'administrateur).
+
+2. Ajouter le répertoire du bureau à surveiller dans le bloc <syscheck> :
+
+```xml
+<directories realtime="yes">C:\Users\<USER_NAME>\Desktop</directories>
+```
+(Remplacer <USER_NAME> par le nom de la session Windows).
+
+Préparation de l'environnement Python :
+Wazuh nécessite Python pour compiler le script en *.exe* directement sur le poste.
+
+1. Télécharger et installer Python. **Attention** : Lors de l'installation, cocher impérativement la case "**Add python.exe to PATH**".
+
+2. Ouvrir PowerShell en tant qu'administrateur et installer le compilateur *pyinstaller* :
+
+```powershell
+pip install pyinstaller
+```
+
+**Création de l'exécutable de suppression** :
+
+1. Créer un fichier texte nommé *remove-threat.py* (par exemple sur le Bureau) et y coller le script officiel Wazuh pour Windows :
+
+```python
+#!/usr/bin/python3
+import os
+import sys
+import json
+import datetime
+
+LOG_FILE = "C:\\Program Files (x86)\\ossec-agent\\active-response\\active-responses.log"
+ADD_COMMAND = 0
+CONTINUE_COMMAND = 2
+ABORT_COMMAND = 3
+OS_SUCCESS = 0
+OS_INVALID = -1
+
+class message:
+    def __init__(self):
+        self.alert = ""
+        self.command = 0
+
+def write_debug_file(ar_name, msg):
+    with open(LOG_FILE, mode="a") as log_file:
+        log_file.write(str(datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')) + " " + ar_name + ": " + msg +"\n")
+
+def setup_and_check_message(argv):
+    msg = message()
+    try:
+        line = sys.stdin.readline()
+        if not line:
+            sys.exit(OS_SUCCESS)
+        msg.alert = json.loads(line)
+        msg.command = msg.alert.get("command")
+        return msg
+    except:
+        sys.exit(OS_INVALID)
+
+def send_keys_and_check_message(argv, keys):
+    msg = message()
+    try:
+        keys_msg = json.dumps({"version": 1, "origin": {"name": argv[0], "module": "wazuh-execd"}, "command": "check_keys", "parameters": {"keys": keys}})
+        write_debug_file(argv[0], keys_msg)
+        print(keys_msg)
+        sys.stdout.flush()
+        line = sys.stdin.readline()
+        if not line:
+            sys.exit(OS_SUCCESS)
+        msg.alert = json.loads(line)
+        msg.command = msg.alert.get("command")
+        return msg
+    except:
+        sys.exit(OS_INVALID)
+
+def main(argv):
+    write_debug_file(argv[0], "Started")
+    msg = setup_and_check_message(argv)
+    if msg.command < 0:
+        sys.exit(OS_INVALID)
+
+    if msg.command == ADD_COMMAND:
+        alert = msg.alert["parameters"]["alert"]
+        keys = [alert["rule"]["id"]]
+        action_msg = send_keys_and_check_message(argv, keys)
+        if action_msg.command != CONTINUE_COMMAND:
+            if action_msg.command == ABORT_COMMAND:
+                write_debug_file(argv[0], "Aborted")
+                sys.exit(OS_SUCCESS)
+            else:
+                write_debug_file(argv[0], "Invalid command")
+                sys.exit(OS_INVALID)
+        try:
+            file_path = msg.alert["parameters"]["alert"]["data"]["virustotal"]["source"]["file"]
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            write_debug_file(argv[0], json.dumps(msg.alert) + " Successfully removed threat")
+        except OSError as error:
+            write_debug_file(argv[0], json.dumps(msg.alert) + " Error removing threat")
+    else:
+        write_debug_file(argv[0], "Invalid command")
+    sys.exit(OS_SUCCESS)
+
+if __name__ == "__main__":
+    main(sys.argv)
+```
+
+2. Dans le PowerShell administrateur, se placer dans le dossier où se trouve le fichier (ex: *cd C:\Users\<USER_NAME>\Desktop*) et compiler le script en tapant :
+
+```powershell
+pyinstaller -F remove-threat.py
+```
+
+3. Déplacer le fichier exécutable *remove-threat.exe* (qui vient d'être généré dans le sous-dossier *dist*) vers le dossier Wazuh :
+
+```powershell
+Move-Item -Path .\dist\remove-threat.exe -Destination "C:\Program Files (x86)\ossec-agent\active-response\bin\"
+```
+
+Redémarrer l'agent Wazuh :
+
+```powershell
+Restart-Service -Name wazuh
+```
+
+### 5.2 Adaptation du serveur Wazuh (Manager)
+
+Il faut indiquer au Manager comment déclencher cette réponse active spécifique à Windows, et l'autoriser à surveiller les événements venant de la machine cliente.  
+
+1. Création d'une règle personnalisée pour le bureau Windows :
+Ouvrir */var/ossec/etc/rules/local_rules.xml* sur le Manager et ajouter cette règle juste en dessous de la règle *100201* créée précédemment :
+
+```xml
+<group name="syscheck,">
+  <rule id="100202" level="7">
+    <if_sid>554</if_sid>
+    <field name="file">Desktop</field>
+    <description>File added to Windows Desktop.</description>
+  </rule>
+</group>
+```
+
+2. Modification du fichier *ossec.conf* du Manager :
+Ouvrir */var/ossec/etc/ossec.conf* et faire deux ajouts.
+D'abord, inclure la nouvelle règle Windows (*100202*) dans l'intégration VirusTotal :
+
+```xml
+<integration>
+    <name>virustotal</name>
+    <api_key><TA_CLE_API></api_key>
+    <rule_id>100201,100202</rule_id>
+    <alert_format>json</alert_format>
+  </integration>
+  ```
+
+Ensuite, ajouter les blocs de commande pour l'exécutable Windows (en dessous de ceux pour Linux) :
+
+```xml
+<command>
+    <name>remove-threat-windows</name>
+    <executable>remove-threat.exe</executable>
+    <timeout_allowed>no</timeout_allowed>
+  </command>
+
+  <active-response>
+    <disabled>no</disabled>
+    <command>remove-threat-windows</command>
+    <location>local</location>
+    <rules_id>87105</rules_id>
+  </active-response>
+```
+
+3. Sauvegarder et redémarrer le Manager :
+
+```bash
+sudo systemctl restart wazuh-manager
+```
+
+### 5.3 Emulation d'attaque
+
+Sur le poste Windows 11, télécharger le fichier malveillant EICAR directement sur le Bureau. Le fichier devrait disparaître automatiquement après quelques secondes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 5. Visualisation des alertes
 
 La séquence complète de l'événement est enregistrée et consultable dans le tableau de bord Wazuh.
@@ -788,9 +2071,61 @@ Pour ce faire :
 
 1. Ajouter le filtre suivant dans la barre de recherche pour interroger spécifiquement les étapes de cette chaîne automatisée :
 
-   * rule.id: is one of 554, 87105, 651
+   * rule.id: is one of 553, 100092, 87105, 100201
 
-(Règle 554 : Fichier créé/modifié | Règle 87105 : Menace détectée par VirusTotal | Règle 651 : Réponse active exécutée)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 * Détection de vulnérabilités : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-vulnerability-detection.html
 
