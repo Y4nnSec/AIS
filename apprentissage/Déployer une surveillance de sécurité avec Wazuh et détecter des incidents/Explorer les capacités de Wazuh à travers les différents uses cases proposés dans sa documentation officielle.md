@@ -776,7 +776,28 @@ Pour vérifier la chaîne de détection et de suppression automatisée, il suffi
 sudo curl -Lo /root/eicar.com https://secure.eicar.org/eicar.com
 ```
 
-Vérifie la présence du fichier, puis attends quelques secondes. Si la configuration est correcte, Wazuh détectera le fichier, consultera VirusTotal, et supprimera le fichier automatiquement. Si tu relances un ls /root/, le fichier eicar.com devrait avoir disparu de lui-même.  
+**Résultat attendu sur le tableau de bord Wazuh (chronologie en quelques secondes)** :
+
+**La séquence complète de l'événement est enregistrée et consultable dans le tableau de bord Wazuh**
+
+Pour ce faire :
+
+1. Accéder au module Threat Hunting dans l'interface web de Wazuh. Choisir l'agent.
+
+1. Ajouter le filtre suivant dans la barre de recherche pour interroger spécifiquement les étapes de cette chaîne automatisée :
+
+* rule.id: is one of 553, 100092, 87105, 100201
+
+
+  * Règle 100201 (Niveau 7) : File added to /root directory. (Ta règle personnalisée FIM détecte l'apparition du fichier spécifique dans le dossier /root).
+
+  * Règle 87105 (Niveau 12) : VirusTotal: Alert - /root/eicar.com - 65 engines detected this file. (L'intégration API VirusTotal confirme que l'empreinte correspond à un malware).
+
+  * Règle 553 (Niveau 7) : File deleted. (L'agent Linux confirme que le fichier n'est plus présent sur le disque dur).
+
+  * Règle 100092 (Niveau 12) : active-response/bin/remove-threat.sh removed threat located at /root/eicar.com (Le script Bash a bien reçu et exécuté l'ordre de suppression du Manager).
+
+![alt text](Images_tp_wazuh/Preuve_Virus_total_Linux.png)
 
 ## 5. Variante : Configuration de la machine cible Windows (Windows 11)
 
@@ -964,9 +985,42 @@ Ensuite, ajouter les blocs de commande pour l'exécutable Windows (en dessous de
 sudo systemctl restart wazuh-manager
 ```
 
-### 5.3 Emulation d'attaque
+# 6. Émulation de l'attaque
 
-Sur le poste Windows 11, télécharger le fichier malveillant EICAR directement sur le Bureau. Le fichier devrait disparaître automatiquement après quelques secondes.
+Avertissement très important : Avant de procéder au test, veillez à **désactiver temporairement la "Protection en temps réel" de Windows Defender via les paramètres de Sécurité Windows. Si l'antivirus natif est actif, il verrouillera ou supprimera le fichier avant même que l'agent Wazuh n'ait le temps de le détecter, ce qui bloquera la chaîne de l'Active Response.**
+
+Ouvrir une invite de commande PowerShell.
+
+Exécuter la commande suivante pour télécharger le fichier de test EICAR directement sur le Bureau :
+
+```Powershell
+Invoke-WebRequest -Uri https://secure.eicar.org/eicar.com.txt -OutFile "$env:USERPROFILE\Desktop\eicar-test.txt"
+```
+
+**Résultat attendu sur le tableau de bord Wazuh (chronologie en quelques secondes) **:
+
+**La séquence complète de l'événement est enregistrée et consultable dans le tableau de bord Wazuh.**
+
+Pour ce faire :
+
+1. Accéder au module Threat Hunting dans l'interface web de Wazuh. Choisir l'agent.
+
+1. Ajouter le filtre suivant dans la barre de recherche pour interroger spécifiquement les étapes de cette chaîne automatisée :
+
+* rule.id: is one of 554, 100092, 553, 87105
+
+
+  * Règle 554 (Niveau 5) : File added to the system. (Le moteur FIM détecte le dépôt du fichier sur le bureau).
+
+  * Règle 87105 (Niveau 12) : VirusTotal: Alert - c:\users\yann\desktop\eicar-test.txt - [X] engines detected this file. (L'intégration VirusTotal confirme la menace).
+
+  * Règle 553 (Niveau 7) : File deleted. (L'agent remonte que le fichier n'est plus présent sur le disque dur).
+
+  * Règle 100092 (Niveau 12) : active-response/bin/remove-threat.exe removed threat located at c:\users\yann\desktop\eicar-test.txt (Validation finale de la remédiation : c'est bien l'Active Response qui a neutralisé la menace).
+
+![alt text](Images_tp_wazuh/Preuve_Virus_total_Windows.png)
+
+
 
 
 
