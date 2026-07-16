@@ -1447,3 +1447,5 @@ rule.description:Shellshock attack detected
 ```
 
 3. Analyse : Une alerte critique apparaîtra, confirmant que Wazuh a analysé la requête HTTP et identifié la signature d'injection de commande.
+
+![alt text](Images_tp_wazuh/Preuve_shellshock.png)
