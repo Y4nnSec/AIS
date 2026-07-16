@@ -1089,6 +1089,7 @@ sudo systemctl restart wazuh-agent
 ```
 
 ## 4. Émulation de l'attaque (Injection de vulnérabilité)
+
 Pour que Wazuh détecte une faille, nous allons volontairement installer une version obsolète et vulnérable d'un logiciel très connu : l'éditeur de texte Vim.
 
 1. Sur l'agent cible, installer une version spécifique et vulnérable :
@@ -1140,103 +1141,309 @@ sudo apt-get upgrade vim
 
 3. Sur le Dashboard Wazuh (Onglet Events), une nouvelle alerte apparaîtra indiquant que la vulnérabilité a le statut Solved (Résolue) ou que l'inventaire est désormais propre.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![alt text](Images_tp_wazuh/Preuve_Vim.png)
 
 * Détection de processus cachés par rootkit : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-detect-hidden-process.html
 
+# Procédure : Détection d'un processus caché (Rootkit / Process Hiding)
 
+## 1. Objectif
 
+Valider la capacité de détection du module Rootcheck de Wazuh. Cette procédure consiste à simuler l'injection d'un rootkit noyau (Diamorphine) sur un endpoint pour vérifier que l'agent est capable d'identifier les incohérences entre la table des processus du noyau et la vue des outils utilisateurs (ps).
 
+## 2. Configuration de l'Agent (Endpoint)
 
+Pour permettre une détection réactive, la fréquence de scan a été optimisée :
 
+1. **Modification de la configuration** : Éditer /var/ossec/etc/ossec.conf sur l'agent.
 
+2. **Ajustement de la fréquence** : Dans le bloc <rootcheck>, définir la fréquence de scan à 120 secondes (2 minutes).
 
+```xml
+<rootcheck>
+  <disabled>no</disabled>
+  <check_pids>yes</check_pids>
+  <frequency>120</frequency>
+</rootcheck>
+```
 
+3. **Application** : Redémarrer l'agent pour appliquer les changements :
+
+```bash
+sudo systemctl restart wazuh-agent
+```
+
+## 3. Emulation de l'Attaque (Rootkit Diamorphine)
+
+*Note : Cette étape nécessite un environnement de test isolé.*
+
+1. **Compilation** : Récupération du code source et compilation du module noyau.
+
+```bash
+git clone https://github.com/m0nad/Diamorphine 
+cd Diamorphine 
+make
+```
+
+2. **Injection** : Charger le module dans le noyau Linux.
+
+```bash
+sudo insmod diamorphine.ko
+```
+
+3. **Masquage de processus** : Utiliser les signaux kill fournis par le rootkit pour rendre le processus rsyslogd invisible aux outils de reporting standard (ps aux).
+
+## 4. Validation et Visualisation
+
+La détection repose sur la corrélation des événements générés par le moteur Rootcheck :
+
+1. **Accès Dashboard** : Threat Hunting > Section de recherche.
+
+2. **Requête de corrélation** : Utiliser le filtre suivant pour isoler les alertes :
+
+```plaintext
+rule.groups:rootcheck
+```
+
+3. **Analyse des preuves** : Le dashboard affiche des alertes critiques de type "Process hidden" ou "Rootkit detection". Ces alertes confirment que Wazuh a détecté la divergence entre les processus réellement actifs et ceux rapportés par le système.
+
+## 5. Analyse de l'incident
+
+**Preuve technique** : L'alerte confirme que Wazuh a réussi à "voir" le processus rsyslogd via son module de surveillance système, alors même que le rootkit tentait de le supprimer de la liste des processus visibles.
+
+* Remédiation :
+
+  * Décharger le module noyau malveillant (rmmod).
+
+  * Analyser l'intégrité du système.
+
+  * Mettre en quarantaine l'endpoint pour une investigation forensique.
+
+![alt text](Images_tp_wazuh/Preuve_rootkit.png)
+![alt text](Images_tp_wazuh/Preuve_rootkit2.png)
 
 * Détection de commandes malveillantes : https://documentation.wazuh.com/current/proof-of-concept-guide/audit-commands-run-by-user.html
 
+# Procédure : Surveillance de l'exécution de commandes malveillantes (Auditd)
+
+## 1. Objectif
+
+Configurer l'utilitaire natif Linux *auditd* sur l'agent pour tracer l'ensemble des commandes exécutées par un utilisateur (y compris via *sudo* ou *su*). L'objectif est ensuite d'utiliser les listes CDB (Constant Database) de Wazuh pour générer une alerte critique personnalisée lorsqu'un binaire spécifiquement identifié comme dangereux (ex: *netcat*) est exécuté.
+
+## 2. Configuration de l'Agent (Endpoint Ubuntu)
+
+Dans un premier temps, il faut configurer le système d'exploitation pour générer les journaux d'audit, puis indiquer à l'agent Wazuh de les lire.
+
+### 2.1. Installation et configuration d'Auditd
+
+1. **Installation du paquet** :
+
+```Bash
+sudo apt -y install auditd
+sudo systemctl start auditd
+
+```
+
+2. **Création des règles d'audit** :
+Ajouter les règles suivantes pour cibler l'utilisateur principal (UID 1000) et tracer les exécutions de commandes (*execve*) avec la clé d'identification *audit-wazuh-c*.
+
+```Bash
+sudo sh -c 'echo "-a exit,always -F auid=1000 -F egid!=994 -F auid!=-1 -F arch=b32 -S execve -k audit-wazuh-c" >> /etc/audit/audit.rules'
+
+sudo sh -c 'echo "-a exit,always -F auid=1000 -F egid!=994 -F auid!=-1 -F arch=b64 -S execve -k audit-wazuh-c" >> /etc/audit/audit.rules'
+```
+
+3. **Application et vérification des règles** :
+
+
+```Bash
+sudo auditctl -R /etc/audit/audit.rules
+sudo auditctl -l
+```
+
+### 2.2. Configuration de l'Agent Wazuh
+
+1. **Lecture des logs** : Éditer le fichier /var/ossec/etc/ossec.conf de l'agent pour y ajouter le bloc suivant afin de collecter les événements auditd :
+
+```XML
+<localfile>
+  <log_format>audit</log_format>
+  <location>/var/log/audit/audit.log</location>
+</localfile>
+```
+
+2. Redémarrage de l'agent :
+
+```Bash
+sudo systemctl restart wazuh-agent
+```
+
+## 3. Configuration du Manager (Wazuh Server)
+
+Cette étape consiste à créer une base de données de surveillance (liste CDB) et une règle de détection sur mesure.
+
+### 3.1. Création de la liste des programmes suspects (CDB List)
+
+1. **Création du fichier de liste** :
+
+```Bash
+sudo nano /var/ossec/etc/lists/suspicious-programs
+```
+
+2. **Ajout du contenu (Format Clé:Valeur)** :
+
+```Plaintext
+ncat:yellow
+nc:red
+tcpdump:orange
+```
+
+3. **Déclaration de la liste** : Éditer le fichier */var/ossec/etc/ossec.conf* du **Manager**, localiser la section <ruleset> et y ajouter :
+
+```XML
+<list>etc/lists/suspicious-programs</list>
+```
+
+### 3.2. Création de la règle de corrélation
+
+1. **Édition des règles locales** :
+
+```Bash
+sudo nano /var/ossec/etc/rules/local_rules.xml
+```
+
+2.**Ajout de la règle d'alerte (Niveau 12 - Haute sévérité)** :
+Cette règle se déclenche (ID 100210) si l'événement correspond à la règle parente d'Auditd (80792) ET si la commande exécutée a la valeur red dans notre liste CDB.
+
+```XML
+<group name="audit">
+  <rule id="100210" level="12">
+      <if_sid>80792</if_sid>
+      <list field="audit.command" lookup="match_key_value" check_value="red">etc/lists/suspicious-programs</list>
+      <description>Audit: Highly Suspicious Command executed: $(audit.exe)</description>
+      <group>audit_command,</group>
+  </rule>
+</group>
+```
+
+3. **Application de la configuration** :  
+
+```Bash
+sudo systemctl restart wazuh-manager
+```
+
+## 4. Émulation de l'Attaque  
+
+Sur l'agent Ubuntu, installer et exécuter l'outil netcat (défini comme programme red dans notre liste) :  
+
+```Bash
+sudo apt -y install netcat
+nc -v
+```
+
+## 5. Validation et Visualisation
+
+La détection valide la bonne intégration d'Auditd et la réactivité des listes CDB.
+
+1. Accès Dashboard : Threat Hunting > Section de recherche.
+
+2. Requête de corrélation : Utiliser les filtres suivants pour isoler l'alerte :
+
+```Plaintext
+data.audit.command:nc
+```
+
+*Ou filtrer directement sur l'ID de règle : rule.id:100210*
+
+3. Analyse de l'alerte : Une alerte de niveau 12 nommée "*Audit: Highly Suspicious Command executed: /usr/bin/nc*" apparaîtra dans le tableau de bord.
+
+![alt text](Preuve_audit.png)
+
 * Détection d'attaques shellshock : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-web-attack-shellshock.html
+
+# Procédure : Détection d'une attaque Shellshock (Serveur Web)
+
+## 1. Objectif
+
+Configurer l'agent Wazuh pour surveiller les journaux d'accès d'un serveur web Apache (logs applicatifs). L'objectif est de démontrer la capacité du SIEM à analyser les requêtes HTTP entrantes et à identifier un payload malveillant caché dans le champ User-Agent (caractéristique de l'attaque Shellshock).
+
+## 2. Préparation de la victime (Agent Ubuntu)
+
+Il faut d'abord installer le service web qui servira de cible.
+
+1. **Installation d'Apache2** :
+
+```Bash
+sudo apt update
+sudo apt install apache2
+```
+
+2. **Configuration du pare-feu (Optionnel mais recommandé)** :
+
+Si *ufw* est activé sur ta machine, autorise le trafic web :
+
+```Bash
+sudo ufw allow 'Apache'
+sudo ufw status
+```
+
+3. **Vérification du service** :
+
+```Bash
+sudo systemctl status apache2
+```
+
+(Le service doit être *active (running*)).
+
+## 3. Configuration de l'Agent Wazuh
+
+Maintenant que le serveur web tourne, il faut dire à Wazuh de lire ses fichiers journaux.
+
+1. **Édition de la configuration** :
+
+```Bash
+sudo nano /var/ossec/etc/ossec.conf
+```
+
+2. **Ajout du bloc de lecture de logs** :
+
+Ajoute ce bloc dans la configuration pour lire le fichier *access.log* d'Apache en tant que format *syslog* :
+
+```XML
+<localfile>
+    <log_format>syslog</log_format>
+    <location>/var/log/apache2/access.log</location>
+</localfile>
+```
+
+3. Application de la configuration :
+
+```Bash
+sudo systemctl restart wazuh-agent
+```
+
+## 4. Emulation de l'Attaque
+
+L'attaque Shellshock exploite une faille dans Bash via les variables d'environnement (souvent passées par les scripts CGI d'Apache).
+
+Depuis une autre machine (ou depuis le terminal de ton Manager si tu n'as pas de machine "attaquante" dédiée), lance cette commande en remplaçant <WEBSERVER_IP_ADDRESS> par l'IP de ton agent Ubuntu :
+
+```Bash
+sudo curl -H "User-Agent: () { :; }; /bin/cat /etc/passwd" http://<WEBSERVER_IP_ADDRESS>
+```
+
+*Explication technique* : L'attaquant modifie son en-tête *User-Agent* pour y injecter une fonction Bash vide *() { :; };* suivie d'une commande système (ici, lire le fichier des mots de passe).
+
+## 5. Validation et Visualisation
+
+Le décodeur natif de Wazuh va analyser le journal d'Apache, extraire l'en-tête malveillant et déclencher la règle de sécurité.
+
+1. Accès Dashboard : *Modules* > *Threat Hunting.*
+
+1. Requête de corrélation : Utilise le filtre suivant dans la barre de recherche :
+
+```Plaintext
+rule.description:Shellshock attack detected
+```
+
+3. Analyse : Une alerte critique apparaîtra, confirmant que Wazuh a analysé la requête HTTP et identifié la signature d'injection de commande.
