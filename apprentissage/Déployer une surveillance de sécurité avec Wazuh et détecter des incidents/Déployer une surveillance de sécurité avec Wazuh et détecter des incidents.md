@@ -10,6 +10,10 @@
 
 # Déployer une surveillance de sécurité avec Wazuh et détecter des incidents
 
+
+**Architecture Wazuh** : [Plans](<Architecture_wazuh.png>)
+
+
 **Mission 1** : [Installation](<Installation et Configuration de Wazuh - Installer Wazuh dans un environnement simulé et configurer la collecte de logs.md>)
 
 
