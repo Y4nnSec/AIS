@@ -2,23 +2,21 @@
   <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
 </p>
 
-
 **Auteur** : Yann (Administrateur Infrastructure Sécurisée)
 
 **Projet** : Juin 2026
-
 
 * Intégration de l'IDS Suricata : https://documentation.wazuh.com/current/proof-of-concept-guide/integrate-network-ids-suricata.html
 
 # Intégration d'un NIDS (Suricata) avec Wazuh
 
-L'intégration d'un système de détection d'intrusions réseau (NIDS) permet d'améliorer la détection des menaces en surveillant et en analysant le trafic réseau. 
+L'intégration d'un système de détection d'intrusions réseau (NIDS) permet d'améliorer la détection des menaces en surveillant et en analysant le trafic réseau.
 
 Ce cas d'usage démontre comment intégrer Suricata avec Wazuh. Suricata fournit une visibilité supplémentaire sur la sécurité du réseau grâce à ses capacités d'inspection du trafic en temps réel.
 
 ## 1. Infrastructure requise
 
-* **Machine cible (Endpoint) :** Un serveur sous **Ubuntu 22.04** avec l'agent Wazuh préalablement installé. 
+* **Machine cible (Endpoint) :** Un serveur sous **Ubuntu 22.04** avec l'agent Wazuh préalablement installé.
 * **Rôle :** C'est sur cette machine qu'est installé Suricata. Wazuh surveillera et analysera le trafic réseau généré et intercepté sur ce point de terminaison.
 
 ## 2. Installation et configuration de Suricata
@@ -43,22 +41,22 @@ sudo apt-get install suricata -y
 
 **Télécharger et extraire le jeu de règles Emerging Threats pour Suricata :**
 
-```bash  
+```bash
 cd /tmp/ && curl -LO [https://rules.emergingthreats.net/open/suricata-6.0.8/emerging.rules.tar.gz](https://rules.emergingthreats.net/open/suricata-6.0.8/emerging.rules.tar.gz)
 sudo tar -xvzf emerging.rules.tar.gz && sudo mkdir -p /etc/suricata/rules && sudo mv rules/*.rules /etc/suricata/rules/
 sudo find /etc/suricata/rules -name "*.rules" -exec chmod 777 {} \;
-```  
+```
 
 ![alt text](<Images_tp_wazuh/Règle suricata.png>)
 ![alt text](Images_tp_wazuh/Règle_suricata(2).png)
 ![alt text](Images_tp_wazuh/Règle_suricata(3).png)
-  
+
 ### 2.3 Configuration de Suricata
 
 Il est nécessaire de modifier les paramètres de Suricata dans le fichier */etc/suricata/suricata.yaml* afin de définir le réseau à surveiller et l'interface réseau.
 
 **Définir les variables de réseau :**
-  
+
 ```YAML
 HOME_NET: "<IP_DE_LA_MACHINE_UBUNTU_22.04>"
 EXTERNAL_NET: "any"
@@ -70,59 +68,58 @@ rule-files:
 # Configuration globale des statistiques
 stats:
   enabled: yes
-```  
-  
+```
+
 Définir l'interface réseau à écouter (remplacer *enp0s3* par le nom réel de l'interface de la machine, qui peut être obtenu via la commande *ip a* :
-  
-```YAML  
+
+```YAML
 # Prise en charge de la capture haute vitesse Linux
 af-packet:
-  - interface: enp0s3 
-```  
-  
+  - interface: enp0s3
+```
+
 ![alt text](Images_tp_wazuh/Paramètre_suricata.png)
 
 Redémarrer le service Suricata pour appliquer les modifications :
-  
-```BASH  
-sudo systemctl restart suricata  
-```  
-  
+
+```BASH
+sudo systemctl restart suricata
+```
+
 ## 3. Configuration de l'agent Wazuh
 
 Afin que l'agent Wazuh puisse lire et transmettre les alertes générées par Suricata, il faut modifier la configuration locale de l'agent.
 
-Ajouter le bloc de configuration suivant dans le fichier */var/ossec/etc/ossec.conf* de la machine cible (Ubuntu) :  
-  
-```XML  
+Ajouter le bloc de configuration suivant dans le fichier */var/ossec/etc/ossec.conf* de la machine cible (Ubuntu) :
+
+```XML
  <ossec_config>
   <localfile>
     <log_format>json</log_format>
     <location>/var/log/suricata/eve.json</location>
   </localfile>
-</ossec_config> 
-```  
+</ossec_config>
+```
 
 ![alt text](Images_tp_wazuh/OSSEC.conf_suricata.png)
-  
+
 Redémarrer l'agent Wazuh pour appliquer les changements :
-  
-```BASH  
-sudo systemctl restart wazuh-agent  
-```  
-  
+
+```BASH
+sudo systemctl restart wazuh-agent
+```
+
 ## 4. Simulation d'attaque et vérification
 
 Wazuh analyse désormais automatiquement les données du fichier */var/log/suricata/eve.json* et génère les alertes correspondantes sur le tableau de bord.
 
 ### 4.1 Émulation
+
 Pour vérifier le bon fonctionnement, générer un trafic ICMP (Ping) depuis le serveur Wazuh (ou une autre machine) vers la machine cible Ubuntu surveillée par Suricata :
 
-```Bash  
- ping -c 20 "<IP_DE_LA_MACHINE_UBUNTU>" 
-```  
-  
-
+```Bash
+ ping -c 20 "<IP_DE_LA_MACHINE_UBUNTU>"
+```
 
 ### 4.2 Visualisation des alertes
 
@@ -131,7 +128,6 @@ Il est possible de visualiser les données d'alerte directement dans le tableau 
 Pour ce faire :
 
 * Accéder au module Threat Hunting.
-
 * Ajouter le filtre suivant dans la barre de recherche pour isoler les événements du NIDS : rule.groups:suricata.
 
 ![alt text](Images_tp_wazuh/Attaque_ICMP.png)
@@ -140,11 +136,11 @@ Pour ce faire :
 
 En cas d'erreur de démarrage de Suricata, il est fréquent de rencontrer l'erreur suivante dans les journaux (*/var/log/suricata/suricata.log*) :
 
-```plaintext  
+```plaintext
 16/9/2022 -- 12:32:16 - <Error> - [ERRCODE: SC_ERR_AFP_CREATE(190)] - Unable to find iface eth0: No such device
 16/9/2022 -- 12:32:16 - <Error> - [ERRCODE: SC_ERR_AFP_CREATE(190)] - Couldn't init AF_PACKET socket, fatal error
-``` 
-  
+```
+
 **Résolution :** Ce problème survient lorsque le nom de l'interface réseau renseigné dans la configuration est incorrect. Il convient de vérifier le nom exact de l'interface réseau disponible sur le système (*ip a*) et de corriger la directive interface dans le fichier */etc/suricata/suricata.yaml*.
 
 * Surveillance de l'intégrité de répertoires/fichiers sensibles : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-file-integrity-monitoring.html
@@ -166,7 +162,7 @@ Ce cas d'usage exploite le module FIM de Wazuh pour détecter les modifications 
 
 Les étapes suivantes permettent de configurer l'agent Wazuh pour surveiller les modifications du système de fichiers dans le répertoire `/root` (ou tout autre répertoire de test).
 
-1. Éditer le fichier de configuration de l'agent Wazuh `/var/ossec/etc/ossec.conf`. 
+1. Éditer le fichier de configuration de l'agent Wazuh `/var/ossec/etc/ossec.conf`.
 2. Ajouter le répertoire à surveiller dans le bloc `<syscheck>`. Pour obtenir des informations supplémentaires (audit complet en temps réel et reporting des changements), la configuration suivante doit être utilisée :
 
 ```xml
@@ -188,7 +184,6 @@ sudo systemctl restart wazuh-agent
 Les étapes suivantes permettent de configurer l'agent Wazuh pour surveiller les modifications dans le répertoire du bureau de l'utilisateur.
 
 1. Ouvrir le fichier de configuration *C:\Program Files (x86)\ossec-agent\ossec.conf* sur la machine Windows surveillée (avec des droits d'administrateur).
-
 2. Ajouter le répertoire à surveiller dans le bloc <*syscheck*>. Il faut remplacer <*USER_NAME*> par le nom de l'utilisateur de la session Windows 11 :
 
 ```XML
@@ -208,13 +203,9 @@ Restart-Service -Name wazuh
 Afin de vérifier que le module FIM remonte correctement les informations, il faut simuler une activité suspecte sur les deux machines (Ubuntu et Windows) dans les répertoires surveillés :
 
 1. Créer un fichier texte dans le répertoire surveillé.
-
 2. Attendre 5 secondes.
-
 3. Ajouter du contenu au fichier texte, puis l'enregistrer.
-
 4. Attendre 5 secondes.
-
 5. Supprimer le fichier texte du répertoire surveillé.
 
 ## 4. Visualisation des alertes
@@ -224,7 +215,6 @@ Il est possible de visualiser les données d'alerte générées par ces actions 
 Pour ce faire :
 
 1. Se rendre dans le module File Integrity Monitoring (ou Threat Hunting) de l'interface web.
-
 2. Ajouter le filtre suivant dans la barre de recherche pour interroger spécifiquement les alertes de création, modification et suppression de fichiers :
 
    * rule.id: is one of 550,553,554
@@ -243,6 +233,7 @@ Ce cas d'usage démontre comment simuler et détecter une attaque par force brut
 ## 1. Infrastructure requise
 
 Afin de réaliser ce scénario, trois rôles (ou machines) sont nécessaires :
+
 * **Machine de l'attaquant :** Un système Linux (ex: Ubuntu) depuis lequel l'attaque sera lancée. *Note : Dans un environnement de laboratoire restreint, la machine hébergeant la sonde Suricata peut jouer ce rôle.*
 * **Cible Linux (Ubuntu 24.04) :** La victime des attaques SSH. Il est requis d'avoir un serveur SSH installé, activé et supervisé par l'agent Wazuh sur cette machine.
 * **Cible Windows (Windows 11) :** La victime des attaques RDP. Le bureau à distance (RDP) doit être activé sur ce point de terminaison.
@@ -270,8 +261,6 @@ Créer un fichier texte contenant une liste de mots de passe aléatoires (par ex
 nano pass.txt
 ```
 
-
-
 ### 3.2 Attaque contre le serveur Linux (SSH)
 
 Exécuter Hydra depuis la machine de l'attaquant pour lancer l'attaque par force brute contre le service SSH. Remplacer <*IP_LINUX*> par l'adresse IP de la cible Ubuntu surveillée :
@@ -292,8 +281,6 @@ De la même manière, exécuter Hydra pour cibler le service Bureau à distance 
 sudo hydra -l badguy -P pass.txt rdp://<IP_WINDOWS>
 ```
 
-
-
 ## 4. Visualisation des alertes
 
 Une fois les attaques lancées, les échecs d'authentification répétés sont automatiquement analysés par Wazuh, qui va déclencher des alertes de sécurité de niveau critique ou élevé.
@@ -302,13 +289,12 @@ Il est possible de visualiser ces données directement dans le tableau de bord.
 Pour ce faire :
 
 1. Accéder au module Threat Hunting dans l'interface web de Wazuh.
-
 2. Ajouter les filtres suivants dans la barre de recherche pour interroger les alertes spécifiques à ces attaques :
 
 Pour la cible Linux (SSH) :
 
 * rule.id:(5551 OR 5712)
-(D'autres règles connexes peuvent également apparaître, telles que 5710, 5711, 5716, 5720, 5503, 5504).
+  (D'autres règles connexes peuvent également apparaître, telles que 5710, 5711, 5716, 5720, 5503, 5504).
 
 ![alt text](Images_tp_wazuh/Preuve_attaque_brute_force_ssh.png)
 
@@ -322,7 +308,7 @@ Pour la cible Windows (RDP) :
 
 # Détection de processus non autorisés (Monitoring de commandes)
 
-La fonctionnalité de surveillance des commandes de Wazuh permet d'exécuter périodiquement des instructions sur un point de terminaison et d'en analyser la sortie. 
+La fonctionnalité de surveillance des commandes de Wazuh permet d'exécuter périodiquement des instructions sur un point de terminaison et d'en analyser la sortie.
 
 Ce cas d'usage exploite cette capacité pour détecter l'exécution d'un processus spécifique non autorisé, en l'occurrence **Netcat** (souvent utilisé de manière illégitime pour l'écoute ou le balayage de ports), sur une machine cible.
 
@@ -409,12 +395,12 @@ nc -l 8000
 📸 [Capture d'écran : Le terminal de la machine Ubuntu exécutant la commande nc -l 8000 et restant en attente (curseur bloquant)]
 
 ## 5.  Visualisation des alertes
+
 Les données d'alerte peuvent désormais être consultées dans le tableau de bord Wazuh.
 
 Pour ce faire :
 
 1. Accéder au module Threat Hunting.
-
 2. Ajouter le filtre suivant dans la barre de recherche pour isoler spécifiquement la règle personnalisée fraîchement créée :
 
    * rule.id:(100051)
@@ -482,7 +468,7 @@ Ajouter les lignes suivantes au fichier de configuration de l'agent Wazuh */var/
 </ossec_config>
 ```
 
-📸 [Capture d'écran : Le fichier *ossec.conf* ouvert sur la machine Ubuntu, mettant en évidence l'ajout du bloc *<localfile>* pointant vers */var/log/apache2/access.log*]
+📸 [Capture d'écran : Le fichier *ossec.conf* ouvert sur la machine Ubuntu, mettant en évidence l'ajout du bloc  pointant vers */var/log/apache2/access.log*]
 
 1. Redémarrer l'agent Wazuh pour appliquer les modifications de configuration :
 
@@ -491,7 +477,7 @@ sudo systemctl restart wazuh-agent
 ```
 
 3. Émulation de l'attaque
-Pour tester la détection, il convient d'exécuter une requête HTTP contenant une charge utile (payload) d'injection SQL basique.
+   Pour tester la détection, il convient d'exécuter une requête HTTP contenant une charge utile (payload) d'injection SQL basique.
 
 Depuis la machine de l'attaquant, exécuter la commande suivante (en remplaçant <IP_UBUNTU> par l'adresse IP de la cible) :
 
@@ -499,7 +485,7 @@ Depuis la machine de l'attaquant, exécuter la commande suivante (en remplaçant
 curl -XGET "http://<IP_UBUNTU>/users/?id=SELECT+*+FROM+users";
 ```
 
-📸 [Capture d'écran : Le terminal de la machine attaquante exécutant la commande curl avec le payload SQLi. Le résultat affichera probablement le code source de la page d'accueil ou une erreur 404, mais l'essentiel est que la requête soit partie]
+📸 [Capture d'écran : Le terminal de la machine attaquante exécutant la commande curl avec le payload SQLi. Le résultat affichera probablement le code source de la page d'accueil ou une erreur 404, mais l'essentiel est que la requête soit partie
 
 ## 4. Visualisation des alertes
 
@@ -509,51 +495,17 @@ Les données d'alerte peuvent être visualisées dans le tableau de bord Wazuh.
 Pour ce faire :
 
 1. Accéder au module Threat Hunting.
-
 2. Ajouter l'un des filtres suivants dans la barre de recherche :
 
    * rule.id: 31103 (Détecte une attaque par injection SQL générique via requête web)
-
    * rule.id: 31106 (Détecte une tentative d'injection SQL qui a potentiellement réussi - code HTTP 200)
 
 📸 [Capture d'écran : Le tableau de bord Wazuh filtré sur rule.id: 31103 ou 31106, montrant l'alerte "SQL injection attempt". Il est recommandé de déplier le détail de l'alerte pour montrer le champ full_log qui contient la requête exacte SELECT * FROM users]
 
 * Détection de cheval de troie : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-detect-trojan.html
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Traitement de malware à travers l'intégration de VirusTotal : https://documentation.wazuh.com/current/proof-of-concept-guide/detect-remove-malware-virustotal.html
+
 * Détection de vulnérabilités : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-vulnerability-detection.html
 * Détection de processus cachés par rootkit : https://documentation.wazuh.com/current/proof-of-concept-guide/poc-detect-hidden-process.html
 * Détection de commandes malveillantes : https://documentation.wazuh.com/current/proof-of-concept-guide/audit-commands-run-by-user.html
