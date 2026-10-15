@@ -43,10 +43,10 @@ Gestion de parc et helpdesk : analyse des besoins, prérequis, sécurité, dépl
 
 ### 🛡️ Supervision de sécurité avec Wazuh
 Déploiement de Wazuh, détection d'incidents (injection SQL, brute force, FIM, Suricata).
-- [➡️ Voir le projet](./projets/Wazuh)
+- [➡️ Voir le projet](./projets/Wazuh/README.md)
 
 ### 🤖 Automatisation avec Ansible
-- [➡️ Voir le projet](./projets/Ansible)
+- [➡️ Voir le projet](./projets/Ansible/Readme.md)
 
 ---
 
