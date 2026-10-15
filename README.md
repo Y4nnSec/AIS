@@ -38,11 +38,8 @@ Ce dépôt regroupe mes projets, procédures et études techniques autour de l'*
 ## 🚀 Projets
 
 ### 🧾 Mise en place de GLPI
-Gestion de parc et helpdesk : analyse des besoins, prérequis, sécurité, déploiement.
-- 📘 [Rapport de projet](./projets/GLPI/Rapport_projet.md)
-- 🏗️ [Document d'Architecture Technique (DAT)](./projets/GLPI/Document_d'Architecture_Technique_GLPI.md)
-- 🛠️ [Procédure d'installation et de déploiement](<./projets/GLPI/Procédure_pour_installation_GLPI.md>)
-- 📡 [Déploiement de l'agent GLPI et inventaire SNMP](<./projets/GLPI/Procédure_de_déploiement _Agent_GLPI_et_Inventaire_Réseau_SNMP_sous_Debian.md>)
+Gestion de parc et helpdesk : analyse des besoins, prérequis, sécurité, déploiement. Le PDF regroupe le rapport de projet et ses annexes (DAT, procédures d'installation et de déploiement de l'agent).
+- 📘 [Rapport de projet et annexes (PDF)](./projets/GLPI/Projet_GLPI_Rapport_et_annexes.pdf)
 
 ### 🛡️ Supervision de sécurité avec Wazuh
 Déploiement de Wazuh, détection d'incidents (injection SQL, brute force, FIM, Suricata).
