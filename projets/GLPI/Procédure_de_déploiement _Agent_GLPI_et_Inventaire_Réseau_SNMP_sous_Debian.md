@@ -31,7 +31,7 @@ sudo rm -rf /usr/local/bin/glpi-agent
 sudo rm -rf /etc/glpi-agent
 ```
 
-![alt text](../Images/Purge_agent_GLPI.png)
+![alt text](../../documentation/Images/Purge_agent_GLPI.png)
 
 **Téléchargement des paquets**
 
@@ -43,7 +43,7 @@ Il est nécessaire de télécharger le cœur de l'agent et le module réseau (in
 wget https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent_1.15-1_all.deb
 ```
 
-![alt text](../Images/Téléchargement_agent_GLPI.png)
+![alt text](../../documentation/Images/Téléchargement_agent_GLPI.png)
 
 **Télécharger le module Network (Obligatoire pour scanner les switchs)**
 
@@ -51,7 +51,7 @@ wget https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agen
 wget https://github.com/glpi-project/glpi-agent/releases/download/1.15/glpi-agent-task-network_1.15-1_all.deb
 ```
 
-![alt text](../Images/Téléchargement_module_Network.png)
+![alt text](../../documentation/Images/Téléchargement_module_Network.png)
 
 **Installation**
 
@@ -63,7 +63,7 @@ Nous utilisons **apt** pour gérer automatiquement les dépendances (Perl, libra
 sudo apt install ./glpi-agent_1.15-1_all.deb ./glpi-agent-task-network_1.15-1_all.deb -y
 ```
 
-![alt text](../Images/Installation_agent_et_modules.png)
+![alt text](../../documentation/Images/Installation_agent_et_modules.png)
 
 **Vérification de l'installation des modules**
 
@@ -82,7 +82,7 @@ La liste doit contenir les lignes suivantes :
 
 Si ces lignes sont absentes, le paquet glpi-agent-task-network est manquant.
 
-![alt text](../Images/Verification_installation_agent_et_modules.png)
+![alt text](../../documentation/Images/Verification_installation_agent_et_modules.png)
 
 
 ### Partie 2 : Configuration de l'Agent
@@ -105,7 +105,7 @@ Modifications à effectuer : Rechercher la ligne # server = ... au début du fic
 
 **Le fichier doit ressembler à ceci :**
 
-![alt text](../Images/Configuration_serveur.png)
+![alt text](../../documentation/Images/Configuration_serveur.png)
 
 **Vérification du Service Systemd**
 
@@ -123,7 +123,7 @@ sudo systemctl edit --full glpi-agent.service
 ExecStart=/usr/bin/glpi-agent --daemon --no-fork $OPTIONS
 ```
 
-![alt text](../Images/Ligne_Execstart.png)
+![alt text](../../documentation/Images/Ligne_Execstart.png)
 
 (Si le chemin indique /usr/local/bin, le corriger vers /usr/bin).
 
@@ -147,7 +147,7 @@ sudo systemctl restart glpi-agent
 sudo systemctl status glpi-agent
 ```
 
-![alt text](../Images/redémarrage_et_verification_du_statut_de_l_agent.png)
+![alt text](../../documentation/Images/redémarrage_et_verification_du_statut_de_l_agent.png)
 
 * Première communication forcée
 
@@ -157,7 +157,7 @@ Pour que l'agent apparaisse dans la liste des agents sur l'interface web, il fau
 sudo glpi-agent --force
 ```
 
-![alt text](../Images/forcer_l_agent.png)
+![alt text](../../documentation/Images/forcer_l_agent.png)
 
 
 ### Partie 3 : Configuration dans GLPI (Interface Web)
@@ -171,9 +171,9 @@ sudo glpi-agent --force
   * Découverte réseau : Oui
   * Inventaire réseau : Oui
 
-![alt text](../Images/activation_des_options_de_l_agent.png)
+![alt text](../../documentation/Images/activation_des_options_de_l_agent.png)
 
-![alt text](../Images/activation_de_l_agent.png)
+![alt text](../../documentation/Images/activation_de_l_agent.png)
 
 ### Création des identifiants SNMPv3
 
@@ -196,9 +196,9 @@ L'agent a besoin d'identifiants chiffrés pour interroger les switchs de manièr
   * *Exemple pour cibler le switch répartiteur SW-STD-DAT-01 spécifiquement :* `10.61.20.1` à `10.61.20.1`.
   * *Exemple pour le réseau d'équipements du site principal (Mauves) :* `10.50.20.1` à `10.50.20.254`.
 
-![alt text](../Images/Identifiant_snmp.png)
+![alt text](../../documentation/Images/Identifiant_snmp.png)
 
-![alt text](../Images/Plage_IP.png)
+![alt text](../../documentation/Images/Plage_IP.png)
 
 **Création de la Tâche**
 
@@ -215,11 +215,11 @@ Cette étape lie l'agent, la cible et les identifiants.
 
 * Action finale : Dans la liste des tâches (ou via le bouton d'action), cliquer sur "Forcer le démarrage" pour préparer le travail.
 
-![alt text](../Images/Gestion_des_tâches1.png)
-![alt text](../Images/Gestion_des_tâches2.png)
-![alt text](../Images/Gestion_des_tâches3.png)
-![alt text](../Images/Gestion_des_tâches4.png)
-![alt text](../Images/Gestion_des_tâches5.png)
+![alt text](../../documentation/Images/Gestion_des_tâches1.png)
+![alt text](../../documentation/Images/Gestion_des_tâches2.png)
+![alt text](../../documentation/Images/Gestion_des_tâches3.png)
+![alt text](../../documentation/Images/Gestion_des_tâches4.png)
+![alt text](../../documentation/Images/Gestion_des_tâches5.png)
 
 
 ### Partie 4 : Exécution et Vérification
@@ -234,7 +234,7 @@ sudo glpi-agent --force
 
 Vérification : Le terminal doit afficher running task NetDiscovery.
 
-![alt text](../Images/Forcer_l'agent_pour_snmp.png)
+![alt text](../../documentation/Images/Forcer_l'agent_pour_snmp.png)
 
 **Vérification de l'importation**
 
@@ -246,8 +246,8 @@ Vérifier la présence du nouveau switch dans la liste.
 
 Cliquer sur le nom du switch pour valider la remontée des informations (Ports, Modèle, Firmware).
 
-![alt text](../Images/Import_SNMP.png)
-![alt text](../Images/Import_SNMP2.png)
+![alt text](../../documentation/Images/Import_SNMP.png)
+![alt text](../../documentation/Images/Import_SNMP2.png)
 
 ### Cas de dépannage (Si le switch n'apparaît pas)
 
@@ -257,7 +257,7 @@ Si le switch n'est pas dans le Parc, c'est que l'identification a échoué (souv
 * Si le switch est présent ici, c'est qu'il manque des informations critiques (MAC/Serial) pour l'import automatique.
 * **Action corrective :** Vérifier les mots de passe et les protocoles de chiffrement SNMPv3 (SHA/AES) dans GLPI et sur le switch, puis relancer le scan.
 
-![alt text](../Images/Depannage_d_import_SNMP.png)
+![alt text](../../documentation/Images/Depannage_d_import_SNMP.png)
 
 ### Conclusion
 

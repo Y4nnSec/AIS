@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
+  <img src="../../documentation/Images/yannsec_banner.png" alt="YannSec Banner" width="600">
 </p>
 
 **Auteur** : Yann (Administrateur Infrastructure Sécurisée)

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Arche_Agglo.png" alt="Logo Arche Agglo" width="320">
+  <img src="../../documentation/Images/Logo_Arche_Agglo.png" alt="Logo Arche Agglo" width="320">
 </p>
 
 <h1 align="center">Projet GLPI </h1>
@@ -11,7 +11,7 @@ Alternant Administrateur d’Infrastructures Sécurisées<br><br>
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Y4nnSec/AIS/main/apprentissage/Images/Logo_Simplon.png" alt="Logo Simplon" width="320">
+  <img src="../../documentation/Images/Logo_Simplon.png" alt="Logo Simplon" width="320">
 </p>
 
 <p align="center">
@@ -300,7 +300,7 @@ Comment mettre en place une solution centralisée permettant d’assurer un inve
 | Sauvegarde | Veeam, Nextcloud |
 | Réseau | SNMPv3, VLAN |
 
-![alt text](../Images/Shéma_global_Arche_Agglo.png)
+![alt text](../../documentation/Images/Shéma_global_Arche_Agglo.png)
 
 
 ## 1. Liste des compétences mises en œuvre dans le cadre du projet
@@ -357,22 +357,22 @@ Née en 2017 de la fusion de trois communautés de communes, ARCHE Agglo gère u
 
 #### 2.1.1. Organigramme
 
-![Organigramme 1](../Images/Organigramme1.png)
-![Organigramme 2](../Images/Organigramme2.png)
-![Organigramme 3](../Images/Organigramme3.png)
-![Organigramme 4](../Images/Organigramme4.png)
-![Organigramme 5](../Images/Organigramme5.png)
-![Organigramme 6](../Images/Organigramme6.png)
-![Organigramme 7](../Images/Organigramme7.png)
-![Organigramme 8](../Images/Organigramme8.png)
+![Organigramme 1](../../documentation/Images/Organigramme1.png)
+![Organigramme 2](../../documentation/Images/Organigramme2.png)
+![Organigramme 3](../../documentation/Images/Organigramme3.png)
+![Organigramme 4](../../documentation/Images/Organigramme4.png)
+![Organigramme 5](../../documentation/Images/Organigramme5.png)
+![Organigramme 6](../../documentation/Images/Organigramme6.png)
+![Organigramme 7](../../documentation/Images/Organigramme7.png)
+![Organigramme 8](../../documentation/Images/Organigramme8.png)
 
 #### 2.1.2. Implantation de l’entreprise
 
 **Les sites principaux :**
-![Carte des sites principaux](../Images/Carte_Arche_Agglo.png)
+![Carte des sites principaux](../../documentation/Images/Carte_Arche_Agglo.png)
 
 **Tous les sites :**
-![Carte de tous les sites](../Images/Carte_Arche_Agglo2.png)
+![Carte de tous les sites](../../documentation/Images/Carte_Arche_Agglo2.png)
 
 ### 2.2. Contexte
 
@@ -746,14 +746,14 @@ L'évolution de l'infrastructure réseau et de la cinématique des flux applicat
 ##### 1. Architecture réseau initiale (Avant projet)
 Dans la configuration d'origine, l'ancien serveur GLPI de production (`SRV-MVS-GLPI-PROD`) est isolé sur l'adresse IP `10.50.99.50`. Son rôle est purement passif : il reçoit uniquement les requêtes HTTPS (port TCP 443) provenant des postes de travail des utilisateurs (VLAN 10 Mairie et Agglo) pour la saisie manuelle des tickets de support. À ce stade, il n'existe aucune découverte automatisée des équipements du réseau ni de centralisation des événements de sécurité.
 
-![alt text](../Images/Plan_Arche_Agglo_Avant.png)
+![alt text](../../documentation/Images/Plan_Arche_Agglo_Avant.png)
 
 ##### 2. Architecture réseau cible (Après projet)
 Cette topologie représente l'intégration finale de la solution de test au sein du VLAN 99. Le nouveau serveur GLPI de maquette (`10.50.99.100`) pilote désormais la découverte et l'inventaire automatique des commutateurs du VLAN 20 en utilisant le protocole sécurisé SNMPv3 AuthPriv (port UDP 161). 
 
 L'évolution majeure réside également dans l'introduction du serveur SIEM/XDR Wazuh (`10.50.99.101`), qui collecte en continu les journaux d'événements et les logs applicatifs chiffrés du serveur GLPI via le port TCP 1514. En local, le couplage avec Fail2ban permet de déclencher des réponses actives immédiates en cas de détection de brute force.
 
-![alt text](../Images/Plan_Arche_Agglo.png)
+![alt text](../../documentation/Images/Plan_Arche_Agglo.png)
 
 #### B. Plan d'adressage cible et Segmentation (VLAN)
 
@@ -813,7 +813,7 @@ Le serveur dispose d'une adresse IPv4 fixe (`10.50.99.100`) et d'un enregistreme
 
 Ce diagramme synthétise les interactions réseaux entrantes et sortantes du serveur GLPI au sein de l'infrastructure :
 
-![alt text](<../Images/Cartographie des Flux Applicatifs et Sécurité.png>)
+![alt text](<../../documentation/Images/Cartographie des Flux Applicatifs et Sécurité.png>)
 
 ### 4.6. Sécurisation de l'infrastructure (Durcissement OS et Flux)
 
@@ -1064,7 +1064,7 @@ En cas d’incident majeur :
 
 Afin de valider cette stratégie, un test réel de Plan de Reprise d'Activité a été exécuté. À l'issue de la restauration de la machine virtuelle et de la réinjection du dump de la base de données, l'intégrité des données a été confirmée.
 
-![nterface GLPI après restauration PRA](../Images/GLPI_Post_Restauration.png)
+![nterface GLPI après restauration PRA](../../documentation/Images/GLPI_Post_Restauration.png)
 
 Cette organisation garantit une remise en service rapide tout en limitant la perte de données.
 
@@ -1166,18 +1166,18 @@ L'architecture détaillée du déploiement met en évidence le cloisonnement des
 #### A. Architecture détaillée initiale (Avant projet)
 Dans cette configuration d'origine, l'ancien serveur GLPI de production (`SRV-MVS-GLPI-PROD`) est isolé sur l'IP `10.50.99.50`. Son rôle est purement passif : il reçoit uniquement les flux HTTP/HTTPS des utilisateurs du VLAN 10 pour la saisie manuelle des tickets. Il n'existe aucune communication de supervision de sécurité ni de découverte de parc automatisée.
 
-![alt text](../Images/Architecture_Réseau_Globale_Avant.png)
+![alt text](../../documentation/Images/Architecture_Réseau_Globale_Avant.png)
 
 #### B. Architecture détaillée cible (Après projet)
 Cette vue représente l'implémentation finale de la solution de test sécurisée. On y observe l'introduction du nouveau serveur GLPI (`10.50.99.100`) configuré avec l'agent d'inventaire automatique et interrogeant le switch de cœur en SNMPv3 AuthPriv. Le serveur SIEM/XDR Wazuh (`10.50.99.101`) fait son apparition pour collecter les logs chiffrés du serveur GLPI, tandis que Fail2ban assure la protection active en couche locale.
 
-![alt text](../Images/Architecture_Réseau_Globale.png)
+![alt text](../../documentation/Images/Architecture_Réseau_Globale.png)
 
 ### 5.3. Diagramme de Séquence du Protocole SNMP
 
 Ce diagramme de séquence détaille les interactions réseau entre l'agent Linux (équipé du module network) et les équipements lors du processus de découverte SNMP.
 
-![alt text](<../Images/Diagramme de Séquence du Protocole SNMP.png>)
+![alt text](<../../documentation/Images/Diagramme de Séquence du Protocole SNMP.png>)
 
 ### 5.4 Politique de sécurité mise en œuvre
 
@@ -1329,7 +1329,7 @@ Résultat:
 
 active active active
 
-![alt text](../Images/wazuh_tout_en_un.png)
+![alt text](../../documentation/Images/wazuh_tout_en_un.png)
 
 **Le socle de supervision est opérationnel et prêt à recevoir les agents**.
 
@@ -1386,7 +1386,7 @@ systemctl daemon-reload
 systemctl enable wazuh-agent
 systemctl start wazuh-agent
 ```
-![alt text](../Images/Installation_agent_wazuh_Glpi.png)
+![alt text](../../documentation/Images/Installation_agent_wazuh_Glpi.png)
 
 **Validation de l’intégration**
 
@@ -1400,7 +1400,7 @@ Cela confirme :
 * la remontée des premiers événements
 * l’intégration correcte dans le SIEM
 
-![alt text](../Images/Dashboard_wazuh.png)
+![alt text](../../documentation/Images/Dashboard_wazuh.png)
 
 ### 6.4 Exploitation et validation de la détection
 
@@ -1424,7 +1424,7 @@ Résultat :
 
 Validation du comportement IDS attendu
 
-![alt text](../Images/Test_brute_force.png)
+![alt text](../../documentation/Images/Test_brute_force.png)
 
 #### 6.4.2 File Integrity Monitoring (FIM)
 
@@ -1446,7 +1446,7 @@ Résultat :
 
 Le système garantit l’intégrité des fichiers critiques
 
-![alt text](../Images/Test_F.I.M.png)
+![alt text](../../documentation/Images/Test_F.I.M.png)
 
 #### 6.4.3 Réponse active (Active Response)
 
@@ -1474,8 +1474,8 @@ Cette fonctionnalité permet :
 * une réduction du temps d’exposition
 * une limitation des scans et brute force
 
-![alt text](../Images/detection_wazuh_bruteforce_ssh.png)
-![alt text](../Images/validation_active_response_logs_agent.png)
+![alt text](../../documentation/Images/detection_wazuh_bruteforce_ssh.png)
+![alt text](../../documentation/Images/validation_active_response_logs_agent.png)
 
 Limite : cette fonction ne remplace pas un firewall périmétrique (type Fortinet / pfSense), mais agit comme une couche de défense complémentaire.
 
@@ -1508,7 +1508,7 @@ bantime = 30m
 
 Ce paramétrage limite efficacement les tentatives d’authentification répétées sur SSH.
 
-![alt text](../Images/fail2ban_config.png)
+![alt text](../../documentation/Images/fail2ban_config.png)
 
 #### 6.5.4 Test de validation
 
@@ -1519,7 +1519,7 @@ la règle a été appliquée sans intervention humaine
 
 Protection effective contre brute force automatisé
 
-![alt text](../Images/preuve_fail2ban.png)
+![alt text](../../documentation/Images/preuve_fail2ban.png)
 
 ### 6.6 Conclusion sécurité
 

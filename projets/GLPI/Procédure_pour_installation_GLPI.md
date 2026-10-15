@@ -116,7 +116,7 @@ Partitionnement recommandé :
 sudo apt update && sudo apt upgrade -y
 ```
 
-![alt text](../Images/Mise_à_jour_debian13.png)
+![alt text](../../documentation/Images/Mise_à_jour_debian13.png)
 
 
 ## 4. Installation de la stack LAMP
@@ -142,7 +142,7 @@ sudo apt install php8.4-{curl,gd,intl,mysql,zip,bcmath,mbstring,xml,bz2,ldap}
 sudo mariadb-secure-installation
 ```
 
-![alt text](../Images/Securisation_MariaDB.png)
+![alt text](../../documentation/Images/Securisation_MariaDB.png)
 
 ### 5.2 Création de la base GLPI
 
@@ -153,7 +153,7 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-![alt text](../Images/Création_de_la_base_de_donnée.png)
+![alt text](../../documentation/Images/Création_de_la_base_de_donnée.png)
 
 
 ## 6. Téléchargement et préparation de GLPI
@@ -250,7 +250,7 @@ sudo nano /etc/apache2/sites-available/glpi-test.archeagglo.fr.conf
 </VirtualHost>
 ```
 
-![alt text](../Images/Config_apache2.png)
+![alt text](../../documentation/Images/Config_apache2.png)
 
 ### 7.2 Activation et redémarrage
 
@@ -291,7 +291,7 @@ session.cookie_samesite = Lax
 
 Redémarrer le service PHP-FPM afin d’appliquer les modifications :
 
-![alt text](../Images/Config_php.ini.png)
+![alt text](../../documentation/Images/Config_php.ini.png)
 
 Redémarrage PHP-FPM :
 
@@ -323,7 +323,7 @@ Cette configuration indique à Apache :
 * d’utiliser le socket PHP-FPM dédié,
 * de déléguer l’exécution des scripts PHP à PHP-FPM
 
-![alt text](../Images/Config_php-fpm_pour_apache2.png)
+![alt text](../../documentation/Images/Config_php-fpm_pour_apache2.png)
 
 Activer les modules nécessaires si ce n’est pas déjà fait :
 
@@ -364,20 +364,20 @@ et conforme aux bonnes pratiques pour un environnement GLPI.
 sudo rm /var/www/glpi/install/install.php
 ```
 
-![alt text](../Images/Conf_glpi_test.png)
-![alt text](../Images/conf_glpi_test2.png)
-![alt text](../Images/conf_glpi_test3.png)
-![alt text](../Images/conf_glpi_test4.png)
-![alt text](../Images/conf_glpi_test5.png)
-![alt text](../Images/conf_glpi_test6.png)
-![alt text](../Images/conf_glpi_test7.png)
-![alt text](../Images/conf_glpi_test8.png)
-![alt text](../Images/conf_glpi_test9.png)
-![alt text](../Images/conf_glpi_test10.png)
-![alt text](../Images/conf_glpi_test11.png)
-![alt text](../Images/conf_glpi_test12.png)
-![alt text](../Images/conf_glpi_test13.png)
-![alt text](../Images/Tableau_de_bord_GLPI_2.png)
+![alt text](../../documentation/Images/Conf_glpi_test.png)
+![alt text](../../documentation/Images/conf_glpi_test2.png)
+![alt text](../../documentation/Images/conf_glpi_test3.png)
+![alt text](../../documentation/Images/conf_glpi_test4.png)
+![alt text](../../documentation/Images/conf_glpi_test5.png)
+![alt text](../../documentation/Images/conf_glpi_test6.png)
+![alt text](../../documentation/Images/conf_glpi_test7.png)
+![alt text](../../documentation/Images/conf_glpi_test8.png)
+![alt text](../../documentation/Images/conf_glpi_test9.png)
+![alt text](../../documentation/Images/conf_glpi_test10.png)
+![alt text](../../documentation/Images/conf_glpi_test11.png)
+![alt text](../../documentation/Images/conf_glpi_test12.png)
+![alt text](../../documentation/Images/conf_glpi_test13.png)
+![alt text](../../documentation/Images/Tableau_de_bord_GLPI_2.png)
 
 
 ## 10. Sécurisation post-installation
@@ -405,7 +405,7 @@ Forward Hostname / IP : 10.50.99.100
 
 Forward Port : 80
 
-![alt text](../Images/Config_nginx.png)
+![alt text](../../documentation/Images/Config_nginx.png)
 
 * SSH restreint / clé
 * Fail2ban
@@ -446,7 +446,7 @@ Test d’accès via navigateur web.
 * Certificat valide et reconnu (aucune alerte de sécurité navigateur).
 * Communication chiffrée confirmée de bout en bout entre le client et le Reverse Proxy.
 
-![alt text](../Images/Connexion_en_HTTPS.png)
+![alt text](../../documentation/Images/Connexion_en_HTTPS.png)
 
 **Statut :** validé
 
@@ -464,7 +464,7 @@ Valider l’authentification des utilisateurs via un annuaire LDAP.
 - Connexion LDAP réussie
 - Synchronisation correcte des comptes utilisateurs
 
-![alt text](../Images/Test_LDAP.png)
+![alt text](../../documentation/Images/Test_LDAP.png)
 
 **Statut :** validé
 
@@ -483,8 +483,8 @@ Vérifier l’envoi et la réception des notifications par e-mail depuis GLPI.
 - Envoi d’e-mails fonctionnel
 - Réception des messages confirmée
 
-![alt text](../Images/Test_SMTP.png)
-![alt text](../Images/Test_réception_SMTP.png)
+![alt text](../../documentation/Images/Test_SMTP.png)
+![alt text](../../documentation/Images/Test_réception_SMTP.png)
 
 **Statut :** validé
 
@@ -503,10 +503,10 @@ Valider le fonctionnement du module helpdesk
 - Cycle de vie des tickets fonctionnel
 - Notifications associées envoyées correctement
 
-![alt text](../Images/Test_ticket.png)
-![alt text](../Images/Test_ticket2.png)
-![alt text](../Images/Fermeture_du_ticket.png)
-![alt text](../Images/Commentaire_du_ticket.png)
+![alt text](../../documentation/Images/Test_ticket.png)
+![alt text](../../documentation/Images/Test_ticket2.png)
+![alt text](../../documentation/Images/Fermeture_du_ticket.png)
+![alt text](../../documentation/Images/Commentaire_du_ticket.png)
 
 **Statut :** validé
 
@@ -522,17 +522,17 @@ correctement accessibles et exploitables dans l’application.
 
 Ces tests confirment la capacité de la solution à gérer un parc informatique et des comptes utilisateurs, aussi bien en création unitaire qu’en import groupé.
 
-![alt text](../Images/Ajout_de_matériel_manuel.png)
-![alt text](../Images/Téléchargement_data_injection.png)
-![alt text](../Images/Outil_data_injection.png)
-![alt text](../Images/Creation_modele_d_import.png)
-![alt text](../Images/Creation_modele_d_import2.png)
-![alt text](../Images/Creation_modele_d_import3.png)
-![alt text](../Images/Creation_modele_d_import4.png)
-![alt text](../Images/Users_a_importer.png)
-![alt text](../Images/Importation_des_utilisateurs.png)
-![alt text](../Images/Importation_des_utilisateurs2.png)
-![alt text](../Images/Users_importés_csv.png)
+![alt text](../../documentation/Images/Ajout_de_matériel_manuel.png)
+![alt text](../../documentation/Images/Téléchargement_data_injection.png)
+![alt text](../../documentation/Images/Outil_data_injection.png)
+![alt text](../../documentation/Images/Creation_modele_d_import.png)
+![alt text](../../documentation/Images/Creation_modele_d_import2.png)
+![alt text](../../documentation/Images/Creation_modele_d_import3.png)
+![alt text](../../documentation/Images/Creation_modele_d_import4.png)
+![alt text](../../documentation/Images/Users_a_importer.png)
+![alt text](../../documentation/Images/Importation_des_utilisateurs.png)
+![alt text](../../documentation/Images/Importation_des_utilisateurs2.png)
+![alt text](../../documentation/Images/Users_importés_csv.png)
 
 **Statut :** validé
 
@@ -545,15 +545,15 @@ S’assurer que les données GLPI peuvent être sauvegardées et restaurées.
 
 J'ai effectué une sauvegarde de test :
 
-![alt text](../Images/creation_d_une_sauvegarde_test.png)
+![alt text](../../documentation/Images/creation_d_une_sauvegarde_test.png)
 
 J’ai vérifié la présence de la sauvegarde ainsi que la cohérence de sa taille :
-![alt text](../Images/vérification_du_backup.png)
+![alt text](../../documentation/Images/vérification_du_backup.png)
 
 Enfin, j’ai effectué un test de restauration de cette sauvegarde dans un dossier temporaire.
 
-![alt text](../Images/Restauration_backup.png)
-![alt text](../Images/Verification_de_la_restauration.png)
+![alt text](../../documentation/Images/Restauration_backup.png)
+![alt text](../../documentation/Images/Verification_de_la_restauration.png)
 
 **Statut :** validé
 
@@ -799,7 +799,7 @@ sudo apt update
 sudo apt install snmp snmpd libsnmp-dev -y
 ```
 
-![alt text](../Images/Installation_des_services_SNMP_SNMPD.png)
+![alt text](../../documentation/Images/Installation_des_services_SNMP_SNMPD.png)
 
 **Vérification de l'installation :**
 
@@ -807,7 +807,7 @@ sudo apt install snmp snmpd libsnmp-dev -y
 snmpd -v
 ```
 
-![alt text](../Images/Vérification_version_snmp.png)
+![alt text](../../documentation/Images/Vérification_version_snmp.png)
 
 **Création de l'utilisateur SNMPv3 (AuthPriv) :**
 
@@ -817,7 +817,7 @@ sudo net-snmp-config --create-snmpv3-user -ro -a SHA -A 'Auth!Str0ng2026' -x AES
 sudo systemctl start snmpd
 ```
 
-![alt text](<../Images/Création de l'utilisateur snmpv3.png>)
+![alt text](<../../documentation/Images/Création de l'utilisateur snmpv3.png>)
 
 **Configuration du service SNMP**
 
@@ -834,8 +834,8 @@ sysLocation Salle serveur - Environnement de test
 sysContact admin@archeagglo.fr
 ```
 
-![alt text](../Images/Configuration_snmp_pour_test.png)
-![alt text](../Images/Configuration_snmp_pour_test_2.png)
+![alt text](../../documentation/Images/Configuration_snmp_pour_test.png)
+![alt text](../../documentation/Images/Configuration_snmp_pour_test_2.png)
 
 **Redémarrage, activation et vértification du statut du service :**
 
@@ -844,7 +844,7 @@ sudo systemctl restart snmpd
 sudo systemctl enable snmpd
 sudo systemctl status snmpd
 ```
-![alt text](../Images/redémarrage_activation_et_statut_snmp.png)
+![alt text](../../documentation/Images/redémarrage_activation_et_statut_snmp.png)
 
 **Ouverture du port SNMP**
 
@@ -853,7 +853,7 @@ sudo ufw allow 161/udp
 sudo ufw reload
 ```
 
-![alt text](<../Images/Ouverture du port 161.png>)
+![alt text](<../../documentation/Images/Ouverture du port 161.png>)
 
 ### 13.10 Tests de supervision SNMP
 
@@ -866,8 +866,8 @@ Valider le bon fonctionnement du service SNMP sur le serveur GLPI.
 snmpwalk -v3 -l authPriv -u ADMIN_GLPI -a SHA -A 'Auth!Str0ng2026' -x AES -X 'Priv@cyCrypt2026' localhost .1
 ```
 
-![alt text](<../Images/Commande snmpwalk.png>)
-![alt text](<../Images/Commande snmpwalk2.png>)
+![alt text](<../../documentation/Images/Commande snmpwalk.png>)
+![alt text](<../../documentation/Images/Commande snmpwalk2.png>)
 
 ### 14. Table de correspondance DAT ↔ Procédure
 
